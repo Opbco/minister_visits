@@ -1,0 +1,38 @@
+{#
+    Template: templates/bundles/SonataAdminBundle/CRUD/list_string_truncated.html.twig
+    Purpose: Display truncated string in list view with tooltip showing full content
+#}
+
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% set maxLength = 50 %}
+    {% if value is not null and value|length > 0 %}
+        {% if value|length > maxLength %}
+            <span 
+                title="{{ value }}" 
+                data-toggle="tooltip" 
+                data-placement="top"
+                class="truncated-text"
+            >
+                {{ value|slice(0, maxLength) }}...
+            </span>
+        {% else %}
+            {{ value }}
+        {% endif %}
+    {% else %}
+        <span class="text-muted">
+            <em>Non renseigné</em>
+        </span>
+    {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .truncated-text {
+            cursor: help;
+            border-bottom: 1px dotted #999;
+        }
+    </style>
+{% endblock %}

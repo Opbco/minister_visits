@@ -1,0 +1,48 @@
+{#
+  This template renders a link in a show view for a One-to-Many or Many-to-Many collection.
+  It generates a link to another admin's list view, pre-filtered
+  by the current object's ID.
+
+  It expects 'route' and 'route_params' to be defined in the ShowMapper's ->add() options.
+#}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if field_description.options.route is defined %}
+        {% set route_name = field_description.options.route %}
+        {% set route_params = {} %}
+
+
+        {# Dynamically replace route param placeholders with object properties #}
+        {% if field_description.options.route_params is defined %}
+            {% for key, value in field_description.options.route_params %}
+                {% if value == 'id' %}
+                    {% set route_params = route_params|merge({(key): object.id}) %}
+                {% else %}
+                    {# Fallback to try and get attribute, e.g., for object.slug #}
+                    {% set route_params = route_params|merge({(key): attribute(object, value)}) %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <a href="{{ path(route_name, route_params) }}" class="btn btn-sm btn-default">
+            <i class="fa fa-list" aria-hidden="true"></i>
+            {# This uses the collection's current count to display "View 5 elements" #}
+            {% if route_name == 'admin_app_domaine_list' %}
+                {{ 'show_action.view_domaines'|trans({'%count%': value|length}, 'messages') }}
+            {% elseif route_name == 'admin_app_filiere_list' %}
+                {{ 'show_action.view_filieres'|trans({'%count%': value|length}, 'messages') }}
+            {% elseif route_name == 'admin_app_specialite_list' %}
+                {{ 'show_action.view_specialites'|trans({'%count%': value|length}, 'messages') }}
+            {% elseif route_name == 'admin_app_inscription_list' %}
+                {{ 'show_action.view_inscriptions'|trans({'%count%': value|length}, 'messages') }}
+            {% else %}
+                {{ 'show_action.view_children'|trans({'%count%': value|length}, 'messages') }}
+            {% endif %}
+        </a>
+
+    {% else %}
+        {# Fallback to default Sonata rendering if no route is provided #}
+        {{ value|length }}
+    {% endif %}
+{% endblock %}

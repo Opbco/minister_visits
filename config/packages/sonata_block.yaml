@@ -1,0 +1,5 @@
+sonata_block:
+    http_cache: false
+    blocks:
+        app.language_switcher:
+            contexts: [admin]

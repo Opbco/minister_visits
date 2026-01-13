@@ -1,0 +1,64 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	{% if value and value.fileName %}
+		{% set file_extension = value.fileName|split('.')|last|lower %}
+		{% set icon_class = 'fa-file' %}
+		{% set file_color = 'text-secondary' %}
+		{% set file_size = '' %}
+
+		{% if file_extension in ['pdf'] %}
+			{% set icon_class = 'fa-file-pdf' %}
+			{% set file_color = 'text-danger' %}
+		{% elseif file_extension in ['doc', 'docx'] %}
+			{% set icon_class = 'fa-file-word' %}
+			{% set file_color = 'text-primary' %}
+		{% elseif file_extension in ['xls', 'xlsx'] %}
+			{% set icon_class = 'fa-file-excel' %}
+			{% set file_color = 'text-success' %}
+		{% elseif file_extension in ['jpg', 'jpeg', 'png', 'gif', 'webp'] %}
+			{% set icon_class = 'fa-file-image' %}
+			{% set file_color = 'text-info' %}
+		{% elseif file_extension in ['txt'] %}
+			{% set icon_class = 'fa-file-alt' %}
+			{% set file_color = 'text-secondary' %}
+		{% endif %}
+
+		<div class="card">
+			<div class="card-body p-3">
+				<div class="d-flex align-items-center mb-3">
+					<div class="me-3">
+						<i class="fas {{ icon_class }} fa-3x {{ file_color }}"></i>
+					</div>
+					<div class="flex-grow-1">
+						<h6 class="mb-1">{{ value.fileName }}</h6>
+						<small class="text-muted">
+							Type:
+							{{ file_extension|upper }}
+							{% if value.mimeType %}
+								|
+								{{ value.mimeType }}
+							{% endif %}
+						</small>
+					</div>
+				</div>
+
+				<div class="d-grid gap-2">
+					<a href="{{ value.fileWebPath }}" target="_blank" class="btn btn-primary btn-sm">
+						<i class="fas fa-external-link-alt"></i>
+						Ouvrir le fichier
+					</a>
+					<a href="{{ value.fileWebPath }}" download="{{ value.fileName }}" class="btn btn-outline-secondary btn-sm">
+						<i class="fas fa-download"></i>
+						Télécharger
+					</a>
+				</div>
+			</div>
+		</div>
+	{% else %}
+		<div class="alert alert-warning">
+			<i class="fas fa-exclamation-triangle"></i>
+			Aucun document associé
+		</div>
+	{% endif %}
+
+{% endblock %}

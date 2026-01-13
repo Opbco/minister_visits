@@ -1,0 +1,46 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+	{% if object.document and object.document.fileName %}
+		{% set file_extension = object.document.fileName|split('.')|last|lower %}
+		{% set icon_class = 'fa-file' %}
+		{% set file_color = 'text-secondary' %}
+
+		{% if file_extension in ['pdf'] %}
+			{% set icon_class = 'fa-file-pdf' %}
+			{% set file_color = 'text-danger' %}
+		{% elseif file_extension in ['doc', 'docx'] %}
+			{% set icon_class = 'fa-file-word' %}
+			{% set file_color = 'text-primary' %}
+		{% elseif file_extension in ['xls', 'xlsx'] %}
+			{% set icon_class = 'fa-file-excel' %}
+			{% set file_color = 'text-success' %}
+		{% elseif file_extension in ['jpg', 'jpeg', 'png', 'gif', 'webp'] %}
+			{% set icon_class = 'fa-file-image' %}
+			{% set file_color = 'text-info' %}
+		{% elseif file_extension in ['txt'] %}
+			{% set icon_class = 'fa-file-alt' %}
+			{% set file_color = 'text-secondary' %}
+		{% endif %}
+
+		<div class="d-flex align-items-center">
+			<a href="{{ object.document.fileWebPath }}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Ouvrir le fichier">
+				<i class="fas {{ icon_class }} {{ file_color }}"></i>
+			</a>
+			<div class="d-flex flex-column">
+				<small class="text-truncate" style="max-width: 150px;" title="{{ object.document.fileName }}">
+					{{ object.document.fileName }}
+				</small>
+				<span class="text-muted" style="font-size: 0.75em;">
+					{{ file_extension|upper }}
+				</span>
+			</div>
+		</div>
+	{% else %}
+		<span class="text-muted">
+			<i class="fas fa-times-circle"></i>
+			Aucun fichier
+		</span>
+	{% endif %}
+
+{% endblock %}

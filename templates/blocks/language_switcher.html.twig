@@ -1,0 +1,11 @@
+{% extends '@SonataBlock/Block/block_base.html.twig' %}
+
+{% block block %}
+<div class="language-switcher">
+    {% for locale in settings.locales %}
+        <a href="{{ path('switch_locale', {'locale': locale}) }}" class="btn btn-sm {% if app.request.locale == locale %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            {{ locale|upper }}
+        </a>
+    {% endfor %}
+</div>
+{% endblock %}

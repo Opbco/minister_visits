@@ -1,0 +1,11 @@
+framework:
+    default_locale: fr
+    enabled_locales: ['en', 'fr']
+    translator:
+        default_path: '%kernel.project_dir%/translations'
+        paths:
+            - '%kernel.project_dir%/templates'
+            - '%kernel.project_dir%/src/Admin'
+        fallbacks:
+            - fr
+        providers:

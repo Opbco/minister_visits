@@ -1,0 +1,147 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    locale: en
+    locales: en|fr
+    uploads_dir: "%kernel.project_dir%/public/uploads"
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Sonata\DoctrineORMAdminBundle\Model\ModelManager: "@sonata.admin.manager.orm"
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: "../src/"
+        exclude:
+            - "../src/DependencyInjection/"
+            - "../src/Entity/"
+            - "../src/Kernel.php"
+
+    app.listener.redirect_404_to_homepage:
+        class: App\EventListener\Redirect404ToHomepageListener
+        arguments:
+            - "@router"
+        tags:
+            - {
+                    name: kernel.event_listener,
+                    event: kernel.exception,
+                    method: onKernelException,
+                }
+
+    App\EventListener\EntityListener:
+        arguments:
+            - "@security.helper"
+            - "@doctrine.orm.entity_manager"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
+
+    acme_api.event.authentication_success_listener:
+        class: App\EventListener\AuthenticationSuccessListener
+        arguments:
+            - "@lexik_jwt_authentication.jwt_manager"
+            - "@request_stack"
+        tags:
+            - {
+                    name: kernel.event_listener,
+                    event: lexik_jwt_authentication.on_authentication_success,
+                    method: onAuthenticationSuccessResponse,
+                }
+
+    # App\Service\Transport\ServiceSmsTransportFactory:
+    #     tags:
+    #         - { name: 'notifier.transport_factory'}
+
+    # App\EventListener\SentMessageListener:
+    #     arguments:
+    #         - "@do.helper"
+    #     tags:
+    #         - { name: notification.event_listener, event: sentEvent }
+
+    # --- Admins ---
+
+    app.language_switcher:
+        class: App\Block\LanguageSwitcherBlockService
+        tags:
+            - { name: sonata.block }
+
+    admin.region:
+        class: App\Admin\RegionAdmin
+        calls:
+            - [setTranslationDomain, ["admin"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Region,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Localisation,
+                    icon: '<i class="fa fa-location-arrow" aria-hidden="true"></i>',
+                    label: Regions,
+                }
+
+    admin.division:
+        class: App\Admin\DivisionAdmin
+        calls:
+            - [setTranslationDomain, ["admin"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Division,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Localisation,
+                    label: Divisions,
+                }
+
+    admin.sub_division:
+        class: App\Admin\SubDivisionAdmin
+        calls:
+            - [setTranslationDomain, ["admin"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\SubDivision,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Localisation,
+                    label: Sub-divisions,
+                }
+
+    admin.country:
+        class: App\Admin\CountryAdmin
+        calls:
+            - [setTranslationDomain, ["admin"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Country,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Localisation,
+                    label: Countries,
+                }
+
+    admin.document:
+        class: App\Admin\DocumentAdmin
+        calls:
+            - [setTranslationDomain, ["admin"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Document,
+                    controller: ~,
+                    manager_type: orm,
+                    group: "Gestion Inscription",
+                    label: Documents (Pictures),
+                }
+

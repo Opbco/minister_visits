@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SchoolGest by OPBco{% endblock %}
+
+{% block body %}
+    <script>
+        window.__INITIAL_STATE__ = {{ page|json_encode|raw }};
+    </script>
+    <div {{ react_component('Main', { 'page': page }) }} ></div>
+{% endblock %}

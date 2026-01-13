@@ -1,0 +1,7 @@
+framework:
+    mailer:
+        dsn: 'smtp://%env(MAILER_USER)%:%env(MAILER_PASSWORD)%@%env(MAILER_HOST)%:%env(MAILER_PORT)%'
+        envelope:
+            sender: '%env(MAILER_FROM_ADDRESS)%'
+        headers:
+            From: '%env(MAILER_FROM_NAME)% <%env(MAILER_FROM_ADDRESS)%>'

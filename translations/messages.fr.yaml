@@ -1,0 +1,427 @@
+form:
+    group_general: "Informations Générales"
+    group_domaines: "Domaines Associés"
+    group_filieres: "Filières Associées"
+    group_specialites: "Spécialités Associées"
+    group_options: "Options Associées"
+    group_dates: "Période"
+    group_localisation_contact: "Localisation et Contacts"
+    group_configurations: 'Configurations'
+    group_assignment: "Affectation"
+    group_hours_credits: "Volume Horaire & Crédits"
+    group_personal_info: "Informations Personnelles"
+    group_contact_address: "Contact & Adresse"
+    group_photo_docs: "Photo & Documents"
+    group_inscription: "Inscription"
+    group_metadata: "Métadonnées"
+    group_photo: "Photo"
+    group_professional_info: "Informations Professionnelles"
+    group_contact: "Contact"
+    group_system_info: "Informations Système"
+    group_departements: "Départements"
+    group_grades: "Grades"
+    group_attribution: "Affectation"
+    group_informations: "Informations"
+
+breadcrumb:
+    link_secteur_list: "Secteurs"
+    link_secteur_create: "Créer Secteur"
+    link_filiere_list: "Filières"
+    link_filiere_create: "Créer Filière"
+    link_domaine_list: "Domaines"
+    link_domaine_create: "Créer Domaine"
+    link_specialite_list: "Spécialités"
+    link_specialite_create: "Créer Spécialité"
+    link_option_list: "Options"
+    link_option_create: "Créer Option"
+    link_etablissement_list: "Liste des Instituts"
+    link_etablissement_create: "Création d'une institut"
+    link_unite_e_create: "Création d'une UE"
+    link_unite_e_list: "Liste des UEs"
+    link_departement_create: "Créer Departement"
+    link_departement_list: "Liste des Departements"
+    link_grade_create: "Créer Grade"
+    link_grade_list: "Liste des Grades"
+    link_attribution_create: "Créer Attribution"
+    link_attribution_list: "Liste des Attribution"
+
+list:
+    label__actions: "Actions"
+
+show_action:
+    view_children: "Voir tous les %count% enfants"
+    view_domaines: "Voir les Domaines"
+    view_filieres: "Voir les Filières"
+    view_specialites: "Voir les Spécialités"
+    view_options: "Voir les Options"
+    view_inscriptions: "Voir ses Inscriptions"
+
+show:
+    group_secteurs: "Secteurs"
+    group_general: "Informations Générales"
+    group_domaines: "Domaines Associés"
+    group_filieres: "Filières Associées"
+    group_specialites: "Spécialités Associées"
+    group_options: "Options Associérales"
+    group_assignment: "Affectation"
+    group_hours_credits: "Volume Horaire & Crédits"
+    group_personal_info: "Informations Personnelles"
+    group_contact_address: "Contact & Adresse"
+    group_photo_docs: "Photo & Documents"
+    group_inscription: "Inscription"
+    group_metadata: "Métadonnées"
+    group_photo: "Photo"
+    group_professional_info: "Informations Professionnelles"
+    group_contact: "Contact"
+    group_system_info: "Informations Système"
+    group_departements: "Départements"
+    group_grades: "Grades"
+    group_attribution: "Affectation"
+    group_informations: "Informations"
+
+secteur:
+    field:
+        code: "Code"
+        libelle: "Libellé"
+        date_created: "Créé le"
+        date_updated: "Modifié le"
+        domaines: "Domaines"
+    action:
+        view_domaines: "Voir les Domaines"
+    group:
+        general: "Informations Générales"
+        domaines: "Domaines Associés"
+
+domaine:
+    field:
+        secteur: "Secteur"
+        code: "Code"
+        libelle: "Libellé"
+        filieres: "Filières"
+    action:
+        view_filieres: "Voir les Filières"
+    group:
+        general: "Informations Générales"
+        filieres: "Filières Associées"
+
+filiere:
+    field:
+        secteur: "Secteur"
+        domaine: "Domaine"
+        code: "Code"
+        libelle: "Libellé"
+        specialites: "Spécialités"
+    action:
+        view_specialites: "Voir les Spécialités"
+    group:
+        general: "Informations Générales"
+        specialites: "Spécialités Associées"
+
+specialite:
+    field:
+        secteur: "Secteur"
+        domaine: "Domaine"
+        filiere: "Filière"
+        cycle: "Cycle"
+        code: "Code"
+        libelle: "Libellé"
+        aOptions: "A des options ?"
+        optionSpecialites: "Options de spécialité"
+    action:
+        view_options: "Voir les Options"
+    help:
+        aOptions: 'Cochez si cette spécialité se divise en options (par ex. "Génie Logiciel" ou "Systèmes d''Information")'
+        optionSpecialites: 'Ces options ne seront utilisées que si la case "A des options ?" est cochée.'
+    btn:
+        addCycle: "Ajouter Cycle"
+
+option:
+    field:
+        secteur: "Secteur"
+        domaine: "Domaine"
+        filiere: "Filière"
+        specialite: "Spécialité"
+        code: "Code"
+        libelle: "Libellé"
+
+cycle:
+    field:
+        code: "Code"
+        libelle: "Libellé"
+        systeme: "Système"
+        specialites: "Spécialités"
+        nombreAnnees: "Nombre d'années d'etude"
+    action:
+        view_specialites: "Voir les Spécialités"
+
+annee_academique:
+    field:
+        libelle: "Libellé (Année)"
+        dateDebut: "Date de début"
+        dateFin: "Date de fin"
+        active: "Active"
+    help:
+        libelle: "Doit être au format AAAA-AAAA ou AAAA/AAAA"
+
+etudiant:
+    field:
+        matricule: "Matricule"
+        nom: "Nom"
+        prenom: "Prénom"
+        full_name: "Nom complet"
+        date_naissance: "Date de naissance"
+        inscriptions: "Inscriptions"
+        sexe: "Sexe"
+        telephone: "Téléphone"
+        email: "Email"
+        adresse: "Adresse"
+        photo: "Photo"
+        date_inscription: "Date d'inscription"
+        lieu_naissance: "Lieu de naissance"
+        first_registration_date: "Date première inscription"
+        date_created: "Date de création"
+        user_created: "Créé par"
+        date_updated: "Date de modification"
+        user_updated: "Modifié par"
+    action:
+        view_inscriptions: "Voir les Inscriptions"
+    help:
+        matricule: "Identifiant unique de l'étudiant"
+        telephone_format: "Format: +237XXXXXXXXX"
+    placeholder:
+        nom: "Nom de famille"
+        prenom: "Prénom"
+        select: "Sélectionner"
+        lieu_naissance: "Ville, Pays"
+        adresse: "Adresse complète"
+
+inscription:
+    form:
+        group:
+            basic_info: "Informations générales"
+            specialite_info: "Spécialité et Option"
+
+    field:
+        etudiant: "Étudiant"
+        annee_academique: "Année académique"
+        date_inscription: "Date d'inscription"
+        annee_etude: "Année d'étude"
+        statut: "Statut"
+        specialite: "Spécialité"
+        option_specialite: "Option de spécialité"
+
+    placeholder:
+        select_specialite: "Sélectionnez une spécialité"
+        select_option: "Sélectionnez une option"
+
+    filter:
+        etudiant: "Étudiant"
+        matricule: "Matricule"
+        specialite: "Spécialité"
+        option_specialite: "Option"
+        annee_academique: "Année académique"
+        annee_etude: "Année d'étude"
+        statut: "Statut"
+        date_inscription: "Date d'inscription"
+
+    list:
+        matricule: "Matricule"
+        etudiant: "Étudiant"
+        specialite: "Spécialité"
+        option: "Option"
+        annee_academique: "Année académique"
+        annee_etude: "Année"
+        statut: "Statut"
+        date_inscription: "Date d'inscription"
+        actions: "Actions"
+        no_option: "Sans option"
+
+    show:
+        group:
+            student_info: "Informations de l'étudiant"
+            inscription_info: "Informations de l'inscription"
+            metadata: "Métadonnées"
+
+        matricule: "Matricule"
+        date_naissance: "Date de naissance"
+        telephone: "Téléphone"
+        email: "Email"
+        filiere: "Filière"
+        cycle: "Cycle"
+        no_option_required: "Aucune option requise"
+        date_created: "Date de création"
+        user_created: "Créé par"
+        date_updated: "Date de modification"
+        user_updated: "Modifié par"
+
+    statut:
+        active: "Active"
+        validee: "Validée"
+        redoublement: "Redoublement"
+        abandonnee: "Abandonnée"
+
+    message:
+        option_required: "Une option est requise pour cette spécialité"
+        option_not_required: "Cette spécialité ne nécessite pas d'option"
+        created_successfully: "Inscription créée avec succès"
+        updated_successfully: "Inscription mise à jour avec succès"
+        deleted_successfully: "Inscription supprimée avec succès"
+
+    validation:
+        option_required: "Une option est obligatoire pour cette spécialité"
+        option_not_allowed: "Cette spécialité ne permet pas de sélectionner une option"
+    
+    action:
+        certificate: "Certificat"
+        attendance_certificate: "Certificat de scolarite"
+
+    certificate:
+        print: "Imprimer"
+        title: "Certificat de scolarité"
+
+etablissement:
+    field:
+        logo: 'Logo (Télécharger un nouveau)'
+        filigramme: 'Filigramme (Télécharger un nouveau)'
+        nom: 'Nom'
+        name: 'Nom en anglais'
+        devise: 'Devise'
+        arrondissement: 'Arrondissement'
+        adresse: 'Adresse complète'
+        contacts: 'Contacts'
+        siteweb: 'Site web'
+        email: 'Email'
+        noteUp: 'Note de passage'
+
+note:
+    action:
+        show: 'Voir'
+        edit: 'Modifier'
+    field:
+        matricule: "Matricule"
+        etudiant: "Étudiant"
+        ue_code: "Code UE"
+        ue_intitule: "Intitulé UE"
+        specialite: "Spécialité"
+        annee_academique: "Année Académique"
+        note_finale: "Note Finale"
+        session: "Session"
+        credit: "Crédit"
+        semestre: "Semestre"
+        credit_obtenu: "Crédit Obtenu"
+    bulk_create:
+        title: "Saisie des Notes"
+        academic_year: "Année Académique"
+        specialty: "Spécialité"
+        option: "Option"
+        semester: "Semestre"
+        semester_label: "Semestre"
+        select_placeholder: "Sélectionner..."
+        load_btn: "Charger"
+        student_header: "Étudiant"
+        td: "TD"
+        sn: "SN"
+        rt: "RT"
+        final: "N"
+        debt_label: "Dette"
+        save_btn: "Enregistrer toutes les notes"
+        no_student_found: "Aucun étudiant inscrit trouvé pour les critères sélectionnés."
+    bulk_edit:
+        title: "Modification des Notes"
+        specialty: "Spécialité"
+        option: "Option"
+        academic_year: "Année Académique"
+        semester: "Semestre"
+        student_header: "Étudiant"
+        td: "TD"
+        sn: "SN"
+        rt: "RT"
+        final: "N"
+        update_btn: "Mettre à jour les notes"
+    bulk_show:
+        page_title: "Relevé de Notes - %specialite%"
+        print_btn: "Imprimer"
+        summary_title: "Résumé de Notes - Semestre"
+        cycle: "Cycle"
+        specialty: "Spécialité"
+        option: "Option"
+        academic_year: "Année Académique"
+        student_count: "Nombre d'étudiants"
+        student_header: "Étudiant<br>(Matricule)"
+        td: "TD"
+        sn: "SN"
+        rt: "RT"
+        final: "N"
+        legend: "Légende"
+        legend_text: "TD = Travaux Dirigés, SN = Session Normale, RT = Rattrapage, N = Note Finale"
+        print_date: "Date d'impression"
+
+personne:
+    field:
+        picture: "Photo"
+        matricule: "Matricule"
+        name: "Nom complet"
+        sexe: "Sexe"
+        datenaiss: "Date de naissance"
+        lieunaiss: "Lieu de naissance"
+        address: "Adresse"
+        departement: "Département"
+        grade: "Grade"
+        active: "Actif"
+        mobile: "Mobile"
+        email: "Email"
+        whatsapp: "WhatsApp"
+        telegram: "Telegram"
+        date_created: "Date de création"
+        date_updated: "Dernière mise à jour"
+        user_created: "Créé par"
+        user_updated: "Modifié par"
+    help:
+        matricule: "Matricule unique de la personne (14 caractères max)"
+        active: "Personne actuellement en service"
+        phone_format: "Format: +237xxxxxxxxx"
+    validation:
+        name_required: "Le nom est obligatoire"
+
+attribution_ue:
+    field:
+        enseignant: "Enseignant"
+        ue: "Unité d'Enseignement"
+        annee_academique: "Année Académique"
+        date_attribution: "Date d'Attribution"
+        date_created: "Date de création"
+        date_updated: "Date de modification"
+    group:
+        attribution: "Attribution"
+        informations: "Informations"
+
+departement:
+    field:
+        code: "Code"
+        libelle: "Libellé"
+
+grade:
+    field:
+        code: "Code"
+        libelle: "Libellé"
+
+unite_e:
+    field:
+        code: "Code UE"
+        intitule: "Intitulé"
+        groupe: "Groupe d'UE"
+        semestre: "Semestre"
+        specialite: "Spécialité"
+        option: "Option (si applicable)"
+        heure_cm: "Heures CM"
+        heure_td: "Heures TD"
+        heure_tp: "Heures TP"
+        heure_tpe: "Heures TPE"
+        credits_calcules: "Crédits Calculés"
+        credits: "Crédits"
+    help:
+        option: "Sélectionnez d'abord une spécialité pour charger les options."
+
+sexe:
+    male: "Masculin"
+    female: "Féminin"

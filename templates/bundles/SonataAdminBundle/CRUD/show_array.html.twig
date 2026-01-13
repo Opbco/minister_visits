@@ -1,0 +1,17 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+    {% if value is iterable and value|length > 0 %}
+        <ul class="list-unstyled mb-0">
+            {% for item in value %}
+                <li>
+                    {{ item }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            Aucune donnée disponible
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,408 @@
+form:
+    group_general: "General Information"
+    group_domaines: "Associated Domains"
+    group_filieres: "Associated Streams"
+    group_specialites: "Associated Specialties"
+    group_options: "Associated Options"
+    group_localisation_contact: "Localization and Contacts"
+    group_configurations: "Configurations"
+    group_assignment: "Assignment"
+    group_hours_credits: "Hours & Credits"
+    group_personal_info: "Personal Information"
+    group_contact_address: "Contact & Address"
+    group_photo_docs: "Photo & Documents"
+    group_inscription: "Registration"
+    group_metadata: "Metadata"
+    group_photo: "Photo"
+    group_professional_info: "Professional Information"
+    group_contact: "Contact"
+    group_system_info: "System Information"
+    group_departements: "Departments"
+    group_grades: "Grades"
+    group_attribution: "Assignment"
+    group_informations: "Information"
+
+breadcrumb:
+    link_secteur_list: "Sectors"
+    link_secteur_create: "Create Sector"
+    link_filiere_list: "Streams"
+    link_filiere_create: "Create Stream"
+    link_domaine_list: "Domains"
+    link_domaine_create: "Create Domain"
+    link_specialite_list: "Specialties"
+    link_specialite_create: "Create Specialty"
+    link_option_list: "Options"
+    link_option_create: "Create Option"
+    link_etablissement_list: "Institutions list"
+    link_etablissement_create: "New Institution creation"
+    link_unite_e_create: "New UE creation"
+    link_unite_e_list: "UE list"
+    link_departement_create: "Create Department"
+    link_departement_list: "Departments list"
+    link_grade_create: "Create Grade"
+    link_grade_list: "Grades list"
+    link_attribution_create: "Create Assignment"
+    link_attribution_list: "Assignments list"
+
+list:
+    label__actions: "Actions"
+
+show_action:
+    view_children: "View all the %count% children"
+    view_domaines: "View Domains"
+    view_filieres: "View Streams"
+    view_specialites: "View Specialties"
+    view_options: "View options"
+    view_inscriptions: "View his|her Inscriptions"
+
+show:
+    group_secteurs: "Sectors"
+    group_general: "General Information"
+    group_domaines: "Associated Domains"
+    group_filieres: "Associated Streams"
+    group_specialites: "Associated Specialties"
+    group_options: "Associated Options"
+    group_assignment: "Assignment"
+    group_hours_credits: "Hours & Credits"
+    group_personal_info: "Personal Information"
+    group_contact_address: "Contact & Address"
+    group_photo_docs: "Photo & Documents"
+    group_inscription: "Registration"
+    group_metadata: "Metadata"
+    group_photo: "Photo"
+    group_professional_info: "Professional Information"
+    group_contact: "Contact"
+    group_system_info: "System Information"
+    group_departements: "Departments"
+    group_grades: "Grades"
+    group_attribution: "Assignment"
+    group_informations: "Information"
+
+secteur:
+    field:
+        code: "Code"
+        libelle: "Label"
+        date_created: "Created at"
+        date_updated: "Updated at"
+        domaines: "Domains"
+    action:
+        view_domaines: "View Domains"
+
+domaine:
+    field:
+        secteur: "Sector"
+        code: "Code"
+        libelle: "Label"
+        filieres: "Streams"
+    action:
+        view_filieres: "View Streams"
+    group:
+        general: "General Information"
+        filieres: "Associated Streams"
+
+filiere:
+    field:
+        secteur: "Sector"
+        domaine: "Domain"
+        code: "Code"
+        libelle: "Label"
+        specialites: "Specialties"
+    action:
+        view_specialites: "View Specialties"
+    group:
+        general: "General Information"
+        specialites: "Associated Specialties"
+
+specialite:
+    field:
+        secteur: "Sector"
+        domaine: "Domain"
+        filiere: "Stream"
+        cycle: "Cycle"
+        code: "Code"
+        libelle: "Label"
+        aOptions: "Has options ?"
+        optionSpecialites: "Specialty options"
+    action:
+        view_options: "View options"
+    help:
+        aOptions: 'Check if this specialty has options (e.g. "Genetic Engineering" or "Information Systems")'
+        optionSpecialites: 'These options will only be used if the "Has options ?" box is checked.'
+    btn:
+        addCycle: "Add Cycle"
+
+option:
+    field:
+        secteur: "Sector"
+        domaine: "Domain"
+        filiere: "Stream"
+        specialite: "Specialty"
+        code: "Code"
+        libelle: "Label"
+
+cycle:
+    field:
+        code: "Code"
+        libelle: "Label"
+        systeme: "System"
+        specialites: "Specialties"
+        nombreAnnees: "Number of years of study"
+    action:
+        view_specialites: "View Specialties"
+
+etudiant:
+    field:
+        matricule: "Student ID"
+        nom: "Last Name"
+        prenom: "First Name"
+        full_name: "Full Name"
+        date_naissance: "Birth Date"
+        inscriptions: "Inscriptions"
+        sexe: "Gender"
+        telephone: "Phone"
+        email: "Email"
+        adresse: "Address"
+        photo: "Photo"
+        date_inscription: "Registration Date"
+        lieu_naissance: "Place of Birth"
+        first_registration_date: "First Registration Date"
+        date_created: "Created at"
+        user_created: "Created by"
+        date_updated: "Updated at"
+        user_updated: "Updated by"
+    action:
+        view_inscriptions: "View Inscriptions"
+    help:
+        matricule: "Unique student identifier"
+        telephone_format: "Format: +237XXXXXXXXX"
+    placeholder:
+        nom: "Family name"
+        prenom: "Given name"
+        select: "Select"
+        lieu_naissance: "City, Country"
+        adresse: "Full address"
+
+inscription:
+    form:
+        group:
+            basic_info: "General Information"
+            specialite_info: "Specialty and Option"
+
+    field:
+        etudiant: "Student"
+        annee_academique: "Academic Year"
+        date_inscription: "Registration Date"
+        annee_etude: "Study Year"
+        statut: "Status"
+        specialite: "Specialty"
+        option_specialite: "Specialty Option"
+
+    placeholder:
+        select_specialite: "Select a specialty"
+        select_option: "Select an option"
+
+    filter:
+        etudiant: "Student"
+        matricule: "Student ID"
+        specialite: "Specialty"
+        option_specialite: "Option"
+        annee_academique: "Academic Year"
+        annee_etude: "Study Year"
+        statut: "Status"
+        date_inscription: "Registration Date"
+
+    list:
+        matricule: "Student ID"
+        etudiant: "Student"
+        specialite: "Specialty"
+        option: "Option"
+        annee_academique: "Academic Year"
+        annee_etude: "Year"
+        statut: "Status"
+        date_inscription: "Registration Date"
+        actions: "Actions"
+        no_option: "No option"
+
+    show:
+        group:
+            student_info: "Student Information"
+            inscription_info: "Registration Information"
+            metadata: "Metadata"
+
+        matricule: "Student ID"
+        date_naissance: "Birth Date"
+        telephone: "Phone"
+        email: "Email"
+        filiere: "Field"
+        cycle: "Cycle"
+        no_option_required: "No option required"
+        date_created: "Created at"
+        user_created: "Created by"
+        date_updated: "Updated at"
+        user_updated: "Updated by"
+
+    statut:
+        active: "Active"
+        validee: "Validated"
+        redoublement: "Repeating"
+        abandonnee: "Abandoned"
+
+    message:
+        option_required: "An option is required for this specialty"
+        option_not_required: "This specialty does not require an option"
+        created_successfully: "Registration created successfully"
+        updated_successfully: "Registration updated successfully"
+        deleted_successfully: "Registration deleted successfully"
+
+    action:
+        view_inscriptions: "View Inscriptions"
+        certificate: "Certificate"
+        attendance_certificate: "Attendance Certificate"
+
+    certificate:
+        print: "Print"
+        title: "School Attendance Certificate"
+
+etablissement:
+    field:
+        logo: 'Logo'
+        filigramme: 'Watermark'
+        nom: 'Name'
+        name: 'Name in English'
+        devise: 'Motto'
+        arrondissement: 'Sub-Division'
+        adresse: 'Full Address'
+        contacts: 'Contacts'
+        siteweb: 'Website'
+        email: 'Email'
+        noteUp: 'Passing score'
+
+note:
+    action:
+        show: 'Show'
+        edit: 'Update'
+    field:
+        matricule: "Student ID"
+        etudiant: "Student"
+        ue_code: "Course Code"
+        ue_intitule: "Course Title"
+        specialite: "Specialty"
+        annee_academique: "Academic Year"
+        note_finale: "Final Mark"
+        session: "Session"
+        credit: "Credit"
+        semestre: "Semester"
+        credit_obtenu: "Credit Earned"
+    bulk_create:
+        title: "Mark Entry"
+        academic_year: "Academic Year"
+        specialty: "Specialty"
+        option: "Option"
+        semester: "Semester"
+        semester_label: "Semester"
+        select_placeholder: "Select..."
+        load_btn: "Load"
+        student_header: "Student"
+        td: "TD"
+        sn: "SN"
+        rt: "RT"
+        final: "N"
+        debt_label: "Debt"
+        save_btn: "Save all marks"
+        no_student_found: "No registered students found for the selected criteria."
+    bulk_edit:
+        title: "Mark Modification"
+        specialty: "Specialty"
+        option: "Option"
+        academic_year: "Academic Year"
+        semester: "Semester"
+        student_header: "Student"
+        td: "TD"
+        sn: "SN"
+        rt: "RT"
+        final: "N"
+        update_btn: "Update marks"
+    bulk_show:
+        page_title: "Marks Sheet - %specialite%"
+        print_btn: "Print"
+        summary_title: "Marks Summary - Semester"
+        cycle: "Cycle"
+        specialty: "Specialty"
+        option: "Option"
+        academic_year: "Academic Year"
+        student_count: "Number of students"
+        student_header: "Student<br>(Matricule)"
+        td: "CA"
+        sn: "NE"
+        rt: "RE"
+        final: "F"
+        legend: "Legend"
+        legend_text: "CA = Continuous Assessment, NE = Normal Exam, RE = Resit Exam, F = Final Mark"
+        print_date: "Print date"
+
+personne:
+    field:
+        picture: "Photo"
+        matricule: "Matricule"
+        name: "Full Name"
+        sexe: "Gender"
+        datenaiss: "Birth Date"
+        lieunaiss: "Place of Birth"
+        address: "Address"
+        departement: "Department"
+        grade: "Grade"
+        active: "Active"
+        mobile: "Mobile"
+        email: "Email"
+        whatsapp: "WhatsApp"
+        telegram: "Telegram"
+        date_created: "Created at"
+        date_updated: "Updated at"
+        user_created: "Created by"
+        user_updated: "Updated by"
+    help:
+        matricule: "Unique identifier (max 14 chars)"
+        active: "Person currently in service"
+        phone_format: "Format: +237xxxxxxxxx"
+    validation:
+        name_required: "Name is required"
+
+attribution_ue:
+    field:
+        enseignant: "Teacher"
+        ue: "Course Unit"
+        annee_academique: "Academic Year"
+        date_attribution: "Assignment Date"
+        date_created: "Created at"
+        date_updated: "Updated at"
+
+departement:
+    field:
+        code: "Code"
+        libelle: "Label"
+
+grade:
+    field:
+        code: "Code"
+        libelle: "Label"
+
+unite_e:
+    field:
+        code: "Code"
+        intitule: "Title"
+        groupe: "Course Group"
+        semestre: "Semester"
+        specialite: "Specialty"
+        option: "Option (if applicable)"
+        heure_cm: "CM Hours"
+        heure_td: "TD Hours"
+        heure_tp: "TP Hours"
+        heure_tpe: "TPE Hours"
+        credits_calcules: "Calculated Credits"
+        credits: "Credits"
+    help:
+        option: "Select a specialty first to load options."
+
+sexe:
+    male: "Male"
+    female: "Female"

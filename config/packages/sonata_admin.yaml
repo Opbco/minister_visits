@@ -1,0 +1,31 @@
+sonata_admin:
+    title: 'SCHOOL-GEST'
+    show_mosaic_button: false
+    assets:
+        extra_stylesheets:
+            - admin/admin.css
+        extra_javascripts:
+            - admin/admin.js
+    dashboard:
+        blocks:
+            - { type: sonata.admin.block.admin_list, position: left }
+            - { type: app.language_switcher, position: right }
+    options:
+        skin: skin-green
+        list_action_button_content: icon
+        html5_validate: true
+        confirm_exit: true
+        use_icheck: false
+
+    security:
+        handler: sonata.admin.security.handler.role
+        
+        role_admin: ROLE_ADMIN
+        role_super_admin: ROLE_SUPER_ADMIN
+
+sonata_block:
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts: [admin]
+        app.language_switcher:
+            contexts: [admin]

@@ -1,0 +1,40 @@
+{# 
+  This template renders a link in a list action column.
+  It generates a link to another admin's list view, pre-filtered
+  by the current object's ID.
+#}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if field_description.options.route is defined %}
+        {% set route_name = field_description.options.route %}
+        {% set route_params = {} %}
+
+        {# Dynamically replace route param placeholders with object properties #}
+        {% if field_description.options.route_params is defined %}
+            {% for key, value in field_description.options.route_params %}
+                {% if value == 'id' %}
+                    {% set route_params = route_params|merge({(key): object.id}) %}
+                {% else %}
+                    {# Fallback to try and get attribute, e.g., for object.slug #}
+                    {% set route_params = route_params|merge({(key): attribute(object, value)}) %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <a {% if value is not iterable or value|length <= 0 %} disabled="true" {% endif %}" href="{{ path(route_name, route_params) }}" class="btn btn-sm btn-default" title="{{ field_description.options.label|trans({}, 'SonataAdmin') }}">
+           <i class="fa fa-list" aria-hidden="true"></i>
+            {% if route_name == 'admin_app_domaine_list' %}
+                {{ 'show_action.view_domaines'|trans({'%count%': value|length}, 'messages') }}
+            {% elseif route_name == 'admin_app_filiere_list' %}
+                {{ 'show_action.view_filieres'|trans({'%count%': value|length}, 'messages') }}
+            {% elseif route_name == 'admin_app_specialite_list' %}
+                {{ 'show_action.view_specialites'|trans({'%count%': value|length}, 'messages') }}
+            {% elseif route_name == 'admin_app_optionspecialite_list' %}
+                {{ 'show_action.view_options'|trans({'%count%': value|length}, 'messages') }}
+            {% else %}
+                {{ 'show_action.view_children'|trans({'%count%': value|length}, 'messages') }}
+            {% endif %}
+        </a>
+    {% endif %}
+{% endblock %}

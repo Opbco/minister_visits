@@ -1,0 +1,85 @@
+[id*="picture_file_help"] {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+
+    & .preview-item {
+        position: relative;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    & .preview-item:hover {
+        transform: scale(1.05);
+    }
+
+    & .preview-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        display: block;
+    }
+
+    & .preview-info {
+        padding: 15px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+
+    & .file-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    & .file-size {
+        font-size: 12px;
+        opacity: 0.9;
+    }
+
+    & .remove-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    & .remove-btn:hover {
+        background: rgba(255, 0, 0, 1);
+        transform: scale(1.1);
+    }
+}
+
+
+.select2-container--bootstrap4 .select2-selection--multiple {
+    border-color: #ced4da;
+}
+
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    font-size: 0.875rem;
+}
+
+.dropdown-menu > a {
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    text-align: left;
+}
