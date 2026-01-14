@@ -194,6 +194,12 @@ class Structure
     #[MaxDepth(1)]
     private Collection $myStructures;
 
+    #[ORM\OneToMany(targetEntity: Visite::class, mappedBy: 'structure')]
+    private Collection $visites;
+
+    #[ORM\OneToMany(targetEntity: Reunion::class, mappedBy: 'organisateur', orphanRemoval: true)]
+    private Collection $reunions;
+
     public function __construct()
     {
         $this->date_created = new \DateTimeImmutable();
@@ -202,6 +208,8 @@ class Structure
         $this->hasAgricultural = false;
         $this->isBilingual = false;
         $this->myStructures = new ArrayCollection();
+        $this->visites = new ArrayCollection();
+        $this->reunions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -517,6 +525,66 @@ class Structure
                 $myStructure->setParent(null);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Visite>
+     */
+    public function getVisites(): Collection
+    {
+        return $this->visites;
+    }
+
+    public function addVisite(Visite $visite): static
+    {
+        if (!$this->visites->contains($visite)) {
+            $this->visites->add($visite);
+            $visite->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisite(Visite $visite): static
+    {
+        if ($this->visites->removeElement($visite)) {
+            // set the owning side to null (unless already changed)
+            if ($visite->getStructure() === $this) {
+                $visite->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reunion>
+     */
+    public function getReunions(): Collection
+    {
+        return $this->reunions;
+    }
+
+    public function addReunion(Reunion $reunion): static
+    {
+        if (!$this->reunions->contains($reunion)) {
+            $this->reunions->add($reunion);
+            $reunion->setOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReunion(Reunion $reunion): static
+    {
+        if ($this->reunions->removeElement($reunion)) {
+            // set the owning side to null (unless already changed)
+            if ($reunion->getOrganisateur() === $this) {
+                $reunion->setOrganisateur(null);
+            }
+        }
+
         return $this;
     }
 }

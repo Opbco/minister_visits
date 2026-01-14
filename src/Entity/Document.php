@@ -41,6 +41,12 @@ class Document
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $context = null;
 
+    #[ORM\ManyToOne(inversedBy: 'photos')]
+    private ?Visite $visite = null;
+
+    #[ORM\ManyToOne]
+    private ?Reunion $reunion = null;
+
     public function getContext(): ?string
     {
         return $this->context;
@@ -182,5 +188,29 @@ class Document
             return self::SERVER_PATH_TO_FILES_FOLDER . '/' . $this->fileName;
         }
         return self::SERVER_PATH_TO_FILES_FOLDER . '/' . $this->context . '/' . $this->fileName;
+    }
+
+    public function getVisite(): ?Visite
+    {
+        return $this->visite;
+    }
+
+    public function setVisite(?Visite $visite): static
+    {
+        $this->visite = $visite;
+
+        return $this;
+    }
+
+    public function getReunion(): ?Reunion
+    {
+        return $this->reunion;
+    }
+
+    public function setReunion(?Reunion $reunion): static
+    {
+        $this->reunion = $reunion;
+
+        return $this;
     }
 }
