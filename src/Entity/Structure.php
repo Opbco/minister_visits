@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\StructureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use App\Enum\StructureCategory;
 use App\Enum\StructureRank;
@@ -104,6 +106,17 @@ class Structure
 
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'myStructures')]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    private Collection $myStructures;
+
+    public function __construct()
+    {
+        $this->myStructures = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -401,5 +414,47 @@ class Structure
     public function preUpdate(): void
     {
         $this->date_updated = new \DateTimeImmutable();
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getMyStructures(): Collection
+    {
+        return $this->myStructures;
+    }
+
+    public function addMyStructure(self $myStructure): static
+    {
+        if (!$this->myStructures->contains($myStructure)) {
+            $this->myStructures->add($myStructure);
+            $myStructure->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMyStructure(self $myStructure): static
+    {
+        if ($this->myStructures->removeElement($myStructure)) {
+            // set the owning side to null (unless already changed)
+            if ($myStructure->getParent() === $this) {
+                $myStructure->setParent(null);
+            }
+        }
+
+        return $this;
     }
 }
