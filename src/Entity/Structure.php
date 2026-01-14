@@ -2,8 +2,7 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
@@ -16,6 +15,8 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use App\Repository\StructureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use App\Enum\StructureCategory;
 use App\Enum\StructureRank;
@@ -27,6 +28,7 @@ use App\Enum\Cycle;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -37,7 +39,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['acronym'], name: 'idx_structure_acronym')]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    normalizationContext: ['groups' => ['structure:read']],
+    // Added 'structure.list' to normalizationContext to ensure SubDivision name is visible
+    normalizationContext: ['groups' => ['structure:read', 'structure.list'], 'enable_max_depth' => true],
     denormalizationContext: ['groups' => ['structure:write']],
     operations: [
         new Get(),
@@ -46,16 +49,20 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(),
         new Patch(),
         new Delete(),
-    ]
+    ],
+    order: ['nameFr' => 'ASC']
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'nameFr' => 'partial', 
     'nameEn' => 'partial', 
-    'acronym' => 'exact', 
-    'subdivision' => 'exact',
+    'acronym' => 'exact',
     'type' => 'exact',
-    'category' => 'exact'
+    'category' => 'exact',
+    'subdivision' => 'exact',
+    'subdivision.name' => 'partial',
+    'parent' => 'exact' // Added parent filter to find all children of a structure
 ])]
+#[ApiFilter(BooleanFilter::class, properties: ['isBilingual', 'hasIndustrial', 'hasCommercial', 'hasAgricultural'])]
 #[ApiFilter(OrderFilter::class, properties: ['nameFr', 'date_created'], arguments: ['orderParameterName' => 'order'])]
 #[ApiFilter(DateFilter::class, properties: ['date_created'])]
 class Structure
@@ -176,16 +183,20 @@ class Structure
     #[ORM\ManyToOne]
     #[Groups(['structure:read', 'structure:write'])]
     private ?User $user_updated = null;
+
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'myStructures')]
+    #[Groups(['structure:read', 'structure:write'])]
+    #[MaxDepth(1)]
     private ?self $parent = null;
 
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[Groups(['structure:read'])]
+    #[MaxDepth(1)]
     private Collection $myStructures;
 
     public function __construct()
     {
         $this->date_created = new \DateTimeImmutable();
-        // Set default booleans to prevent null issues in API/React
         $this->hasIndustrial = false;
         $this->hasCommercial = false;
         $this->hasAgricultural = false;
@@ -206,7 +217,6 @@ class Structure
     public function setNameFr(string $nameFr): static
     {
         $this->nameFr = $nameFr;
-
         return $this;
     }
 
@@ -218,7 +228,6 @@ class Structure
     public function setNameEn(string $nameEn): static
     {
         $this->nameEn = $nameEn;
-
         return $this;
     }
 
@@ -230,7 +239,6 @@ class Structure
     public function setAcronym(?string $acronym): static
     {
         $this->acronym = $acronym;
-
         return $this;
     }
 
@@ -242,7 +250,6 @@ class Structure
     public function setCategory(?StructureCategory $category): static
     {
         $this->category = $category;
-
         return $this;
     }
 
@@ -254,7 +261,6 @@ class Structure
     public function setType(StructureType $type): static
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -266,7 +272,6 @@ class Structure
     public function setLevelRank(?StructureRank $levelRank): static
     {
         $this->levelRank = $levelRank;
-
         return $this;
     }
 
@@ -278,7 +283,6 @@ class Structure
     public function setEducation(?StructureEducation $education): static
     {
         $this->education = $education;
-
         return $this;
     }
 
@@ -290,7 +294,6 @@ class Structure
     public function setOrdre(?StructureOrdre $ordre): static
     {
         $this->ordre = $ordre;
-
         return $this;
     }
 
@@ -302,7 +305,6 @@ class Structure
     public function setCycle(?Cycle $cycle): static
     {
         $this->cycle = $cycle;
-
         return $this;
     }
 
@@ -314,7 +316,6 @@ class Structure
     public function setHasIndustrial(bool $hasIndustrial): static
     {
         $this->hasIndustrial = $hasIndustrial;
-
         return $this;
     }
 
@@ -326,7 +327,6 @@ class Structure
     public function setHasCommercial(bool $hasCommercial): static
     {
         $this->hasCommercial = $hasCommercial;
-
         return $this;
     }
 
@@ -338,7 +338,6 @@ class Structure
     public function setHasAgricultural(bool $hasAgricultural): static
     {
         $this->hasAgricultural = $hasAgricultural;
-
         return $this;
     }
 
@@ -350,7 +349,6 @@ class Structure
     public function setSubdivision(?SubDivision $subdivision): static
     {
         $this->subdivision = $subdivision;
-
         return $this;
     }
 
@@ -362,7 +360,6 @@ class Structure
     public function setAdress(?string $adress): static
     {
         $this->adress = $adress;
-
         return $this;
     }
 
@@ -374,7 +371,6 @@ class Structure
     public function setLatitude(?string $latitude): static
     {
         $this->latitude = $latitude;
-
         return $this;
     }
 
@@ -386,7 +382,6 @@ class Structure
     public function setLongitude(?string $longitude): static
     {
         $this->longitude = $longitude;
-
         return $this;
     }
 
@@ -398,7 +393,6 @@ class Structure
     public function setAltitude(?string $altitude): static
     {
         $this->altitude = $altitude;
-
         return $this;
     }
 
@@ -410,7 +404,6 @@ class Structure
     public function setSubsystem(?Subsystem $subsystem): static
     {
         $this->subsystem = $subsystem;
-
         return $this;
     }
 
@@ -422,7 +415,6 @@ class Structure
     public function setIsBilingual(bool $isBilingual): static
     {
         $this->isBilingual = $isBilingual;
-
         return $this;
     }
 
@@ -434,7 +426,6 @@ class Structure
     public function setDateCreated(\DateTimeInterface $date_created): static
     {
         $this->date_created = $date_created;
-
         return $this;
     }
 
@@ -446,7 +437,6 @@ class Structure
     public function setDateUpdated(?\DateTimeInterface $date_updated): static
     {
         $this->date_updated = $date_updated;
-
         return $this;
     }
 
@@ -458,7 +448,6 @@ class Structure
     public function setUserCreated(?User $user_created): static
     {
         $this->user_created = $user_created;
-
         return $this;
     }
 
@@ -470,7 +459,6 @@ class Structure
     public function setUserUpdated(?User $user_updated): static
     {
         $this->user_updated = $user_updated;
-
         return $this;
     }
 
@@ -502,7 +490,6 @@ class Structure
     public function setParent(?self $parent): static
     {
         $this->parent = $parent;
-
         return $this;
     }
 
@@ -520,19 +507,16 @@ class Structure
             $this->myStructures->add($myStructure);
             $myStructure->setParent($this);
         }
-
         return $this;
     }
 
     public function removeMyStructure(self $myStructure): static
     {
         if ($this->myStructures->removeElement($myStructure)) {
-            // set the owning side to null (unless already changed)
             if ($myStructure->getParent() === $this) {
                 $myStructure->setParent(null);
             }
         }
-
         return $this;
     }
 }
