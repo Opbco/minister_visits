@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PersonnelRepository::class)]
 #[ORM\Table(name: 'personnel')]
-#[ORM\Index(columns: ['nomComplet'], name: 'idx_personnel_nom_prenom')]
+#[ORM\Index(columns: ['nom_complet'], name: 'idx_personnel_nom_prenom')]
 #[ORM\Index(columns: ['matricule'], name: 'idx_personnel_matricule')]
 #[ApiResource(
     normalizationContext: ['groups' => ['personnel:read']],
