@@ -3,6 +3,7 @@ twig:
     form_themes:
         - '@SonataAdmin/Form/form_admin_fields.html.twig'
         - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+        - 'form/map_coords_widget.html.twig'
 
 when@test:
     twig:

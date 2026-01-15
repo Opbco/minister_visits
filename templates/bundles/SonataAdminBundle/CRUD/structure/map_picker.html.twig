@@ -1,0 +1,72 @@
+{# templates/admin/structure/map_picker.html.twig #}
+
+<div class="form-group">
+    <label class="control-label required">Sélectionner la position sur la carte</label>
+    <div id="map-picker" style="height: 400px; width: 100%; border: 1px solid #ccc; border-radius: 4px;"></div>
+    <small class="form-text text-muted">
+        Cliquez sur la carte ou faites glisser le marqueur pour définir la position exacte.
+    </small>
+</div>
+
+{# Include Leaflet CSS & JS via CDN #}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    $(document).ready(function() {
+        // 1. Get references to the hidden inputs created in StructureAdmin
+        var latInput = $('.js-latitude');
+        var lngInput = $('.js-longitude');
+
+        // 2. Default coordinates (Yaoundé, Cameroon)
+        var defaultLat = 3.8480;
+        var defaultLng = 11.5021;
+        var zoomLevel = 13;
+
+        // Check if we are editing an existing structure with coordinates
+        var currentLat = latInput.val() ? parseFloat(latInput.val()) : defaultLat;
+        var currentLng = lngInput.val() ? parseFloat(lngInput.val()) : defaultLng;
+        
+        // If values exist, zoom in closer
+        if (latInput.val() && lngInput.val()) {
+            zoomLevel = 16;
+        }
+
+        // 3. Initialize the map
+        var map = L.map('map-picker').setView([currentLat, currentLng], zoomLevel);
+
+        // 4. Load OpenStreetMap tiles
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // 5. Add a draggable marker
+        var marker = L.marker([currentLat, currentLng], {
+            draggable: true
+        }).addTo(map);
+
+        // Function to update hidden inputs
+        function updateInputs(lat, lng) {
+            latInput.val(lat.toFixed(7));
+            lngInput.val(lng.toFixed(7));
+        }
+
+        // Event: Marker dragged
+        marker.on('dragend', function(event) {
+            var position = marker.getLatLng();
+            updateInputs(position.lat, position.lng);
+        });
+
+        // Event: Map clicked (move marker there)
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateInputs(e.latlng.lat, e.latlng.lng);
+        });
+        
+        // Fix for map rendering issues in tabs
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            map.invalidateSize();
+        });
+    });
+</script>

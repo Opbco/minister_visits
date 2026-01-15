@@ -1,0 +1,29 @@
+{# templates/admin/structure/show_map.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+    {% if object.latitude is not null and object.longitude is not null %}
+        <div id="map-show" style="height: 300px; width: 100%; border: 1px solid #ccc; margin-bottom: 20px;"></div>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                var lat = {{ object.latitude }};
+                var lng = {{ object.longitude }};
+
+                var map = L.map('map-show').setView([lat, lng], 15);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(map);
+
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup("<b>{{ object.nameFr }}</b><br>{{ object.adress|default('') }}")
+                    .openPopup();
+            });
+        </script>
+    {% else %}
+        <div class="alert alert-info">Aucune coordonnée géographique définie pour cette structure.</div>
+    {% endif %}
+{% endblock %}

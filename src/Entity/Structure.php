@@ -103,6 +103,11 @@ class Structure
     #[Groups(['structure:read', 'structure:write'])]
     private ?StructureRank $levelRank = StructureRank::Service;
 
+    #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "The hierarchic code is required.")]
+    #[Groups(['structure:read', 'structure:write'])]
+    private ?string $codeHierarchique = null;
+
     #[ORM\Column(type: Types::STRING, length: 100, enumType: StructureEducation::class, nullable: true)]
     #[Groups(['structure:read', 'structure:write'])]
     private ?StructureEducation $education = null;
@@ -476,6 +481,26 @@ class Structure
         if ($this->date_created === null) {
             $this->date_created = new \DateTimeImmutable();
         }
+        
+        if(empty($this->codeHierarchique)) {
+            if ($this->type === StructureType::ETABLISSEMENT) {
+                $this->codeHierarchique = 'MINESEC/SDEC/DRES/DDES/ETS';
+            } elseif ($this->type === StructureType::DRES) {
+                $this->codeHierarchique = 'MINESEC/SDEC';
+            } elseif ($this->type === StructureType::CABINET) {
+                $this->codeHierarchique = '---';
+            }elseif ($this->parent !== null) {
+                $this->codeHierarchique = $this->parent->getCodeHierarchique() ?  $this->parent->getCodeHierarchique() . '/' . $this->parent->getAcronym() : $this->parent->getAcronym();
+            }
+        }
+    }
+
+    public function getLocationMap(): array
+    {
+        return [
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+        ];
     }
 
     #[ORM\PreUpdate]
@@ -584,6 +609,18 @@ class Structure
                 $reunion->setOrganisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCodeHierarchique(): ?string
+    {
+        return $this->codeHierarchique;
+    }
+
+    public function setCodeHierarchique(string $codeHierarchique): static
+    {
+        $this->codeHierarchique = $codeHierarchique;
 
         return $this;
     }

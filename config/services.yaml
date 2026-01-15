@@ -74,61 +74,75 @@ services:
         tags:
             - { name: sonata.block }
 
-    admin.region:
-        class: App\Admin\RegionAdmin
-        calls:
-            - [setTranslationDomain, ["admin"]]
-        tags:
-            - {
-                    name: sonata.admin,
-                    model_class: App\Entity\Region,
-                    controller: ~,
-                    manager_type: orm,
-                    group: Localisation,
-                    icon: '<i class="fa fa-location-arrow" aria-hidden="true"></i>',
-                    label: Regions,
-                }
-
-    admin.division:
-        class: App\Admin\DivisionAdmin
-        calls:
-            - [setTranslationDomain, ["admin"]]
-        tags:
-            - {
-                    name: sonata.admin,
-                    model_class: App\Entity\Division,
-                    controller: ~,
-                    manager_type: orm,
-                    group: Localisation,
-                    label: Divisions,
-                }
-
-    admin.sub_division:
-        class: App\Admin\SubDivisionAdmin
-        calls:
-            - [setTranslationDomain, ["admin"]]
-        tags:
-            - {
-                    name: sonata.admin,
-                    model_class: App\Entity\SubDivision,
-                    controller: ~,
-                    manager_type: orm,
-                    group: Localisation,
-                    label: Sub-divisions,
-                }
-
     admin.country:
         class: App\Admin\CountryAdmin
         calls:
-            - [setTranslationDomain, ["admin"]]
+            - [setTranslationDomain, ["messages"]]
         tags:
             - {
                     name: sonata.admin,
                     model_class: App\Entity\Country,
                     controller: ~,
                     manager_type: orm,
-                    group: Localisation,
+                    icon: '<i class="fa fa-location-arrow" aria-hidden="true"></i>',
+                    group: Gestion des structures,
                     label: Countries,
+                }
+
+    admin.region:
+        class: App\Admin\RegionAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Region,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Gestion des structures,
+                    label: Regions,
+                }
+
+    admin.division:
+        class: App\Admin\DivisionAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Division,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Gestion des structures,
+                    label: Divisions,
+                }
+
+    admin.sub_division:
+        class: App\Admin\SubDivisionAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\SubDivision,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Gestion des structures,
+                    label: Sub-divisions,
+                }
+    
+    admin.structure:
+        class: App\Admin\StructureAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Structure,
+                    controller: ~,
+                    manager_type: orm,
+                    group: Gestion des structures,
+                    label: Structures,
                 }
 
     admin.document:
@@ -141,7 +155,7 @@ services:
                     model_class: App\Entity\Document,
                     controller: ~,
                     manager_type: orm,
-                    group: "Gestion Inscription",
-                    label: Documents (Pictures),
+                    group: "Gestion des documents",
+                    label: Documents,
                 }
 

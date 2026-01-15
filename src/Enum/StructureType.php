@@ -25,6 +25,8 @@ enum StructureType: string
     case SP = 'sp';
     case CT = 'ct';
     case ENI = 'ecole normale d\'instituteurs';
+    case DRES = 'dres';
+    case DDES = 'ddes';
 
     public function label(): string
     {
@@ -50,6 +52,8 @@ enum StructureType: string
             self::SP => 'Sécrétariat Particulier',
             self::CT => 'Conseil Technique',
             self::ENI => 'Ecole Normale d\'Instituteurs',
+            self::DRES => 'Délégation Régionale des Enseignements Secondaires',
+            self::DDES => 'Délégation Départementale des Enseignements Secondaires',
         };
     }
 
@@ -77,6 +81,8 @@ enum StructureType: string
             self::SP => 'Private Secretariat',
             self::CT => 'Technical Advisor',
             self::ENI => 'Teacher Training College',
+            self::DRES => 'Regional Delegation for Secondary Education',
+            self::DDES => 'Divisional Delegation for Secondary Education',
         };
     }
 

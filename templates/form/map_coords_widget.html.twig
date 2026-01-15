@@ -1,0 +1,70 @@
+{% block map_coords_widget %}
+    <div class="form-group">
+        <label class="control-label required"><strong>Géolocalisation</strong> (Cliquez sur la carte)</label>
+        
+        <div id="map-picker" style="height: 400px; width: 100%; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;"></div>
+        <small class="form-text text-muted">
+            <i class="fa fa-info-circle"></i> Glissez le marqueur ou cliquez pour définir la position.
+        </small>
+    </div>
+
+    {# Leaflet CSS & JS (CDN) #}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <script>
+        $(document).ready(function() {
+            // 1. Target the hidden inputs
+            var latInput = $('.js-latitude');
+            var lngInput = $('.js-longitude');
+
+            if (!latInput.length || !lngInput.length) {
+                console.error("MapPicker: Could not find inputs with class .js-latitude or .js-longitude");
+                return;
+            }
+
+            // 2. Default center (Yaoundé)
+            var defaultLat = 3.8480;
+            var defaultLng = 11.5021;
+            var zoomLevel = 13;
+
+            var currentLat = latInput.val() ? parseFloat(latInput.val()) : defaultLat;
+            var currentLng = lngInput.val() ? parseFloat(lngInput.val()) : defaultLng;
+
+            // Zoom in if we already have a location
+            if (latInput.val() && lngInput.val()) {
+                zoomLevel = 16;
+            }
+
+            // 3. Init Map
+            var map = L.map('map-picker').setView([currentLat, currentLng], zoomLevel);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            var marker = L.marker([currentLat, currentLng], { draggable: true }).addTo(map);
+
+            function updateInputs(lat, lng) {
+                latInput.val(lat.toFixed(7));
+                lngInput.val(lng.toFixed(7));
+            }
+
+            marker.on('dragend', function(e) {
+                var pos = marker.getLatLng();
+                updateInputs(pos.lat, pos.lng);
+            });
+
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                updateInputs(e.latlng.lat, e.latlng.lng);
+            });
+
+            // Refresh map when switching tabs in Sonata
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                map.invalidateSize();
+            });
+        });
+    </script>
+{% endblock %}
