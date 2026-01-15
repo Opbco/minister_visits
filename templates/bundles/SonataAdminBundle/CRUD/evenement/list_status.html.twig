@@ -1,0 +1,25 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+    {% set now = date() %}
+    {% set start = object.dateDebut %}
+    {% set end = object.dateFin %}
+
+    {% if end is null %}
+        {% set end = start %}
+    {% endif %}
+
+    {% if now < start %}
+        <span class="badge bg-info text-white">
+            <i class="fas fa-clock"></i> À venir
+        </span>
+    {% elseif now >= start and now <= end %}
+        <span class="badge bg-success text-white">
+            <i class="fas fa-sync fa-spin"></i> En cours
+        </span>
+    {% else %}
+        <span class="badge bg-secondary text-white">
+            <i class="fas fa-check"></i> Terminé
+        </span>
+    {% endif %}
+{% endblock %}

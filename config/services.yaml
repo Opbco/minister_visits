@@ -145,6 +145,21 @@ services:
                     label: Structures,
                 }
 
+    admin.evenement:
+        class: App\Admin\EvenementAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Evenement,
+                    controller: ~,
+                    manager_type: orm,
+                    icon: '<i class="fa fa-calendar" aria-hidden="true"></i>',
+                    group: "Gestion des événements",
+                    label: Événements,
+                }
+
     admin.document:
         class: App\Admin\DocumentAdmin
         calls:
