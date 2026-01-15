@@ -103,10 +103,9 @@ class Structure
     #[Groups(['structure:read', 'structure:write'])]
     private ?StructureRank $levelRank = StructureRank::Service;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotNull(message: "The hierarchic code is required.")]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['structure:read', 'structure:write'])]
-    private ?string $codeHierarchique = null;
+    private ?string $codeHierarchique = "";
 
     #[ORM\Column(type: Types::STRING, length: 100, enumType: StructureEducation::class, nullable: true)]
     #[Groups(['structure:read', 'structure:write'])]
@@ -618,7 +617,7 @@ class Structure
         return $this->codeHierarchique;
     }
 
-    public function setCodeHierarchique(string $codeHierarchique): static
+    public function setCodeHierarchique(?string $codeHierarchique=""): static
     {
         $this->codeHierarchique = $codeHierarchique;
 
