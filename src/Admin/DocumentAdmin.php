@@ -83,9 +83,6 @@ final class DocumentAdmin extends AbstractAdmin
     {
         if ($doc->getFile()) {
             $doc->refreshUpdated();
-            $doc->setFileName($doc->getFile()->getClientOriginalName());
-            $doc->setMimeType($doc->getFile()->getClientMimeType());
-            $doc->setContext('others');
         }
     }
 

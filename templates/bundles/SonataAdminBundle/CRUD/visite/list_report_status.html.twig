@@ -1,0 +1,15 @@
+{# templates/admin/visite/list_report_status.html.twig #}
+
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.rapport %}
+        <a href="{{ object.rapport.fileWebPath }}" target="_blank" class="btn btn-sm btn-success" title="Télécharger le rapport">
+            <i class="fa fa-file-pdf-o"></i> Disponible
+        </a>
+    {% else %}
+        <span class="badge bg-warning text-dark">
+            <i class="fa fa-clock-o"></i> En attente
+        </span>
+    {% endif %}
+{% endblock %}

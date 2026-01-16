@@ -21,9 +21,8 @@ class Document
     #[Groups(["document.list", 'bulletin:read', 'classe.timetable', 'etablissement.details', "document.details", 'paiement.list', "depense.details", "depense.list", 'salleclasse.student', 'user.details'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["document.list", "document.details", "depense.details", "depense.list", 'etablissement.details', 'user.details', 'classe.timetable'])]
-    #[Assert\NotBlank(message: 'Le nom du fichier est obligatoire.')]
+    #[ORM\Column(length: 100, unique: true, nullable: true)]
+    #[Groups(["document.list", "document.details"])]
     private ?string $fileName = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -34,8 +33,8 @@ class Document
      */
     private ?UploadedFile $file = null;
 
-    #[ORM\Column(length: 100)]
-    #[Groups(["document.list", "depense.details", "depense.list"])]
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(["document.list"])]
     private ?string $mimeType = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -44,7 +43,7 @@ class Document
     #[ORM\ManyToOne(inversedBy: 'photos')]
     private ?Visite $visite = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'documents')]
     private ?Reunion $reunion = null;
 
     public function getContext(): ?string
@@ -80,8 +79,11 @@ class Document
         }
 
         // Determine subfolder based on context
-        $subfolder = $this->context ?? 'other';
+        $mimeType = $this->getFile()->getClientMimeType();
+
+        $subfolder = $this->context ?? (str_starts_with($mimeType, 'image/') ? 'photos' : 'rapports');
         $targetDir = self::SERVER_PATH_TO_FILES_FOLDER . '/' . $subfolder;
+        $fileName = uniqid() . '.' . pathinfo($this->getFile()->getClientOriginalName(), PATHINFO_EXTENSION);
 
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
@@ -90,11 +92,12 @@ class Document
         // move takes the target directory and target filename as params
         $this->getFile()->move(
             $targetDir,
-            $this->getFile()->getClientOriginalName()
+            $fileName
         );
 
         // set the path property to the filename where you've saved the file
-        $this->fileName = $this->getFile()->getClientOriginalName();
+        $this->fileName = $fileName;
+        $this->context = $subfolder;
         $this->mimeType = $this->getFile()->getClientMimeType();
 
         // clean up the file property as you won't need it anymore

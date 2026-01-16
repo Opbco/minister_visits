@@ -101,7 +101,7 @@ class Visite
     // Additional documents (e.g. photos, attendance sheets)
     #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'visite', cascade: ['persist'])]
     #[Groups(['visite:read', 'visite:write'])]
-    private Collection $documents;
+    private Collection $photos; 
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context(
@@ -131,7 +131,7 @@ class Visite
     public function __construct()
     {
         $this->date_created = new \DateTimeImmutable();
-        $this->documents = new ArrayCollection();
+        $this->photos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -219,26 +219,26 @@ class Visite
     /**
      * @return Collection<int, Document>
      */
-    public function getDocuments(): Collection
+    public function getPhotos(): Collection
     {
-        return $this->documents;
+        return $this->photos;
     }
 
-    public function addDocument(Document $document): static
+    public function addPhoto(Document $photo): static
     {
-        if (!$this->documents->contains($document)) {
-            $this->documents->add($document);
-            $document->setVisite($this);
+        if (!$this->photos->contains($photo)) {
+            $this->photos->add($photo);
+            $photo->setVisite($this);
         }
         return $this;
     }
 
-    public function removeDocument(Document $document): static
+    public function removePhoto(Document $photo): static
     {
-        if ($this->documents->removeElement($document)) {
+        if ($this->photos->removeElement($photo)) {
             // set the owning side to null (unless already changed)
-            if ($document->getVisite() === $this) {
-                $document->setVisite(null);
+            if ($photo->getVisite() === $this) {
+                $photo->setVisite(null);
             }
         }
         return $this;
@@ -286,6 +286,15 @@ class Visite
     {
         $this->user_updated = $user_updated;
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        $structureName = $this->structure ? $this->structure->getNameFr() : 'N/A';
+        $eventLabel = $this->evenement ? $this->evenement->getLibelle() : 'N/A';
+        $dateArriveeStr = $this->dateArrivee ? $this->dateArrivee->format('Y-m-d H:i') : 'N/A';
+
+        return sprintf('%s - %s (%s)', $structureName, $eventLabel, $dateArriveeStr);
     }
 
     #[ORM\PrePersist]

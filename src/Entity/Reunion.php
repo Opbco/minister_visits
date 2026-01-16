@@ -118,7 +118,7 @@ class Reunion
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?string $compteRendu = null;
 
-    #[ORM\Column(type: 'string', enumType: ReunionStatut::class)]
+    #[ORM\Column(type: Types::INTEGER, enumType: ReunionStatut::class)]
     #[Assert\NotNull(message: "The status is required.")]
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?ReunionStatut $statut = null;

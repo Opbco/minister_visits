@@ -1,0 +1,78 @@
+{# templates/admin/visite/show_documents_viewer.html.twig #}
+
+<div class="row">
+    {# 1. OFFICIAL REPORT VIEWER #}
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-file-text"></i> Rapport Officiel</h3>
+            </div>
+            <div class="box-body" style="padding: 0;">
+                {% if object.rapport %}
+                    {% set ext = object.rapport.fileName|split('.')|last|lower %}
+                    
+                    {% if ext == 'pdf' %}
+                        {# Embed PDF directly #}
+                        <object data="{{ object.rapport.fileWebPath }}" type="application/pdf" width="100%" height="600px">
+                            <p>Votre navigateur ne peut pas afficher ce PDF. <a href="{{ object.rapport.fileWebPath }}">Télécharger ici</a>.</p>
+                        </object>
+                    {% else %}
+                        {# Fallback for Word/Excel docs #}
+                        <div class="text-center p-5" style="padding: 50px;">
+                            <i class="fa fa-file-word-o fa-4x text-blue"></i>
+                            <br><br>
+                            <a href="{{ object.rapport.fileWebPath }}" class="btn btn-primary">
+                                <i class="fa fa-download"></i> Télécharger le document ({{ ext|upper }})
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-warning m-3">
+                        <i class="fa fa-exclamation-triangle"></i> Aucun rapport n'a encore été téléversé pour cette visite.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# 2. GALLERY FOR OTHER DOCUMENTS #}
+    <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-camera"></i> Galerie & Annexes</h3>
+            </div>
+            <div class="box-body" style="max-height: 600px; overflow-y: auto;">
+                {% if object.photos|length > 0 %}
+                    <div class="row">
+                        {% for doc in object.photos %}
+                            <div class="col-xs-6 col-md-6" style="margin-bottom: 15px;">
+                                <div class="thumbnail">
+                                    {# Check if image for preview #}
+                                    {% set docExt = doc.fileName|split('.')|last|lower %}
+                                    {% if docExt in ['jpg', 'jpeg', 'png', 'gif', 'webp'] %}
+                                        <a href="{{ doc.fileWebPath }}" target="_blank">
+                                            <img src="{{ doc.fileWebPath }}" alt="Preuve" style="height: 120px; width: 100%; object-fit: cover;">
+                                        </a>
+                                    {% else %}
+                                        <div style="height: 120px; background: #f4f4f4; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fa fa-file fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="caption text-center">
+                                        <small>{{ doc.fileName|slice(0, 15) }}...</small><br>
+                                        <a href="{{ doc.fileWebPath }}" target="_blank" class="btn btn-xs btn-default mt-1">
+                                            <i class="fa fa-eye"></i> Voir
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center p-3">Aucun document supplémentaire.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

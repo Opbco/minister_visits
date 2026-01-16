@@ -11,6 +11,8 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Knp\Menu\ItemInterface;
+use Sonata\AdminBundle\Admin\AdminInterface;
 
 final class EvenementAdmin extends AbstractAdmin
 {
@@ -79,7 +81,7 @@ final class EvenementAdmin extends AbstractAdmin
             // 2. The Creative Part: Map Tab
             ->tab('Cartographie & Itinéraire')
                 ->with('Carte des visites', ['class' => 'col-md-12'])
-                    ->add('map_route', null, [
+                    ->add('routeMap', null, [
                         'mapped' => false,
                         'template' => '@SonataAdmin/CRUD/evenement/show_map_route.html.twig'
                     ])
@@ -94,5 +96,25 @@ final class EvenementAdmin extends AbstractAdmin
                     ])
                 ->end()
             ->end();
+    }
+
+    protected function configureTabMenu(ItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void
+    {
+        // 1. Only show tabs on Edit or Show pages
+        if (!$childAdmin && !in_array($action, ['edit', 'show'], true)) {
+            return;
+        }
+
+        // 2. Get the current Event ID
+        $admin = $this->isChild() ? $this->getParent() : $this;
+        $id = $admin->getRequest()->get('id');
+
+        // 3. Add the "Visites" Tab
+        $menu->addChild('Gérer les Visites', [
+            'uri' => $admin->generateUrl('admin.visite.list', ['id' => $id]),
+            'attributes' => ['class' => 'nav-item'],
+            'linkAttributes' => ['class' => 'nav-link']
+        ])->setLabel(sprintf('Gérer les Visites (%d)', count($this->getSubject()->getVisites())));
+    
     }
 }

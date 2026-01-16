@@ -284,4 +284,21 @@ class Evenement
 
         return $this;
     }
+
+    public function getRouteMap(): array
+    {
+        $coordinates = [];
+        foreach ($this->visites as $visite) {
+            $structure = $visite->getStructure();
+            if ($structure) {
+                $coordinates[] = [
+                    'visite_id' => $visite->getId(),
+                    'structure_id' => $structure->getId(),
+                    'longitude' => $structure->getLongitude(),
+                    'latitude' => $structure->getLatitude(),
+                ];
+            }
+        }
+        return $coordinates;
+    }
 }

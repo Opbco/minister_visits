@@ -149,6 +149,7 @@ services:
         class: App\Admin\EvenementAdmin
         calls:
             - [setTranslationDomain, ["messages"]]
+            - [addChild, ['@admin.visite', 'evenement']]
         tags:
             - {
                     name: sonata.admin,
@@ -158,6 +159,21 @@ services:
                     icon: '<i class="fa fa-calendar" aria-hidden="true"></i>',
                     group: "Gestion des événements",
                     label: Événements,
+                }
+
+    admin.visite:
+        class: App\Admin\VisiteAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Visite,
+                    controller: ~,
+                    manager_type: orm,
+                    icon: '<i class="fa fa-map-marker" aria-hidden="true"></i>',
+                    group: "Gestion des événements",
+                    label: Visites,
                 }
 
     admin.document:
