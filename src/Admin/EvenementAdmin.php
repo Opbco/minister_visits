@@ -2,7 +2,9 @@
 
 namespace App\Admin;
 
+use App\Entity\Division;
 use App\Entity\Evenement;
+use App\Entity\Structure;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -12,10 +14,29 @@ use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Knp\Menu\ItemInterface;
+use Sonata\DoctrineORMAdminBundle\Filter\ModelFilter;
 use Sonata\AdminBundle\Admin\AdminInterface;
+use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
+use Sonata\DoctrineORMAdminBundle\Filter\DateTimeRangeFilter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 final class EvenementAdmin extends AbstractAdmin
 {
+    public function toString(object $object): string
+    {
+        return $object instanceof Evenement
+            ? $object->getLibelle()
+            : 'Événement'; // shown in the breadcrumb on the create view
+    }
+
+    protected function defaultSortValues(): array
+    {
+        return [
+            '_sort_order' => 'DESC',
+            '_sort_by' => 'dateDebut',
+        ];
+    }
+
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -40,6 +61,40 @@ final class EvenementAdmin extends AbstractAdmin
                     ->add('objectifs', CKEditorType::class, ['required' => false])
                 ->end()
             ->end();
+    }
+
+    protected function configureDatagridFilters(DatagridMapper $filter): void
+    {
+        $filter
+            ->add('libelle', null, ['label' => 'Titre'])
+            ->add('theme', null, ['label' => 'Thème'])
+            ->add('dateDebut', DateTimeRangeFilter::class, [
+                'label' => 'Date de début (Période)',
+            ])
+            ->add('dateFin', DateTimeRangeFilter::class, [
+                'label' => 'Date de fin (Période)',
+            ])
+            ->add('visites.structure', ModelFilter::class, [
+                'label' => 'Structure visitée',
+                'field_type' => ModelAutocompleteType::class,
+                'field_options' => [
+                    'property' => 'name',
+                    'minimum_input_length' => 2,
+                    'items_per_page' => 10,
+                    'quiet_millis' => 100,
+                ],
+            ])
+            ->add('visites.structure.subdivision.division', ModelFilter::class, [
+                'label' => 'Département visitée',
+                'field_type' => ModelAutocompleteType::class,
+                'field_options' => [
+                    'property' => 'name',
+                    'minimum_input_length' => 2,
+                    'items_per_page' => 10,
+                    'quiet_millis' => 100,
+                ],
+            ])
+        ;
     }
 
     protected function configureListFields(ListMapper $list): void

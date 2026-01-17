@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Odm\Filter\RangeFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
@@ -46,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     'theme' => 'partial',
     'user_created.username' => 'exact' // Filter events created by a specific user
 ])]
-#[ApiFilter(DateFilter::class, properties: ['dateDebut', 'dateFin', 'date_created'])]
+#[ApiFilter(RangeFilter::class, properties: ['dateDebut', 'dateFin', 'date_created'])]
 #[ApiFilter(OrderFilter::class, properties: ['dateDebut', 'libelle'], arguments: ['orderParameterName' => 'order'])]
 class Evenement
 {

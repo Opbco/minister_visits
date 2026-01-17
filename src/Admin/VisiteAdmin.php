@@ -7,12 +7,14 @@ use App\Entity\Evenement;
 use App\Entity\Structure;
 use App\Entity\Visite;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Knp\Menu\MenuItem;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Form\Type\ModelListType;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\Form\Type\CollectionType;
 use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -169,5 +171,24 @@ final class VisiteAdmin extends AbstractAdmin
     {
         $sortValues['_sort_order'] = 'DESC';
         $sortValues['_sort_by'] = 'dateArrivee';
+    }
+
+    protected function configureBatchActions(array $actions): array
+    {
+        // Disable the delete batch action
+        if (isset($actions['delete'])) {
+            unset($actions['delete']);
+        }
+
+        return $actions;
+    }
+
+    protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+        if($this->isChild()){
+            return;
+        }
+
+        $collection->clearExcept(['list', 'export']);
     }
 }
