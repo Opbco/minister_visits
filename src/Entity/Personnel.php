@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use App\Repository\PersonnelRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -83,6 +85,18 @@ class Personnel
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
     #[Groups(['personnel:read', 'personnel:write'])]
     private ?User $userAccount = null;
+
+    #[ORM\OneToMany(targetEntity: ReunionParticipation::class, mappedBy: 'personnel', orphanRemoval: true)]
+    private Collection $myReunions;
+
+    #[ORM\OneToMany(targetEntity: ActionItem::class, mappedBy: 'responsable')]
+    private Collection $actionItems;
+
+    public function __construct()
+    {
+        $this->myReunions = new ArrayCollection();
+        $this->actionItems = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -170,5 +184,65 @@ class Personnel
     {
         $func = $this->fonction ? $this->fonction->getLibelle() : 'N/A';
         return sprintf('%s (%s)', $this->nomComplet, $func);
+    }
+
+    /**
+     * @return Collection<int, ReunionParticipation>
+     */
+    public function getMyReunions(): Collection
+    {
+        return $this->myReunions;
+    }
+
+    public function addMyReunion(ReunionParticipation $myReunion): static
+    {
+        if (!$this->myReunions->contains($myReunion)) {
+            $this->myReunions->add($myReunion);
+            $myReunion->setPersonnel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMyReunion(ReunionParticipation $myReunion): static
+    {
+        if ($this->myReunions->removeElement($myReunion)) {
+            // set the owning side to null (unless already changed)
+            if ($myReunion->getPersonnel() === $this) {
+                $myReunion->setPersonnel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActionItem>
+     */
+    public function getActionItems(): Collection
+    {
+        return $this->actionItems;
+    }
+
+    public function addActionItem(ActionItem $actionItem): static
+    {
+        if (!$this->actionItems->contains($actionItem)) {
+            $this->actionItems->add($actionItem);
+            $actionItem->setResponsable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActionItem(ActionItem $actionItem): static
+    {
+        if ($this->actionItems->removeElement($actionItem)) {
+            // set the owning side to null (unless already changed)
+            if ($actionItem->getResponsable() === $this) {
+                $actionItem->setResponsable(null);
+            }
+        }
+
+        return $this;
     }
 }

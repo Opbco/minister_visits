@@ -603,7 +603,6 @@ class Structure
     public function removeReunion(Reunion $reunion): static
     {
         if ($this->reunions->removeElement($reunion)) {
-            // set the owning side to null (unless already changed)
             if ($reunion->getOrganisateur() === $this) {
                 $reunion->setOrganisateur(null);
             }

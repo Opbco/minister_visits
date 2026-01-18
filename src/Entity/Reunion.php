@@ -28,6 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'reunion')]
 #[ORM\Index(columns: ['date_debut'], name: 'idx_reunion_date_debut')]
 #[ORM\Index(columns: ['statut'], name: 'idx_reunion_statut')]
+#[ORM\Index(columns: ['president_id'], name: 'idx_reunion_president')]
+#[ORM\Index(columns: ['organisateur_id'], name: 'idx_reunion_organisateur')]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext: ['groups' => ['reunion:read']],
@@ -45,13 +47,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(SearchFilter::class, properties: [
     'objet' => 'partial',
     'lieu' => 'partial',
+    'type' => 'exact',
     'organisateur' => 'exact',
     'statut' => 'exact',
-    'president' => 'exact',         // Filter by President (Personnel ID)
-    'participantsInternes' => 'exact' // Filter meetings where a specific staff member participated
+    'president' => 'exact',
+    'salle' => 'exact',
+    'participations.status' => 'exact'
 ])]
-#[ApiFilter(DateFilter::class, properties: ['dateDebut', 'dateFin'])]
-#[ApiFilter(OrderFilter::class, properties: ['dateDebut', 'objet'], arguments: ['orderParameterName' => 'order'])]
+#[ApiFilter(DateFilter::class, properties: ['dateDebut', 'dateFin', 'date_created'])]
+#[ApiFilter(OrderFilter::class, properties: ['dateDebut', 'objet', 'statut'], arguments: ['orderParameterName' => 'order'])]
 class Reunion
 {
     #[ORM\Id]
@@ -62,7 +66,7 @@ class Reunion
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "The subject (objet) is required.")]
-    #[Assert\Length(min: 3, max: 255)]
+    #[Assert\Length(min: 3, max: 255, minMessage: "Subject must be at least 3 characters", maxMessage: "Subject cannot exceed 255 characters")]
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?string $objet = null;
     
@@ -104,16 +108,6 @@ class Reunion
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?Personnel $president = null;
 
-    // --- UPDATED: Internal Staff Participants ---
-    #[ORM\ManyToMany(targetEntity: Personnel::class)]
-    #[Groups(['reunion:read', 'reunion:write'])]
-    private Collection $participantsInternes;
-
-    // --- UPDATED: External Consultants/Guests ---
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['reunion:read', 'reunion:write'])]
-    private ?string $participantsExternes = null; 
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?string $compteRendu = null;
@@ -122,10 +116,18 @@ class Reunion
     #[Assert\NotNull(message: "The status is required.")]
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?ReunionStatut $statut = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
+    
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['reunion:read', 'reunion:write'])]
-    private ?string $motifRejet = null;
+    private ?string $motifReport = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Context(
+        normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
+        denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
+    )]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?\DateTimeInterface $nouvelleDateDebut = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[Groups(['reunion:read', 'reunion:write'])]
@@ -138,6 +140,14 @@ class Reunion
     #[ORM\ManyToOne]
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?User $userValidated = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Context(
+        normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
+        denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
+    )]
+    #[Groups(['reunion:read'])]
+    private ?\DateTimeInterface $dateValidation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context(
@@ -164,11 +174,42 @@ class Reunion
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?User $user_updated = null;
 
+    #[ORM\OneToMany(targetEntity: ReunionParticipation::class, mappedBy: 'reunion', orphanRemoval: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private Collection $participations;
+
+    #[ORM\OneToMany(targetEntity: AgendaItem::class, mappedBy: 'reunion', orphanRemoval: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private Collection $agendaItems;
+
+    #[ORM\OneToMany(targetEntity: ActionItem::class, mappedBy: 'reunion', orphanRemoval: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private Collection $actionItems;
+
+    #[ORM\ManyToOne(targetEntity: MeetingRoom::class)]
+    private ?MeetingRoom $salle = null;
+    
+    // --- COMPUTED PROPERTIES ---
+    #[Groups(['reunion:read'])]
+    private ?int $dureeMinutes = null;
+
+    #[Groups(['reunion:read'])]
+    private ?int $nombreParticipantsInternes = null;
+
+    #[Groups(['reunion:read'])]
+    private ?int $nombreParticipantsExternes = null;
+
+    #[Groups(['reunion:read'])]
+    private ?int $nombrePresents = null;
+
     public function __construct()
     {
         $this->date_created = new \DateTimeImmutable();
         $this->documents = new ArrayCollection();
-        $this->participantsInternes = new ArrayCollection();
+        $this->participations = new ArrayCollection();
+        $this->agendaItems = new ArrayCollection();
+        $this->actionItems = new ArrayCollection();
+        $this->statut = ReunionStatut::PLANNED;
     }
 
     // ... Standard Getters/Setters for ID, Objet, Dates, Lieu, Organisateur ...
@@ -257,41 +298,6 @@ class Reunion
         return $this;
     }
 
-    /**
-     * @return Collection<int, Personnel>
-     */
-    public function getParticipantsInternes(): Collection
-    {
-        return $this->participantsInternes;
-    }
-
-    public function addParticipantsInterne(Personnel $participantsInterne): static
-    {
-        if (!$this->participantsInternes->contains($participantsInterne)) {
-            $this->participantsInternes->add($participantsInterne);
-        }
-        return $this;
-    }
-
-    public function removeParticipantsInterne(Personnel $participantsInterne): static
-    {
-        $this->participantsInternes->removeElement($participantsInterne);
-        return $this;
-    }
-
-    public function getParticipantsExternes(): ?string
-    {
-        return $this->participantsExternes;
-    }
-
-    public function setParticipantsExternes(?string $participantsExternes): static
-    {
-        $this->participantsExternes = $participantsExternes;
-        return $this;
-    }
-
-    // ... Remaining Getters/Setters (CompteRendu, Statut, Documents, Users, Dates) ...
-
     public function getCompteRendu(): ?string
     {
         return $this->compteRendu;
@@ -311,17 +317,6 @@ class Reunion
     public function setStatut(ReunionStatut $statut): static
     {
         $this->statut = $statut;
-        return $this;
-    }
-
-    public function getMotifRejet(): ?string
-    {
-        return $this->motifRejet;
-    }
-
-    public function setMotifRejet(?string $motifRejet): static
-    {
-        $this->motifRejet = $motifRejet;
         return $this;
     }
 
@@ -421,6 +416,9 @@ class Reunion
         if ($this->date_created === null) {
             $this->date_created = new \DateTimeImmutable();
         }
+        if ($this->statut === null) {
+            $this->statut = ReunionStatut::PLANNED;
+        }
     }
 
     #[ORM\PreUpdate]
@@ -433,4 +431,254 @@ class Reunion
     {
         return $this->objet ?? 'New Meeting';
     }
+
+    /**
+     * @return Collection<int, ReunionParticipation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(ReunionParticipation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setReunion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(ReunionParticipation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            // set the owning side to null (unless already changed)
+            if ($participation->getReunion() === $this) {
+                $participation->setReunion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AgendaItem>
+     */
+    public function getAgendaItems(): Collection
+    {
+        return $this->agendaItems;
+    }
+
+    public function addAgendaItem(AgendaItem $agendaItem): static
+    {
+        if (!$this->agendaItems->contains($agendaItem)) {
+            $this->agendaItems->add($agendaItem);
+            $agendaItem->setReunion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAgendaItem(AgendaItem $agendaItem): static
+    {
+        if ($this->agendaItems->removeElement($agendaItem)) {
+            // set the owning side to null (unless already changed)
+            if ($agendaItem->getReunion() === $this) {
+                $agendaItem->setReunion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActionItem>
+     */
+    public function getActionItems(): Collection
+    {
+        return $this->actionItems;
+    }
+
+    public function addActionItem(ActionItem $actionItem): static
+    {
+        if (!$this->actionItems->contains($actionItem)) {
+            $this->actionItems->add($actionItem);
+            $actionItem->setReunion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActionItem(ActionItem $actionItem): static
+    {
+        if ($this->actionItems->removeElement($actionItem)) {
+            // set the owning side to null (unless already changed)
+            if ($actionItem->getReunion() === $this) {
+                $actionItem->setReunion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
+    /**
+     * Get all internal personnel participants (regardless of status)
+     */
+    public function getParticipantsInternes(): array
+    {
+        return $this->participations
+            ->filter(fn($p) => $p->getPersonnel() !== null)
+            ->map(fn($p) => $p->getPersonnel())
+            ->toArray();
+    }
+
+    public function getParticipantsExternes(): array
+    {
+        return $this->participations
+            ->filter(fn($p) => $p->getExternalParticipant() !== null)
+            ->map(fn($p) => $p->getExternalParticipant())
+            ->toArray();
+    }
+
+    /**
+     * Get participants who actually attended
+     */
+    public function getAttendees(): Collection
+    {
+        return $this->participations
+            ->filter(fn($p) => $p->getStatus() === 'attended');
+    }
+
+    
+    // ==================== COMPUTED PROPERTIES ====================
+
+    public function getDureeMinutes(): ?int
+    {
+        if ($this->dateDebut && $this->dateFin) {
+            $diff = $this->dateDebut->diff($this->dateFin);
+            return ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+        }
+        return null;
+    }
+
+    public function getNombreParticipantsInternes(): int
+    {
+        return $this->getParticipantsInternes() ? count($this->getParticipantsInternes()) : 0;
+    }
+
+    public function getNombreParticipantsExternes(): int
+    {
+        return $this->getParticipantsExternes() ? count($this->getParticipantsExternes()) : 0;
+    }
+
+    public function getNombrePresents(): int
+    {
+        return $this->participations->filter(fn($p) => $p->getStatus() === 'attended')->count();
+    }
+
+    // ==================== BUSINESS METHODS ====================
+
+    /**
+     * Check if meeting is in the past
+     */
+    public function isPast(): bool
+    {
+        return $this->dateFin < new \DateTime();
+    }
+
+    /**
+     * Check if meeting is ongoing
+     */
+    public function isOngoing(): bool
+    {
+        $now = new \DateTime();
+        return $this->dateDebut <= $now && $this->dateFin >= $now;
+    }
+
+    /**
+     * Check if meeting is upcoming
+     */
+    public function isUpcoming(): bool
+    {
+        return $this->dateDebut > new \DateTime();
+    }
+
+    /**
+     * Validate the meeting
+     */
+    public function validate(User $validator): void
+    {
+        $this->statut = ReunionStatut::CONFIRMED;
+        $this->userValidated = $validator;
+        $this->dateValidation = new \DateTime();
+    }
+
+    /**
+     * Postpone the meeting
+     */
+    public function postpone(\DateTimeInterface $newDate, string $motif): void
+    {
+        $this->statut = ReunionStatut::POSTPONED;
+        $this->nouvelleDateDebut = $newDate;
+        $this->motifReport = $motif;
+    }
+
+    /**
+     * Mark meeting as completed
+     */
+    public function complete(): void
+    {
+        $this->statut = ReunionStatut::COMPLETED;
+    }
+
+    public function getMotifReport(): ?string
+    {
+        return $this->motifReport;
+    }
+
+    public function setMotifReport(?string $motifReport): static
+    {
+        $this->motifReport = $motifReport;
+
+        return $this;
+    }
+
+    public function getNouvelleDateDebut(): ?\DateTimeInterface
+    {
+        return $this->nouvelleDateDebut;
+    }
+
+    public function setNouvelleDateDebut(?\DateTimeInterface $nouvelleDateDebut): static
+    {
+        $this->nouvelleDateDebut = $nouvelleDateDebut;
+
+        return $this;
+    }
+
+    public function getDateValidation(): ?\DateTimeInterface
+    {
+        return $this->dateValidation;
+    }
+
+    public function setDateValidation(?\DateTimeInterface $dateValidation): static
+    {
+        $this->dateValidation = $dateValidation;
+
+        return $this;
+    }
+
+    public function getSalle(): ?MeetingRoom
+    {
+        return $this->salle;
+    }
+
+    public function setSalle(?MeetingRoom $salle): static
+    {
+        $this->salle = $salle;
+
+        return $this;
+    }
+
 }

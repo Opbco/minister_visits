@@ -28,7 +28,8 @@ final class DocumentAdmin extends AbstractAdmin
         $filter
             ->add('id')
             ->add('mimeType', null, ['label' => 'Mime Type'])
-            ->add('fileName', null, ['label' => 'Name of the document']);
+            ->add('fileName', null, ['label' => 'Name of the document'])
+            ->add('context', null, ['label' => 'folder']);
     }
 
     protected function configureListFields(ListMapper $list): void
@@ -41,6 +42,7 @@ final class DocumentAdmin extends AbstractAdmin
             ])
             ->add('mimeType', null, ['label' => 'Mime Type'])
             ->add('context', null, ['label' => 'Contexte'])
+            ->add('originalFileName', null, ['label' => 'Original Filename'])
             ->add('updated', null, ['label' => 'Last Modified'])
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [

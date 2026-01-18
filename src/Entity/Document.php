@@ -28,9 +28,19 @@ class Document
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updated = null;
 
-    /**
-     * Unmapped property to handle file uploads
-     */
+    #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    #[Groups(["document.list"])]
+    private ?int $fileSize = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["document.list"])]
+    private ?string $originalFileName = null;
+
+    #[Assert\File(
+        maxSize: '2M',
+        mimeTypes: ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        mimeTypesMessage: 'Please upload a valid document (PDF, Word, JPEG, PNG)'
+    )]
     private ?UploadedFile $file = null;
 
     #[ORM\Column(length: 100, nullable: true)]
@@ -80,27 +90,24 @@ class Document
 
         // Determine subfolder based on context
         $mimeType = $this->getFile()->getClientMimeType();
-
         $subfolder = $this->context ?? (str_starts_with($mimeType, 'image/') ? 'photos' : 'rapports');
         $targetDir = self::SERVER_PATH_TO_FILES_FOLDER . '/' . $subfolder;
-        $fileName = uniqid() . '.' . pathinfo($this->getFile()->getClientOriginalName(), PATHINFO_EXTENSION);
+
+        // SECURITY: Use a completely random filename
+        $fileName = bin2hex(random_bytes(16)) . '.' . $this->getFile()->guessExtension();
 
         if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0777, true);
+            mkdir($targetDir, 0755, true); // Changed from 0777 to 0755
         }
 
-        // move takes the target directory and target filename as params
-        $this->getFile()->move(
-            $targetDir,
-            $fileName
-        );
-
-        // set the path property to the filename where you've saved the file
+        $this->getFile()->move($targetDir, $fileName);
+        
         $this->fileName = $fileName;
         $this->context = $subfolder;
         $this->mimeType = $this->getFile()->getClientMimeType();
-
-        // clean up the file property as you won't need it anymore
+        $this->fileSize = $this->getFile()->getSize();
+        $this->originalFileName = $this->getFile()->getClientOriginalName();
+        
         $this->setFile(null);
     }
 
@@ -168,7 +175,7 @@ class Document
         return $this;
     }
 
-    #[Groups(["document.list", "document.details", 'bulletin:read', 'classe.timetable', 'user.details', 'paiement.list', 'depense.details', 'depense.list', 'salleclasse.student', 'etablissement.details'])]
+    #[Groups(["document.list", "document.details"])]
     public function getFileWebPath(): string
     {
         if (empty($this->fileName)) {
@@ -213,6 +220,30 @@ class Document
     public function setReunion(?Reunion $reunion): static
     {
         $this->reunion = $reunion;
+
+        return $this;
+    }
+
+    public function getFileSize(): ?string
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(?string $fileSize): static
+    {
+        $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    public function getOriginalFileName(): ?string
+    {
+        return $this->originalFileName;
+    }
+
+    public function setOriginalFileName(?string $originalFileName): static
+    {
+        $this->originalFileName = $originalFileName;
 
         return $this;
     }
