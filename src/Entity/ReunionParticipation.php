@@ -104,21 +104,20 @@ class ReunionParticipation
 
     // --- Validation to ensure consistency ---
     #[Assert\Callback]
-    public function validateParticipant(ExecutionContextInterface $context, $payload): void
+    public function validateParticipant(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
     {
-        if (null === $this->personnel && null === $this->externalParticipant) {
-            $context->buildViolation('Vous devez sélectionner soit un Personnel, soit un Participant Externe.')
+        if (!$this->personnel && !$this->externalParticipant) {
+            $context->buildViolation('A participation must have either a Personnel or an External Participant.')
                 ->atPath('personnel')
                 ->addViolation();
         }
-
-        if (null !== $this->personnel && null !== $this->externalParticipant) {
-            $context->buildViolation('Un participant ne peut pas être à la fois Personnel et Externe.')
+        if ($this->personnel && $this->externalParticipant) {
+            $context->buildViolation('Cannot be both Personnel and External.')
                 ->atPath('personnel')
                 ->addViolation();
         }
     }
-
+    
     // --- Helper for Display ---
     public function getParticipantName(): string
     {

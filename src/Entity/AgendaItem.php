@@ -2,37 +2,54 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\AgendaItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AgendaItemRepository::class)]
+#[ORM\Table(name: 'agenda_item')]
+#[ApiResource(
+    normalizationContext: ['groups' => ['agenda:read']],
+    denormalizationContext: ['groups' => ['agenda:write']]
+)]
 class AgendaItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['agenda:read', 'reunion:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'agendaItems')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['agenda:write'])]
     private ?Reunion $reunion = null;
 
     #[ORM\Column]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
     private ?int $ordre = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
     private ?int $dureeEstimee = null;
 
     #[ORM\ManyToOne(inversedBy: 'agendaItems')]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
     private ?ReunionParticipation $presentateur = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

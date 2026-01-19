@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -46,21 +47,30 @@ class ExternalParticipant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['external:read', 'reunion:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Groups(['external:read', 'external:write', 'reunion:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['external:read', 'external:write', 'reunion:read'])]
     private ?string $organisation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['external:read', 'external:write', 'reunion:read'])]
     private ?string $fonction = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
+    #[Groups(['external:read', 'external:write', 'reunion:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(['external:read', 'external:write'])]
     private ?string $telephone = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

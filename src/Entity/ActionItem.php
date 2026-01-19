@@ -9,30 +9,43 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ActionItemRepository::class)]
-#[ApiResource]
+#[ORM\Table(name: 'action_item')]
+#[ApiResource(
+    normalizationContext: ['groups' => ['action:read']],
+    denormalizationContext: ['groups' => ['action:write']]
+)]
 class ActionItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['action:read', 'reunion:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'actionItems')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['action:write'])]
     private ?Reunion $reunion = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
+    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
     private ?\DateTimeInterface $dateEcheance = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
     private ?string $commentaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'actionItems')]
+    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
     private ?Personnel $responsable = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -57,6 +70,7 @@ class ActionItem
     private ?User $user_updated = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, enumType: ActionStatut::class)]
+    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
     private ?ActionStatut $statut = ActionStatut::PENDING;
 
     public function getId(): ?int

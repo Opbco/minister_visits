@@ -174,19 +174,21 @@ class Reunion
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?User $user_updated = null;
 
-    #[ORM\OneToMany(targetEntity: ReunionParticipation::class, mappedBy: 'reunion', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ReunionParticipation::class, mappedBy: 'reunion', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['reunion:read', 'reunion:write'])]
     private Collection $participations;
 
-    #[ORM\OneToMany(targetEntity: AgendaItem::class, mappedBy: 'reunion', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: AgendaItem::class, mappedBy: 'reunion', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['reunion:read', 'reunion:write'])]
     private Collection $agendaItems;
 
-    #[ORM\OneToMany(targetEntity: ActionItem::class, mappedBy: 'reunion', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ActionItem::class, mappedBy: 'reunion', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['reunion:read', 'reunion:write'])]
     private Collection $actionItems;
 
-    #[ORM\ManyToOne(targetEntity: MeetingRoom::class)]
+    #[ORM\ManyToOne(targetEntity: MeetingRoom::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
     private ?MeetingRoom $salle = null;
     
     // --- COMPUTED PROPERTIES ---
@@ -591,6 +593,14 @@ class Reunion
     }
 
     // ==================== BUSINESS METHODS ====================
+
+    public function getLocationDisplay(): string
+    {
+        if ($this->salle !== null) {
+            return $this->salle->getNom();
+        }
+        return $this->lieu ?? 'Lieu non défini';
+    }
 
     /**
      * Check if meeting is in the past

@@ -3,32 +3,67 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\MeetingRoomRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MeetingRoomRepository::class)]
-#[ApiResource]
+#[ORM\Table(name: 'meeting_room')]
+#[ApiResource(
+    normalizationContext: ['groups' => ['room:read']],
+    denormalizationContext: ['groups' => ['room:write']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+    ],
+    order: ['name' => 'ASC']
+)]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'equipment' => 'partial'])]
+#[ORM\HasLifecycleCallbacks]
 class MeetingRoom
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['room:read', 'reunion:read'])]
     private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
 
     #[ORM\ManyToOne(targetEntity: Structure::class)]
     private ?Structure $structure = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom de la salle est obligatoire.")]
+    #[Groups(['room:read', 'room:write', 'reunion:read'])]
+    private ?string $nom = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Assert\Positive]
+    #[Groups(['room:read', 'room:write'])]
     private ?int $capacite = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['room:read', 'room:write'])]
+    private ?string $description = null;
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $equipements = null;
+    #[Groups(['room:read', 'room:write'])]
+    private array $equipements = []; // e.g. ["Projector", "Video Conf", "AC"]
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context(
@@ -99,7 +134,7 @@ class MeetingRoom
 
     public function setEquipements(?array $equipements): static
     {
-        $this->equipements = $equipements;
+        $this->equipements = $equipements ?? [];
 
         return $this;
     }
@@ -148,6 +183,18 @@ class MeetingRoom
     public function setUserUpdated(?User $user_updated): static
     {
         $this->user_updated = $user_updated;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
