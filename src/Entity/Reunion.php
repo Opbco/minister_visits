@@ -202,6 +202,9 @@ class Reunion
     #[Groups(['reunion:read'])]
     private ?int $nombrePresents = null;
 
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'reunion', orphanRemoval: true)]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->date_created = new \DateTimeImmutable();
@@ -210,6 +213,7 @@ class Reunion
         $this->agendaItems = new ArrayCollection();
         $this->actionItems = new ArrayCollection();
         $this->statut = ReunionStatut::PLANNED;
+        $this->notifications = new ArrayCollection();
     }
 
     // ... Standard Getters/Setters for ID, Objet, Dates, Lieu, Organisateur ...
@@ -545,12 +549,20 @@ class Reunion
     /**
      * Get participants who actually attended
      */
-    public function getAttendees(): Collection
+    public function getAttendees(): array // Changed from Collection to array for consistency
     {
         return $this->participations
-            ->filter(fn($p) => $p->getStatus() === 'attended');
+            ->filter(fn($p) => $p->getStatus()->value === 'attended')
+            ->toArray();
     }
 
+    // Add method to get invited but not confirmed
+    public function getPendingParticipants(): array
+    {
+        return $this->participations
+            ->filter(fn($p) => $p->getStatus()->value === 'invited')
+            ->toArray();
+    }
     
     // ==================== COMPUTED PROPERTIES ====================
 
@@ -677,6 +689,36 @@ class Reunion
     public function setSalle(?MeetingRoom $salle): static
     {
         $this->salle = $salle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setReunion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getReunion() === $this) {
+                $notification->setReunion(null);
+            }
+        }
 
         return $this;
     }

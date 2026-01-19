@@ -20,6 +20,14 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['reunion_id', 'personnel_id'], name: 'idx_participation_reunion_personnel')]
 #[ORM\Index(columns: ['reunion_id', 'external_participant_id'], name: 'idx_participation_reunion_external_participant')]
 #[ORM\Index(columns: ['status'], name: 'idx_participation_status')]
+#[ORM\UniqueConstraint(
+    name: 'unique_reunion_personnel',
+    columns: ['reunion_id', 'personnel_id']
+)]
+#[ORM\UniqueConstraint(
+    name: 'unique_reunion_external',
+    columns: ['reunion_id', 'external_participant_id']
+)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class ReunionParticipation
@@ -38,13 +46,13 @@ class ReunionParticipation
     // --- OPTION A: Internal Personnel ---
     #[ORM\ManyToOne(inversedBy: 'myReunions')]
     #[ORM\JoinColumn(nullable: true)]
-    #[Groups(['reunion:read', 'reunion:write'])]
+    #[Groups(['reunion:read', 'reunion:write', 'participation:read'])]
     private ?Personnel $personnel = null;
 
     // --- OPTION B: External Participant ---
     #[ORM\ManyToOne(targetEntity: ExternalParticipant::class, inversedBy: 'myReunions')]
     #[ORM\JoinColumn(nullable: true)]
-    #[Groups(['reunion:read', 'reunion:write'])]
+    #[Groups(['reunion:read', 'reunion:write', 'participation:read'])]
     private ?ExternalParticipant $externalParticipant = null;
 
     #[ORM\Column(nullable: true)]
@@ -121,6 +129,12 @@ class ReunionParticipation
             return sprintf('%s (%s)', $this->externalParticipant->getNom(), $this->externalParticipant->getOrganisation());
         }
         return 'Inconnu';
+    }
+
+    #[Groups(['reunion:read', 'participation:read'])]
+    public function getParticipantType(): string
+    {
+        return $this->personnel ? 'internal' : 'external';
     }
 
     public function __toString(): string
@@ -294,6 +308,33 @@ class ReunionParticipation
             }
         }
 
+        return $this;
+    }
+
+    public function confirm(): static
+    {
+        $this->status = ParticipantStatut::Confirmed;
+        $this->confirmedAt = new \DateTimeImmutable();
+        return $this;
+    }
+
+    public function markAsAttended(): static
+    {
+        $this->status = ParticipantStatut::Attended;
+        return $this;
+    }
+
+    public function markAsAbsent(string $reason = null): static
+    {
+        $this->status = ParticipantStatut::Absent;
+        $this->absenceReason = $reason;
+        return $this;
+    }
+
+    public function excuse(string $reason): static
+    {
+        $this->status = ParticipantStatut::Excused;
+        $this->absenceReason = $reason;
         return $this;
     }
 }

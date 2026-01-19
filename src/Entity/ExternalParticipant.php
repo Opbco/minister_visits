@@ -3,6 +3,14 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\ExternalParticipantRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,9 +18,29 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ExternalParticipantRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['external_participant:read']],
+    denormalizationContext: ['groups' => ['external_participant:write']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+    ],
+    order: ['nom' => 'ASC']
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'nom' => 'partial',
+    'organisation' => 'partial',
+    'email' => 'exact'
+])]
+#[ORM\HasLifecycleCallbacks]
 class ExternalParticipant
 {
     #[ORM\Id]
@@ -23,10 +51,10 @@ class ExternalParticipant
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $organisation = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $fonction = null;
 
     #[ORM\Column(length: 255)]
@@ -129,6 +157,16 @@ class ExternalParticipant
         return $this;
     }
 
+    #[Assert\Callback]
+    public function validateContactInfo(ExecutionContextInterface $context, $payload): void
+    {
+        if (empty($this->email) && empty($this->telephone)) {
+            $context->buildViolation('At least email or phone number is required.')
+                ->atPath('email')
+                ->addViolation();
+        }
+    }
+
     public function getDateCreated(): ?\DateTimeInterface
     {
         return $this->date_created;
@@ -205,5 +243,27 @@ class ExternalParticipant
         }
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function prePersist(): void
+    {
+        if ($this->date_created === null) {
+            $this->date_created = new \DateTimeImmutable();
+        }
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate(): void
+    {
+        $this->date_updated = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('%s (%s)', 
+            $this->nom, 
+            $this->organisation ?? $this->email ?? 'External'
+        );
     }
 }
