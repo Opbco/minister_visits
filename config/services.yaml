@@ -176,6 +176,23 @@ services:
                     label: Visites,
                 }
 
+    # ==================== PERSONNEL ADMIN ====================
+    admin.fonction:
+        class: App\Admin\FonctionAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Fonction, manager_type: orm, group: 'Human Resources', label: 'Functions', icon: '<i class="fa fa-briefcase"></i>' }
+        calls:
+            - [setTranslationDomain, ['messages']]
+
+    admin.personnel:
+        class: App\Admin\PersonnelAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Personnel, manager_type: orm, group: 'Human Resources', label: 'Personnel', icon: '<i class="fa fa-users"></i>' }
+        calls:
+            - [setTranslationDomain, ['messages']]
+
+    # ============ END ======== PERSONNEL ADMIN ========= END ===========
+
     admin.document:
         class: App\Admin\DocumentAdmin
         calls:

@@ -1,0 +1,52 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}
+    Create User Account - {{ object.nomComplet }}
+{% endblock %}
+
+{% block content %}
+    <div class="box box-danger">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-user-plus"></i>
+                Create User Account for {{ object.nomComplet }}
+            </h3>
+        </div>
+        <form method="POST" action="{{ admin.generateObjectUrl('create_user_account', object) }}">
+            <div class="box-body">
+                <div class="alert alert-info">
+                    <h4><i class="fa fa-info-circle"></i> Account Creation Information</h4>
+                    <p>A new user account will be created with the following details:</p>
+                    <ul>
+                        <li><strong>Email:</strong> {{ object.email }}</li>
+                        <li><strong>Username:</strong> Will be generated from email</li>
+                        <li><strong>Password:</strong> A secure random password will be generated</li>
+                        <li><strong>Role:</strong> ROLE_USER (basic access)</li>
+                    </ul>
+                    <p class="text-warning">
+                        <i class="fa fa-warning"></i>
+                        <strong>Important:</strong> The generated password will be displayed only once. 
+                        Make sure to save it and share it securely with the user.
+                    </p>
+                </div>
+
+                {% if not object.email %}
+                    <div class="alert alert-danger">
+                        <h4><i class="fa fa-times-circle"></i> Cannot Create Account</h4>
+                        <p>This personnel does not have an email address. Please add an email address before creating a user account.</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="box-footer">
+                {% if object.email %}
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-check"></i> Create User Account
+                    </button>
+                {% endif %}
+                <a href="{{ admin.generateObjectUrl('edit', object) }}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

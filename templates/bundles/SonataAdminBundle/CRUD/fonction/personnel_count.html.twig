@@ -1,0 +1,8 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <span class="badge badge-info">
+        <i class="fa fa-users"></i> 
+        <span title="Staff members with this function">{{ object.personnels|length }}</span>
+    </span>
+{% endblock %}

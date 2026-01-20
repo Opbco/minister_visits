@@ -1,0 +1,70 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	<div class="box box-solid">
+		<div class="box-body">
+			{% if object.myReunions|length > 0 %}
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Meeting</th>
+							<th>Role</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for participation in object.myReunions|slice(0, 10) %}
+							<tr>
+								<td>{{ participation.reunion.dateDebut|date('Y-m-d H:i') }}</td>
+								<td>
+									<strong>{{ participation.reunion.objet }}</strong><br>
+									<small class="text-muted">
+										<i class="fa fa-map-marker"></i>
+										{{ participation.reunion.lieu ?: 'N/A' }}
+									</small>
+								</td>
+								<td>
+									{% if participation.reunion.president == object %}
+										<span class="badge badge-danger">President</span>
+									{% elseif participation.reunion.secretaire == object %}
+										<span class="badge badge-warning">Secretary</span>
+									{% else %}
+										<span class="badge badge-info">Participant</span>
+									{% endif %}
+								</td>
+								<td>
+									{% set status = participation.status.value %}
+									{% if status == 'attended' %}
+										<span class="label label-success">Attended</span>
+									{% elseif status == 'absent' %}
+										<span class="label label-danger">Absent</span>
+									{% elseif status == 'excused' %}
+										<span class="label label-warning">Excused</span>
+									{% elseif status == 'confirmed' %}
+										<span class="label label-info">Confirmed</span>
+									{% else %}
+										<span class="label label-default">Invited</span>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% if object.myReunions|length > 10 %}
+					<div class="text-center">
+						<a href="{{ admin.generateObjectUrl('meetings', object) }}" class="btn btn-primary">
+							View All
+							{{ object.myReunions|length }}
+							Meetings
+						</a>
+					</div>
+				{% endif %}
+			{% else %}
+				<div class="alert alert-info">
+					<i class="fa fa-info-circle"></i>
+					No meeting participation recorded yet.
+				</div>
+			{% endif %}
+		</div>
+    </div>
+{% endblock %}

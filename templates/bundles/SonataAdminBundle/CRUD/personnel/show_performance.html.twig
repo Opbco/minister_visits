@@ -1,0 +1,47 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	{% set completedActions = object.actionItems|filter(item => item.statut == 'completed')|length %}
+	{% set pendingActions = object.actionItems|filter(item => item.statut == 'pending')|length %}
+	{% set overdueActions = object.actionItems|filter(item => item.dateEcheance and item.dateEcheance < date() and item.statut != 'completed')|length %}
+
+	<div class="info-box bg-purple">
+		<span class="info-box-icon">
+			<i class="fa fa-gavel"></i>
+		</span>
+		<div class="info-box-content">
+			<span class="info-box-text">As President</span>
+			<span class="info-box-number">{{ object.myReunions|filter(p => p.reunion.president == object)|length }}</span>
+		</div>
+	</div>
+
+	<div class="info-box bg-teal">
+		<span class="info-box-icon">
+			<i class="fa fa-tasks"></i>
+		</span>
+		<div class="info-box-content">
+			<span class="info-box-text">Completed Actions</span>
+			<span class="info-box-number">{{ completedActions }}</span>
+			<div class="progress">
+				<div class="progress-bar" style="width: {{ object.actionItems|length > 0 ? (completedActions / object.actionItems|length * 100)|round : 0 }}%"></div>
+			</div>
+			<span class="progress-description">
+				{{ object.actionItems|length > 0 ? ((completedActions / object.actionItems|length * 100)|round) : 0 }}% completion rate
+			</span>
+		</div>
+	</div>
+
+	{% if overdueActions > 0 %}
+		<div class="info-box bg-red">
+			<span class="info-box-icon">
+				<i class="fa fa-warning"></i>
+			</span>
+			<div class="info-box-content">
+				<span class="info-box-text">Overdue Actions</span>
+				<span class="info-box-number">{{ overdueActions }}</span>
+				<span class="progress-description">
+					Requires immediate attention!
+				</span>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

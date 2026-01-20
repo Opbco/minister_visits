@@ -1,0 +1,59 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-sm">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">{{ 'Name'|trans }}</th>
+                <th scope="col">{{ 'Matricule'|trans }}</th>
+                <th scope="col">{{ 'Structure'|trans }}</th>
+                <th scope="col">{{ 'Email'|trans }}</th>
+                <th scope="col">{{ 'Phone'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set personnels = object.personnels|sort((a, b) => a.structure.nameFr <=> b.structure.nameFr)|slice(0, 100) %}
+            {% if personnels|length > 0 %}
+                {% for personnel in personnels %}
+                <tr>
+                    <td>
+                        <a href="{{ admin.generateUrl('edit', { 'id': personnel.id }, admin_resource_routes.resource) }}">
+                            {{ personnel.nomComplet }}
+                        </a>
+                    </td>
+                    <td>{{ personnel.matricule ?? '-' }}</td>
+                    <td>
+                        {% if personnel.structure %}
+                            <span class="badge bg-info text-dark">{{ personnel.structure.nameFr }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if personnel.email %}
+                            <a href="mailto:{{ personnel.email }}">{{ personnel.email }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ personnel.telephone ?? '-' }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">
+                        {{ 'No personnel assigned to this function'|trans }}
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {% if object.personnels|length > 100 %}
+    <div class="alert alert-info alert-sm mt-2">
+        <small>{{ 'Displaying 100 of'|trans }} {{ object.personnels|length }} {{ 'personnel'|trans }}</small>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

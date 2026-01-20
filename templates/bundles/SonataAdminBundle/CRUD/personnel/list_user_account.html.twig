@@ -1,0 +1,13 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.userAccount %}
+        <span class="badge badge-success">
+            <i class="fa fa-user"></i> {{ object.userAccount.username }}
+        </span>
+    {% else %}
+        <span class="badge badge-warning">
+            <i class="fa fa-user-times"></i> No account
+        </span>
+    {% endif %}
+{% endblock %}

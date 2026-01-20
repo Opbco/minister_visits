@@ -61,7 +61,7 @@ class Personnel
     #[Groups(['personnel:read', 'personnel:write'])]
     private ?string $matricule = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: Fonction::class, inversedBy: 'personnels', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "The function is required.")]
     #[Groups(['personnel:read', 'personnel:write', 'reunion:read'])]

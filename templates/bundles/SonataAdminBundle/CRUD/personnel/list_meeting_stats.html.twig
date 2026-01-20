@@ -1,0 +1,15 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+
+    {% set meetingCount = object.myReunions|length %}
+    {% set attendedCount = object.myReunions|filter(p => p.status.value == 'attended')|length %}
+
+    <span class="badge badge-info" title="Total meetings">
+        <i class="fa fa-calendar"></i> {{ meetingCount }}
+    </span>
+    <span class="badge badge-success" title="Attended meetings">
+        <i class="fa fa-check"></i> {{ attendedCount }}
+    </span>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+
+    {% if value %}
+        <a href="mailto:{{ value }}" title="Send email">
+            <i class="fa fa-envelope"></i> {{ value }}
+        </a>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-envelope-o"></i> Not provided
+        </span>
+    {% endif %}
+
+{% endblock %}

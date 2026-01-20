@@ -1,0 +1,34 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	<div class="contact-info">
+		{% if value %}
+			<a href="mailto:{{ value }}" class="btn btn-sm btn-success" title="Send email to {{ value }}">
+				<i class="fa fa-envelope"></i>
+				{{ value }}
+			</a>
+			<button type="button" class="btn btn-sm btn-default" onclick="copyToClipboard('{{ value }}')" title="Copy to clipboard">
+				<i class="fa fa-copy"></i>
+			</button>
+		{% else %}
+			<span class="text-muted">
+				<i class="fa fa-envelope-o"></i>
+				Email not provided
+			</span>
+			<div class="alert alert-warning" style="margin-top: 10px;">
+				<i class="fa fa-warning"></i>
+				<strong>Warning:</strong>
+				This person cannot receive email notifications without an email address.
+			</div>
+		{% endif %}
+	</div>
+
+	<script>
+		function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert('Email copied to clipboard: ' + text);
+            });
+        }
+	</script>
+
+
+{% endblock %}

@@ -15,6 +15,8 @@ use App\Repository\FonctionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FonctionRepository::class)]
@@ -57,6 +59,14 @@ class Fonction
     #[Groups(['fonction:read', 'fonction:write'])]
     private ?string $description = null;
 
+    #[ORM\OneToMany(targetEntity: Personnel::class, mappedBy: 'fonction', orphanRemoval: true)]
+    private Collection $personnels;
+
+    public function __construct()
+    {
+        $this->personnels = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -98,5 +108,35 @@ class Fonction
     public function __toString(): string
     {
         return $this->abbreviation ? sprintf('%s (%s)', $this->libelle, $this->abbreviation) : $this->libelle;
+    }
+
+    /**
+     * @return Collection<int, Personnel>
+     */
+    public function getPersonnels(): Collection
+    {
+        return $this->personnels;
+    }
+
+    public function addPersonnel(Personnel $personnel): static
+    {
+        if (!$this->personnels->contains($personnel)) {
+            $this->personnels->add($personnel);
+            $personnel->setFonction($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonnel(Personnel $personnel): static
+    {
+        if ($this->personnels->removeElement($personnel)) {
+            // set the owning side to null (unless already changed)
+            if ($personnel->getFonction() === $this) {
+                $personnel->setFonction(null);
+            }
+        }
+
+        return $this;
     }
 }

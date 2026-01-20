@@ -1,0 +1,36 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+    <div class="contact-info">
+    {% if value %}
+        <a href="tel:{{ value }}" class="btn btn-sm btn-info" title="Call {{ value }}">
+            <i class="fa fa-phone"></i> {{ value }}
+        </a>
+        <button type="button" class="btn btn-sm btn-default" onclick="copyToClipboard('{{ value }}')" title="Copy to clipboard">
+            <i class="fa fa-copy"></i>
+        </button>
+        {% if value starts with '+' or value starts with '00' %}
+            <a href="https://wa.me/{{ value|replace({'+': '', ' ': '', '-': ''}) }}" 
+                target="_blank" 
+                class="btn btn-sm btn-success" 
+                title="Send WhatsApp message">
+                <i class="fa fa-whatsapp"></i> WhatsApp
+            </a>
+        {% endif %}
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-phone"></i> Phone not provided
+        </span>
+        <div class="alert alert-warning" style="margin-top: 10px;">
+            <i class="fa fa-warning"></i> <strong>Warning:</strong> This person cannot receive SMS notifications without a phone number.
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('Phone number copied to clipboard: ' + text);
+    });
+}
+</script>
+{% endblock %}

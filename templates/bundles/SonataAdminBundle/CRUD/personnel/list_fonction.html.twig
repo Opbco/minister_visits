@@ -1,0 +1,11 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.fonction %}
+        <span class="label label-primary" title="{{ object.fonction.libelle }}">
+            {{ object.fonction.abbreviation ?: object.fonction.libelle }}
+        </span>
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,7 @@
+{% set pendingCount = object.actionItems|filter(item => item.statut == 'pending')|length %}
+<a class="btn btn-sm btn-warning" href="{{ admin.generateObjectUrl('action_items', object) }}" title="View action items">
+    <i class="fa fa-tasks"></i> Tasks
+    {% if pendingCount > 0 %}
+        <span class="badge">{{ pendingCount }}</span>
+    {% endif %}
+</a>

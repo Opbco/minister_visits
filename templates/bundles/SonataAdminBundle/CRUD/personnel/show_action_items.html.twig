@@ -1,0 +1,61 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+    <div class="box box-solid">
+    <div class="box-body">
+        {% if object.actionItems|length > 0 %}
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Action Item</th>
+                        <th>Meeting</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in object.actionItems|slice(0, 10) %}
+                        <tr class="{% if item.statut == 'completed' %}success{% elseif item.dateEcheance and item.dateEcheance < date() and item.statut != 'completed' %}danger{% endif %}">
+                            <td>{{ item.description|slice(0, 100) }}...</td>
+                            <td>
+                                <small>{{ item.reunion.objet }}</small>
+                            </td>
+                            <td>
+                                {% if item.dateEcheance %}
+                                    {{ item.dateEcheance|date('Y-m-d') }}
+                                    {% if item.dateEcheance < date() and item.statut != 'completed' %}
+                                        <span class="label label-danger">Overdue</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">No deadline</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.statut == 'completed' %}
+                                    <span class="label label-success">Completed</span>
+                                {% elseif item.statut == 'in_progress' %}
+                                    <span class="label label-info">In Progress</span>
+                                {% elseif item.statut == 'cancelled' %}
+                                    <span class="label label-default">Cancelled</span>
+                                {% else %}
+                                    <span class="label label-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if object.actionItems|length > 10 %}
+                <div class="text-center">
+                    <a href="{{ admin.generateObjectUrl('action_items', object) }}" class="btn btn-warning">
+                        View All {{ object.actionItems|length }} Action Items
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> No action items assigned yet.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

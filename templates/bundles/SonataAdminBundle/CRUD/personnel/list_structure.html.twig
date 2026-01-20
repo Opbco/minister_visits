@@ -1,0 +1,12 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.structure %}
+        <span title="{{ object.structure.nameFr }}">
+            <i class="fa fa-building"></i>
+            {{ object.structure.acronym ?: (object.structure.nameFr|length > 30 ? object.structure.nameFr|slice(0, 30) ~ '...' : object.structure.nameFr) }}
+        </span>
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+{% endblock %} 
