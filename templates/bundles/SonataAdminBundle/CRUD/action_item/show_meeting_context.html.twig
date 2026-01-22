@@ -1,0 +1,131 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/show_meeting_context.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% set reunion = object.reunion %}
+    
+    {% if reunion %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <i class="fa fa-info-circle"></i> Meeting Information
+                        </h3>
+                    </div>
+                    <div class="box-body">
+                        <dl class="dl-horizontal">
+                            <dt>Meeting:</dt>
+                            <dd><strong>{{ reunion.objet }}</strong></dd>
+                            
+                            <dt>Date:</dt>
+                            <dd>
+                                <i class="fa fa-calendar"></i> {{ reunion.dateDebut|date('d/m/Y') }}
+                                <br>
+                                <i class="fa fa-clock-o"></i> {{ reunion.dateDebut|date('H:i') }}
+                                {% if reunion.dateFin %}
+                                    - {{ reunion.dateFin|date('H:i') }}
+                                {% endif %}
+                            </dd>
+                            
+                            {% if reunion.lieu %}
+                                <dt>Location:</dt>
+                                <dd><i class="fa fa-map-marker"></i> {{ reunion.lieu }}</dd>
+                            {% endif %}
+                            
+                            {% if reunion.organisateur %}
+                                <dt>Organizer:</dt>
+                                <dd><i class="fa fa-building"></i> {{ reunion.organisateur.nameFr }}</dd>
+                            {% endif %}
+                            
+                            {% if reunion.president %}
+                                <dt>Chair:</dt>
+                                <dd><i class="fa fa-user"></i> {{ reunion.president.nomComplet }}</dd>
+                            {% endif %}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <i class="fa fa-list"></i> Related Action Items
+                        </h3>
+                    </div>
+                    <div class="box-body">
+                        {% set otherActionItems = reunion.actionItems|filter(a => a.id != object.id) %}
+                        
+                        {% if otherActionItems|length > 0 %}
+                            <ul class="list-unstyled">
+                                {% for actionItem in otherActionItems|slice(0, 5) %}
+                                    <li style="margin-bottom: 10px;">
+                                        {% set statusValue = actionItem.statut.value %}
+                                        <span class="label 
+                                            {% if statusValue == 'completed' %}label-success
+                                            {% elseif statusValue == 'in_progress' %}label-info
+                                            {% elseif statusValue == 'cancelled' %}label-danger
+                                            {% else %}label-default{% endif %}">
+                                            {% if statusValue == 'completed' %}
+                                                <i class="fa fa-check"></i>
+                                            {% elseif statusValue == 'in_progress' %}
+                                                <i class="fa fa-spinner"></i>
+                                            {% elseif statusValue == 'cancelled' %}
+                                                <i class="fa fa-ban"></i>
+                                            {% else %}
+                                                <i class="fa fa-clock-o"></i>
+                                            {% endif %}
+                                        </span>
+                                        {{ actionItem.description|slice(0, 60) }}
+                                        {% if actionItem.description|length > 60 %}...{% endif %}
+                                        {% if actionItem.responsable %}
+                                            <br><small class="text-muted">
+                                                <i class="fa fa-user"></i> {{ actionItem.responsable.nomComplet }}
+                                            </small>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            
+                            {% if otherActionItems|length > 5 %}
+                                <p class="text-muted">
+                                    <i class="fa fa-info-circle"></i> 
+                                    And {{ otherActionItems|length - 5 }} more action item(s) from this meeting
+                                </p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-muted">
+                                <i class="fa fa-info-circle"></i> 
+                                This is the only action item from this meeting.
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="info-box bg-aqua">
+                    <span class="info-box-icon"><i class="fa fa-users"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Meeting Participants</span>
+                        <span class="info-box-number">{{ reunion.participations|length }} People</span>
+                        <div class="progress" style="height: 3px; margin: 5px 0;">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+                        <span class="progress-description">
+                            Total attendees at the meeting where this action was created
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fa fa-warning"></i> 
+            This action item is not associated with any meeting.
+        </div>
+    {% endif %}
+{% endblock %}

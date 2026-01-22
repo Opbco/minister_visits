@@ -1,0 +1,14 @@
+{# templates/bundles/SonataAdminBundle/CRUD/meeting_room/list_availability.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.isAvailable() %}
+        <span class="label label-success" style="font-size: 12px;">
+            <i class="fa fa-check-circle"></i> Available
+        </span>
+    {% else %}
+        <span class="label label-danger" style="font-size: 12px;">
+            <i class="fa fa-ban"></i> In Use
+        </span>
+    {% endif %}
+{% endblock %}

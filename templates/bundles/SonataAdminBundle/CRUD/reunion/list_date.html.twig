@@ -1,0 +1,37 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+	<div>
+		<strong style="font-size: 14px;">
+			<i class="fa fa-calendar"></i>
+			{{ object.dateDebut|date('d/m/Y') }}
+		</strong>
+		<br>
+		<small class="text-muted">
+			<i class="fa fa-clock-o"></i>
+			{{ object.dateDebut|date('H:i') }}
+			-
+			{{ object.dateFin|date('H:i') }}
+			({{ object.dureeMinutes }}
+			min)
+		</small>
+		<br>
+		{% if object.isUpcoming() %}
+			<span class="label label-info">
+				<i class="fa fa-arrow-right"></i>
+				Upcoming
+			</span>
+		{% elseif object.isOngoing() %}
+			<span class="label label-warning">
+				<i class="fa fa-circle"></i>
+				Ongoing
+			</span>
+		{% elseif object.isPast() %}
+			<span class="label label-default">
+				<i class="fa fa-check"></i>
+				Past
+			</span>
+		{% endif %}
+	</div>
+
+{% endblock %}

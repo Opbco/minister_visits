@@ -1,0 +1,40 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+	{% set status = object.statut.value %}
+
+	{% if status == 'planned' %}
+		<span class="label label-default">
+			<i class="fa fa-calendar"></i>
+			Planned
+		</span>
+	{% elseif status == 'confirmed' %}
+		<span class="label label-primary">
+			<i class="fa fa-check-circle"></i>
+			Confirmed
+		</span>
+	{% elseif status == 'in_progress' %}
+		<span class="label label-warning">
+			<i class="fa fa-spinner fa-spin"></i>
+			In Progress
+		</span>
+	{% elseif status == 'completed' %}
+		<span class="label label-success">
+			<i class="fa fa-check"></i>
+			Completed
+		</span>
+	{% elseif status == 'cancelled' %}
+		<span class="label label-danger">
+			<i class="fa fa-ban"></i>
+			Cancelled
+		</span>
+	{% elseif status == 'postponed' %}
+		<span class="label label-warning">
+			<i class="fa fa-clock-o"></i>
+			Postponed
+		</span>
+	{% else %}
+		<span class="label label-default">{{ status|title }}</span>
+	{% endif %}
+
+{% endblock %}

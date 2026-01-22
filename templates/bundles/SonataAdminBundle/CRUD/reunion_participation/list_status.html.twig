@@ -1,0 +1,31 @@
+{# templates/admin/reunion_participation/list_status.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        {% set statusValue = value.value %}
+        {% if statusValue == 'attended' %}
+            <span class="label label-success">
+                <i class="fa fa-check"></i> Attended
+            </span>
+        {% elseif statusValue == 'confirmed' %}
+            <span class="label label-info">
+                <i class="fa fa-check-circle"></i> Confirmed
+            </span>
+        {% elseif statusValue == 'absent' %}
+            <span class="label label-danger">
+                <i class="fa fa-times"></i> Absent
+            </span>
+        {% elseif statusValue == 'excused' %}
+            <span class="label label-warning">
+                <i class="fa fa-info-circle"></i> Excused
+            </span>
+        {% else %}
+            <span class="label label-default">
+                <i class="fa fa-envelope"></i> Invited
+            </span>
+        {% endif %}
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+{% endblock %}

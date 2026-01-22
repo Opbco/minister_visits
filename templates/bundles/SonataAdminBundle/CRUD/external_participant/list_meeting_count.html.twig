@@ -1,0 +1,15 @@
+{# templates/bundles/SonataAdminBundle/CRUD/external_participant/list_meeting_count.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% set count = object.myReunions|length %}
+    {% if count > 0 %}
+        <span class="badge badge-primary">
+            <i class="fa fa-calendar"></i> {{ count }}
+        </span>
+    {% else %}
+        <span class="badge badge-default">
+            <i class="fa fa-calendar-o"></i> 0
+        </span>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,113 @@
+{# templates/admin/external_participant/show_statistics.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% set participations = object.myReunions %}
+    {% set total = participations|length %}
+    {% set attended = 0 %}
+    {% set confirmed = 0 %}
+    {% set absent = 0 %}
+    {% set excused = 0 %}
+    {% set invited = 0 %}
+    
+    {% for participation in participations %}
+        {% if participation.status.value == 'attended' %}
+            {% set attended = attended + 1 %}
+        {% elseif participation.status.value == 'confirmed' %}
+            {% set confirmed = confirmed + 1 %}
+        {% elseif participation.status.value == 'absent' %}
+            {% set absent = absent + 1 %}
+        {% elseif participation.status.value == 'excused' %}
+            {% set excused = excused + 1 %}
+        {% else %}
+            {% set invited = invited + 1 %}
+        {% endif %}
+    {% endfor %}
+    
+    {% set attendanceRate = total > 0 ? (attended / total * 100)|round(2) : 0 %}
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="info-box bg-aqua">
+                <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Meetings</span>
+                    <span class="info-box-number">{{ total }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="info-box bg-green">
+                <span class="info-box-icon"><i class="fa fa-check"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Attended</span>
+                    <span class="info-box-number">{{ attended }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="info-box bg-yellow">
+                <span class="info-box-icon"><i class="fa fa-clock-o"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Confirmed</span>
+                    <span class="info-box-number">{{ confirmed }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="info-box bg-red">
+                <span class="info-box-icon"><i class="fa fa-times"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Absent</span>
+                    <span class="info-box-number">{{ absent }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Attendance Rate</h3>
+                </div>
+                <div class="box-body">
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar progress-bar-success" style="width: {{ attendanceRate }}%">
+                            <span style="line-height: 30px; font-size: 16px;">
+                                {{ attendanceRate }}%
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="margin-top: 10px;">
+                        <i class="fa fa-info-circle"></i> 
+                        {{ attended }} out of {{ total }} meetings attended
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Status Breakdown</h3>
+                </div>
+                <div class="box-body">
+                    <ul class="list-unstyled">
+                        <li>
+                            <span class="label label-default">Invited</span> 
+                            <strong>{{ invited }}</strong> meeting(s)
+                        </li>
+                        <li style="margin-top: 5px;">
+                            <span class="label label-warning">Excused</span> 
+                            <strong>{{ excused }}</strong> meeting(s)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

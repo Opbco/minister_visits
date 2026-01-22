@@ -1,0 +1,45 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/show_reunion.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div class="well well-sm">
+            <h4 style="margin-top: 0;">
+                <i class="fa fa-calendar"></i> {{ value.objet }}
+            </h4>
+            <dl class="dl-horizontal" style="margin-bottom: 0;">
+                <dt>Date & Time:</dt>
+                <dd>
+                    <i class="fa fa-clock-o"></i> 
+                    {{ value.dateDebut|date('d/m/Y H:i') }}
+                    {% if value.dateFin %}
+                        - {{ value.dateFin|date('H:i') }}
+                    {% endif %}
+                </dd>
+                
+                {% if value.lieu %}
+                    <dt>Location:</dt>
+                    <dd>
+                        <i class="fa fa-map-marker text-danger"></i> {{ value.lieu }}
+                    </dd>
+                {% endif %}
+                
+                {% if value.organisateur %}
+                    <dt>Organizer:</dt>
+                    <dd>
+                        <i class="fa fa-building text-primary"></i> {{ value.organisateur.nameFr }}
+                    </dd>
+                {% endif %}
+                
+                {% if value.statut %}
+                    <dt>Status:</dt>
+                    <dd>
+                        <span class="label label-info">{{ value.statut.label() }}</span>
+                    </dd>
+                {% endif %}
+            </dl>
+        </div>
+    {% else %}
+        <span class="text-muted">No meeting associated</span>
+    {% endif %}
+{% endblock %}

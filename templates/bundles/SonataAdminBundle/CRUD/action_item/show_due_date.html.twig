@@ -1,0 +1,43 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/show_due_date.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        {% set now = 'now'|date('U') %}
+        {% set dueDate = value|date('U') %}
+        {% set isOverdue = dueDate < now and object.statut.value != 'completed' %}
+        {% set daysUntil = ((dueDate - now) / 86400)|round %}
+        
+        <div class="info-box {% if isOverdue %}bg-red{% elseif daysUntil <= 3 %}bg-yellow{% elseif daysUntil <= 7 %}bg-aqua{% else %}bg-green{% endif %}" style="margin: 0;">
+            <span class="info-box-icon">
+                <i class="fa {% if isOverdue %}fa-exclamation-triangle{% else %}fa-calendar{% endif %}"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Due Date</span>
+                <span class="info-box-number">{{ value|date('d/m/Y') }}</span>
+                <div class="progress" style="height: 3px; margin: 5px 0;">
+                    <div class="progress-bar" style="width: 100%"></div>
+                </div>
+                <span class="progress-description">
+                    {% if isOverdue %}
+                        {{ (daysUntil * -1)|round }} day(s) overdue!
+                    {% elseif daysUntil == 0 %}
+                        Due TODAY
+                    {% elseif daysUntil == 1 %}
+                        Due TOMORROW
+                    {% elseif daysUntil <= 3 %}
+                        Due in {{ daysUntil }} days (Urgent)
+                    {% elseif daysUntil <= 7 %}
+                        Due in {{ daysUntil }} days
+                    {% else %}
+                        {{ daysUntil }} days remaining
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-question-circle"></i> No deadline set
+        </span>
+    {% endif %}
+{% endblock %}

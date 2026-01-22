@@ -1,0 +1,156 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	{% set totalParticipants = object.participations|length %}
+	{% set internalCount = object.nombreParticipantsInternes %}
+	{% set externalCount = object.nombreParticipantsExternes %}
+
+	<div class="row">
+		<div class="col-md-4">
+			<div class="info-box bg-aqua">
+				<span class="info-box-icon">
+					<i class="fa fa-users"></i>
+				</span>
+				<div class="info-box-content">
+					<span class="info-box-text">Total Participants</span>
+					<span class="info-box-number">{{ totalParticipants }}</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="info-box bg-blue">
+				<span class="info-box-icon">
+					<i class="fa fa-user"></i>
+				</span>
+				<div class="info-box-content">
+					<span class="info-box-text">Internal Staff</span>
+					<span class="info-box-number">{{ internalCount }}</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="info-box bg-yellow">
+				<span class="info-box-icon">
+					<i class="fa fa-user-plus"></i>
+				</span>
+				<div class="info-box-content">
+					<span class="info-box-text">External Guests</span>
+					<span class="info-box-number">{{ externalCount }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if totalParticipants > 0 %}
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title">Participant List</h3>
+			</div>
+			<div class="box-body">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Organization/Function</th>
+							<th>Contact</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for participation in object.participations %}
+							<tr>
+								<td>
+									<strong>{{ participation.participantName }}</strong>
+									{% if object.president and participation.personnel == object.president %}
+										<br><span class="label label-danger">
+											<i class="fa fa-gavel"></i>
+											President
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{% if participation.personnel %}
+										<span class="label label-info">
+											<i class="fa fa-user"></i>
+											Internal
+										</span>
+									{% else %}
+										<span class="label label-warning">
+											<i class="fa fa-user-plus"></i>
+											External
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{% if participation.personnel %}
+										{{ participation.personnel.fonction ? participation.personnel.fonction.libelle : 'N/A' }}
+										<br>
+										<small class="text-muted">{{ participation.personnel.structure.nameFr }}</small>
+									{% else %}
+										{{ participation.externalParticipant.fonction ?: 'N/A' }}
+										<br>
+										<small class="text-muted">{{ participation.externalParticipant.organisation }}</small>
+									{% endif %}
+								</td>
+								<td>
+									{% set email = participation.personnel ? participation.personnel.email : participation.externalParticipant.email %}
+									{% set phone = participation.personnel ? participation.personnel.telephone : participation.externalParticipant.telephone %}
+
+									{% if email %}
+										<i class="fa fa-envelope"></i>
+										{{ email }}<br>
+									{% endif %}
+									{% if phone %}
+										<i class="fa fa-phone"></i>
+										{{ phone }}
+									{% endif %}
+								</td>
+								<td>
+									{% set status = participation.status.value %}
+									{% if status == 'attended' %}
+										<span class="label label-success">
+											<i class="fa fa-check"></i>
+											Attended
+										</span>
+									{% elseif status == 'absent' %}
+										<span class="label label-danger">
+											<i class="fa fa-times"></i>
+											Absent
+										</span>
+									{% elseif status == 'excused' %}
+										<span class="label label-warning">
+											<i class="fa fa-exclamation"></i>
+											Excused
+										</span>
+									{% elseif status == 'confirmed' %}
+										<span class="label label-primary">
+											<i class="fa fa-check-circle"></i>
+											Confirmed
+										</span>
+									{% else %}
+										<span class="label label-default">
+											<i class="fa fa-envelope"></i>
+											Invited
+										</span>
+									{% endif %}
+
+									{% if participation.absenceReason %}
+										<br><small class="text-muted">{{ participation.absenceReason }}</small>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	{% else %}
+		<div class="alert alert-info">
+			<i class="fa fa-info-circle"></i>
+			No participants have been added to this meeting yet.
+		</div>
+	{% endif %}
+
+{% endblock %}

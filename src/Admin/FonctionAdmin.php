@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
+use App\Form\Type\HtmlType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -110,11 +111,8 @@ final class FonctionAdmin extends AbstractAdmin
                 'class' => 'col-md-4',
                 'box_class' => 'box box-info'
             ])
-                ->add('_help', TextType::class, [
-                    'label' => false,
-                    'mapped' => false,
-                    'disabled' => true,
-                    'help' => '
+                ->add('_help', HtmlType::class, [
+                    'html' => '
                         <div class="alert alert-info">
                             <h4><i class="icon fa fa-info-circle"></i> Function Management Tips</h4>
                             <ul>
@@ -125,7 +123,6 @@ final class FonctionAdmin extends AbstractAdmin
                             </ul>
                         </div>
                     ',
-                    'help_html' => true,
                 ])
             ->end()
         ;
@@ -186,6 +183,12 @@ final class FonctionAdmin extends AbstractAdmin
         // Check if any personnel has this function
         // This should be handled by database constraints or service layer
         // Here we just demonstrate the hook
+        if (!$object instanceof \App\Entity\Fonction) {
+            return;
+        }
+        if (count($object->getPersonnels()) > 0) {
+            throw new \RuntimeException('Cannot delete function assigned to personnel.');
+        }
     }
 
     protected function configureExportFields(): array

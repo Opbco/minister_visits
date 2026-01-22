@@ -1,0 +1,44 @@
+<div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            <i class="fa fa-eye"></i> Invitation Preview
+        </h3>
+    </div>
+    <div class="box-body">
+        <div class="well">
+            <h4>{{ object.objet }}</h4>
+            <hr>
+            
+            <p><strong>Date:</strong> {{ object.dateDebut|date('l, F j, Y') }}</p>
+            <p><strong>Time:</strong> {{ object.dateDebut|date('H:i') }} - {{ object.dateFin|date('H:i') }}</p>
+            
+            <p><strong>Format:</strong> {{ object.meetingType.label }}</p>
+            
+            {% if object.requiresPhysicalLocation() %}
+                <p><strong>Location:</strong> {{ object.salle ? object.salle.nom : object.lieu }}</p>
+            {% endif %}
+            
+            {% if object.requiresVideoConference() and object.videoConferenceLink %}
+                <hr>
+                <h5><i class="fa fa-video-camera"></i> Video Conference Details:</h5>
+                <p><strong>Platform:</strong> {{ object.videoConferencePlatform.label }}</p>
+                <p><strong>Join Link:</strong> <a href="{{ object.videoConferenceLink }}" target="_blank">{{ object.videoConferenceLink }}</a></p>
+                {% if object.videoConferenceMeetingId %}
+                    <p><strong>Meeting ID:</strong> {{ object.videoConferenceMeetingId }}</p>
+                {% endif %}
+                {% if object.videoConferencePassword %}
+                    <p><strong>Password:</strong> {{ object.videoConferencePassword }}</p>
+                {% endif %}
+                {% if object.videoConferenceInstructions %}
+                    <p><strong>Instructions:</strong><br>{{ object.videoConferenceInstructions|nl2br }}</p>
+                {% endif %}
+            {% endif %}
+            
+            <hr>
+            <p><strong>Organizer:</strong> {{ object.organisateur.nameFr }}</p>
+            {% if object.president %}
+                <p><strong>President:</strong> {{ object.president.nomComplet }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

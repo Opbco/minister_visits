@@ -1,0 +1,27 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/list_status.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        {% set statusValue = value.value %}
+        {% if statusValue == 'completed' %}
+            <span class="label label-success" style="font-size: 12px;">
+                <i class="fa fa-check-circle"></i> Completed
+            </span>
+        {% elseif statusValue == 'in_progress' %}
+            <span class="label label-info" style="font-size: 12px;">
+                <i class="fa fa-spinner"></i> In Progress
+            </span>
+        {% elseif statusValue == 'cancelled' %}
+            <span class="label label-danger" style="font-size: 12px;">
+                <i class="fa fa-ban"></i> Cancelled
+            </span>
+        {% else %}
+            <span class="label label-default" style="font-size: 12px;">
+                <i class="fa fa-clock-o"></i> Pending
+            </span>
+        {% endif %}
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+{% endblock %}

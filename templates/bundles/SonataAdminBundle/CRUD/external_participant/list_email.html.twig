@@ -1,0 +1,14 @@
+{# templates/bundles/SonataAdminBundle/CRUD/external_participant/list_email.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <a href="mailto:{{ value }}" class="btn btn-xs btn-info">
+            <i class="fa fa-envelope"></i> {{ value }}
+        </a>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-times"></i> No email
+        </span>
+    {% endif %}
+{% endblock %}

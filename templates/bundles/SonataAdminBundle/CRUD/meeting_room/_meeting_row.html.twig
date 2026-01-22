@@ -1,0 +1,57 @@
+{# templates/admin/meeting_room/_meeting_row.html.twig #}
+<tr>
+    <td>
+        <strong>{{ meeting.objet }}</strong>
+        {% if meeting.type %}
+            <br><span class="label label-default">{{ meeting.type }}</span>
+        {% endif %}
+        {% if meeting.meetingType %}
+            <br><span class="label label-info">
+                {% if meeting.meetingType.value == 'virtual' %}
+                    <i class="fa fa-video-camera"></i> Virtual
+                {% elseif meeting.meetingType.value == 'hybrid' %}
+                    <i class="fa fa-users"></i> Hybrid
+                {% else %}
+                    <i class="fa fa-building"></i> In-Person
+                {% endif %}
+            </span>
+        {% endif %}
+    </td>
+    <td>
+        <i class="fa fa-calendar"></i> {{ meeting.dateDebut|date('d/m/Y') }}
+        <br>
+        <i class="fa fa-clock-o"></i> 
+        {{ meeting.dateDebut|date('H:i') }}
+        {% if meeting.dateFin %}
+            - {{ meeting.dateFin|date('H:i') }}
+            {% set duration = ((meeting.dateFin|date('U') - meeting.dateDebut|date('U')) / 60)|round %}
+            <br><small class="text-muted">({{ duration }} min)</small>
+        {% endif %}
+    </td>
+    <td>
+        {% if meeting.organisateur %}
+            <i class="fa fa-building text-primary"></i> 
+            {{ meeting.organisateur.nameFr }}
+            {% if meeting.organisateur.acronym %}
+                <br><small class="text-muted">({{ meeting.organisateur.acronym }})</small>
+            {% endif %}
+        {% else %}
+            <span class="text-muted">—</span>
+        {% endif %}
+    </td>
+    <td>
+        {% set totalParticipants = meeting.participations|length %}
+        {% if totalParticipants > 0 %}
+            <span class="badge badge-primary">
+                <i class="fa fa-users"></i> {{ totalParticipants }}
+            </span>
+            {% if meeting.president %}
+                <br><small class="text-muted">
+                    Chair: {{ meeting.president.nomComplet }}
+                </small>
+            {% endif %}
+        {% else %}
+            <span class="text-muted">No participants</span>
+        {% endif %}
+    </td>
+</tr>

@@ -1,0 +1,9 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/list_mark_completed_action.html.twig #}
+{% if object.statut.value != 'completed' %}
+    <a href="{{ admin.generateObjectUrl('mark_completed', object) }}" 
+        class="btn btn-sm btn-success" 
+        title="Mark as Completed"
+        onclick="return confirm('Mark this action item as completed?');">
+        <i class="fa fa-check"></i> Complete
+    </a>
+{% endif %}

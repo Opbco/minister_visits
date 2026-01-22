@@ -1,0 +1,14 @@
+{# templates/bundles/SonataAdminBundle/CRUD/external_participant/list_phone.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <a href="tel:{{ value }}" class="btn btn-xs btn-success">
+            <i class="fa fa-phone"></i> {{ value }}
+        </a>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-times"></i> No phone
+        </span>
+    {% endif %}
+{% endblock %}

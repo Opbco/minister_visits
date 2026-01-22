@@ -1,0 +1,22 @@
+{# templates/admin/reunion_participation/list_reunion.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div>
+            <strong>{{ value.objet }}</strong>
+            <br>
+            <small class="text-muted">
+                <i class="fa fa-calendar"></i> {{ value.dateDebut|date('d/m/Y H:i') }}
+            </small>
+            {% if value.lieu %}
+                <br>
+                <small class="text-muted">
+                    <i class="fa fa-map-marker"></i> {{ value.lieu }}
+                </small>
+            {% endif %}
+        </div>
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+{% endblock %}

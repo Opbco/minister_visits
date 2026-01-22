@@ -13,8 +13,10 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
+use App\Enum\MeetingTypeEnum;
 use App\Repository\ReunionRepository;
 use App\Enum\ReunionStatut;
+use App\Enum\VideoConferencePlatform;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,6 +25,7 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ReunionRepository::class)]
 #[ORM\Table(name: 'reunion')]
@@ -186,10 +189,54 @@ class Reunion
     #[Groups(['reunion:read', 'reunion:write'])]
     private Collection $actionItems;
 
-    #[ORM\ManyToOne(targetEntity: MeetingRoom::class, cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: MeetingRoom::class, inversedBy: 'reunions', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(['reunion:read', 'reunion:write'])]
     private ?MeetingRoom $salle = null;
+
+    /**
+     * Meeting format: in-person, virtual, or hybrid
+     */
+    #[ORM\Column(type: Types::STRING, length: 20, enumType: MeetingTypeEnum::class)]
+    #[Assert\NotNull(message: "The meeting type is required.")]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?MeetingTypeEnum $meetingType = MeetingTypeEnum::IN_PERSON;
+
+    /**
+     * Video conference platform (if virtual or hybrid)
+     */
+    #[ORM\Column(type: Types::STRING, length: 50, enumType: VideoConferencePlatform::class, nullable: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?VideoConferencePlatform $videoConferencePlatform = null;
+
+    /**
+     * Video conference link/URL
+     */
+    #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Url(message: "Please provide a valid URL")]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?string $videoConferenceLink = null;
+
+    /**
+     * Meeting ID or access code for the video conference
+     */
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?string $videoConferenceMeetingId = null;
+
+    /**
+     * Password/passcode for the video conference
+     */
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?string $videoConferencePassword = null;
+
+    /**
+     * Additional instructions for joining the video conference
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['reunion:read', 'reunion:write'])]
+    private ?string $videoConferenceInstructions = null;
     
     // --- COMPUTED PROPERTIES ---
     #[Groups(['reunion:read'])]
@@ -594,14 +641,6 @@ class Reunion
 
     // ==================== BUSINESS METHODS ====================
 
-    public function getLocationDisplay(): string
-    {
-        if ($this->salle !== null) {
-            return $this->salle->getNom();
-        }
-        return $this->lieu ?? 'Lieu non défini';
-    }
-
     /**
      * Check if meeting is in the past
      */
@@ -731,6 +770,190 @@ class Reunion
         }
 
         return $this;
+    }
+
+    public function getMeetingType(): ?MeetingTypeEnum
+    {
+        return $this->meetingType;
+    }
+
+    public function setMeetingType(MeetingTypeEnum $meetingType): static
+    {
+        $this->meetingType = $meetingType;
+        return $this;
+    }
+
+    public function getVideoConferencePlatform(): ?VideoConferencePlatform
+    {
+        return $this->videoConferencePlatform;
+    }
+
+    public function setVideoConferencePlatform(?VideoConferencePlatform $platform): static
+    {
+        $this->videoConferencePlatform = $platform;
+        return $this;
+    }
+
+    public function getVideoConferenceLink(): ?string
+    {
+        return $this->videoConferenceLink;
+    }
+
+    public function setVideoConferenceLink(?string $link): static
+    {
+        $this->videoConferenceLink = $link;
+        return $this;
+    }
+
+    public function getVideoConferenceMeetingId(): ?string
+    {
+        return $this->videoConferenceMeetingId;
+    }
+
+    public function setVideoConferenceMeetingId(?string $meetingId): static
+    {
+        $this->videoConferenceMeetingId = $meetingId;
+        return $this;
+    }
+
+    public function getVideoConferencePassword(): ?string
+    {
+        return $this->videoConferencePassword;
+    }
+
+    public function setVideoConferencePassword(?string $password): static
+    {
+        $this->videoConferencePassword = $password;
+        return $this;
+    }
+
+    public function getVideoConferenceInstructions(): ?string
+    {
+        return $this->videoConferenceInstructions;
+    }
+
+    public function setVideoConferenceInstructions(?string $instructions): static
+    {
+        $this->videoConferenceInstructions = $instructions;
+        return $this;
+    }
+
+    // ==================== HELPER METHODS ====================
+
+    /**
+     * Check if meeting requires physical location
+     */
+    public function requiresPhysicalLocation(): bool
+    {
+        return $this->meetingType && $this->meetingType->requiresPhysicalLocation();
+    }
+
+    /**
+     * Check if meeting requires video conference link
+     */
+    public function requiresVideoConference(): bool
+    {
+        return $this->meetingType && $this->meetingType->requiresVideoLink();
+    }
+
+    /**
+     * Check if meeting is fully virtual
+     */
+    public function isVirtual(): bool
+    {
+        return $this->meetingType === MeetingTypeEnum::VIRTUAL;
+    }
+
+    /**
+     * Check if meeting is hybrid
+     */
+    public function isHybrid(): bool
+    {
+        return $this->meetingType === MeetingTypeEnum::HYBRID;
+    }
+
+    /**
+     * Check if meeting is in-person only
+     */
+    public function isInPerson(): bool
+    {
+        return $this->meetingType === MeetingTypeEnum::IN_PERSON;
+    }
+
+    /**
+     * Get complete video conference details as array
+     */
+    public function getVideoConferenceDetails(): ?array
+    {
+        if (!$this->requiresVideoConference() || !$this->videoConferenceLink) {
+            return null;
+        }
+
+        return [
+            'platform' => $this->videoConferencePlatform?->label(),
+            'link' => $this->videoConferenceLink,
+            'meeting_id' => $this->videoConferenceMeetingId,
+            'password' => $this->videoConferencePassword,
+            'instructions' => $this->videoConferenceInstructions,
+        ];
+    }
+
+    public function getLocationDisplay(): string
+    {
+        if ($this->isVirtual()) {
+            return $this->videoConferencePlatform 
+                ? sprintf('Virtual - %s', $this->videoConferencePlatform->label())
+                : 'Virtual Meeting';
+        }
+
+        if ($this->isHybrid()) {
+            $physical = $this->salle?->getNom() ?? $this->lieu ?? 'Location TBD';
+            $virtual = $this->videoConferencePlatform?->label() ?? 'Video Conference';
+            return sprintf('%s + %s', $physical, $virtual);
+        }
+
+        // In-person
+        if ($this->salle !== null) {
+            return $this->salle->getNom();
+        }
+        return $this->lieu ?? 'Location not specified';
+    }
+
+    /**
+     * Validate video conference requirements
+     */
+    #[Assert\Callback]
+    public function validateVideoConference(ExecutionContextInterface $context): void
+    {
+        // If virtual or hybrid, video conference link is required
+        if ($this->requiresVideoConference() && empty($this->videoConferenceLink)) {
+            $context->buildViolation('Video conference link is required for virtual and hybrid meetings.')
+                ->atPath('videoConferenceLink')
+                ->addViolation();
+        }
+
+        // If virtual or hybrid, platform should be specified
+        if ($this->requiresVideoConference() && !$this->videoConferencePlatform) {
+            $context->buildViolation('Please select the video conference platform.')
+                ->atPath('videoConferencePlatform')
+                ->addViolation();
+        }
+
+        // If in-person, should have location
+        if ($this->meetingType === MeetingTypeEnum::IN_PERSON && !$this->salle && empty($this->lieu)) {
+            $context->buildViolation('Physical location is required for in-person meetings.')
+                ->atPath('lieu')
+                ->addViolation();
+        }
+
+        // If hybrid, should have both
+        if ($this->isHybrid()) {
+            if (!$this->salle && empty($this->lieu)) {
+                $context->buildViolation('Physical location is required for hybrid meetings.')
+                    ->atPath('lieu')
+                    ->addViolation();
+            }
+        }
     }
 
 }

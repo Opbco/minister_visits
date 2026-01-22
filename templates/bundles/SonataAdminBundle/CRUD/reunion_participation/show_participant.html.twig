@@ -1,0 +1,89 @@
+{# templates/admin/reunion_participation/show_participant.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if object.personnel %}
+        <div class="well well-sm" style="background-color: #e3f2fd;">
+            <h4 style="margin-top: 0;">
+                <i class="fa fa-user text-primary"></i> 
+                {{ object.personnel.nomComplet }}
+            </h4>
+            <dl class="dl-horizontal" style="margin-bottom: 0;">
+                <dt>Type:</dt>
+                <dd>
+                    <span class="label label-primary">Internal Personnel</span>
+                </dd>
+                
+                <dt>Function:</dt>
+                <dd>{{ object.personnel.fonction.libelle }}</dd>
+                
+                <dt>Structure:</dt>
+                <dd>{{ object.personnel.structure.nameFr }}</dd>
+                
+                {% if object.personnel.email %}
+                    <dt>Email:</dt>
+                    <dd>
+                        <a href="mailto:{{ object.personnel.email }}">
+                            <i class="fa fa-envelope"></i> {{ object.personnel.email }}
+                        </a>
+                    </dd>
+                {% endif %}
+                
+                {% if object.personnel.telephone %}
+                    <dt>Phone:</dt>
+                    <dd>
+                        <a href="tel:{{ object.personnel.telephone }}">
+                            <i class="fa fa-phone"></i> {{ object.personnel.telephone }}
+                        </a>
+                    </dd>
+                {% endif %}
+            </dl>
+        </div>
+    {% elseif object.externalParticipant %}
+        <div class="well well-sm" style="background-color: #e8f5e9;">
+            <h4 style="margin-top: 0;">
+                <i class="fa fa-user-secret text-info"></i> 
+                {{ object.externalParticipant.nom }}
+            </h4>
+            <dl class="dl-horizontal" style="margin-bottom: 0;">
+                <dt>Type:</dt>
+                <dd>
+                    <span class="label label-info">External Participant</span>
+                </dd>
+                
+                {% if object.externalParticipant.organisation %}
+                    <dt>Organization:</dt>
+                    <dd>{{ object.externalParticipant.organisation }}</dd>
+                {% endif %}
+                
+                {% if object.externalParticipant.fonction %}
+                    <dt>Function:</dt>
+                    <dd>{{ object.externalParticipant.fonction }}</dd>
+                {% endif %}
+                
+                {% if object.externalParticipant.email %}
+                    <dt>Email:</dt>
+                    <dd>
+                        <a href="mailto:{{ object.externalParticipant.email }}">
+                            <i class="fa fa-envelope"></i> {{ object.externalParticipant.email }}
+                        </a>
+                    </dd>
+                {% endif %}
+                
+                {% if object.externalParticipant.telephone %}
+                    <dt>Phone:</dt>
+                    <dd>
+                        <a href="tel:{{ object.externalParticipant.telephone }}">
+                            <i class="fa fa-phone"></i> {{ object.externalParticipant.telephone }}
+                        </a>
+                    </dd>
+                {% endif %}
+            </dl>
+        </div>
+    {% else %}
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i> 
+            <strong>Error:</strong> No participant information available.
+        </div>
+    {% endif %}
+{% endblock %}

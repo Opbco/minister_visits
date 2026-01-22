@@ -1,0 +1,58 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/show_status.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        {% set statusValue = value.value %}
+        
+        {% if statusValue == 'completed' %}
+            <div class="callout callout-success">
+                <h4>
+                    <i class="fa fa-check-circle"></i> Completed
+                </h4>
+                <p>This action item has been successfully completed.</p>
+            </div>
+        {% elseif statusValue == 'in_progress' %}
+            <div class="callout callout-info">
+                <h4>
+                    <i class="fa fa-spinner"></i> In Progress
+                </h4>
+                <p>This action item is currently being worked on.</p>
+            </div>
+        {% elseif statusValue == 'cancelled' %}
+            <div class="callout callout-danger">
+                <h4>
+                    <i class="fa fa-ban"></i> Cancelled
+                </h4>
+                <p>This action item has been cancelled and is no longer needed.</p>
+            </div>
+        {% else %}
+            <div class="callout callout-warning">
+                <h4>
+                    <i class="fa fa-clock-o"></i> Pending
+                </h4>
+                <p>This action item has not been started yet.</p>
+            </div>
+        {% endif %}
+        
+        <div style="margin-top: 15px;">
+            {% if statusValue != 'completed' and statusValue != 'cancelled' %}
+                <a href="{{ admin.generateObjectUrl('mark_completed', object) }}" 
+                    class="btn btn-success"
+                    onclick="return confirm('Mark this action as completed?');">
+                    <i class="fa fa-check"></i> Mark as Completed
+                </a>
+            {% endif %}
+            
+            {% if statusValue == 'pending' %}
+                <a href="{{ admin.generateObjectUrl('mark_in_progress', object) }}" 
+                    class="btn btn-info"
+                    onclick="return confirm('Mark this action as in progress?');">
+                    <i class="fa fa-play"></i> Start Working
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+{% endblock %}

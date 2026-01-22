@@ -1,0 +1,210 @@
+{# templates/bundles/SonataAdminBundle/CRUD/meeting_room/show_usage_stats.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% set reunions = object.reunions %}
+    {% set totalMeetings = reunions|length %}
+    {% set upcomingMeetings = 0 %}
+    {% set pastMeetings = 0 %}
+    {% set ongoingMeetings = 0 %}
+    {% set now = 'now'|date('U') %}
+    
+    {% for reunion in reunions %}
+        {% set startTime = reunion.dateDebut|date('U') %}
+        {% set endTime = reunion.dateFin|date('U') %}
+        
+        {% if startTime > now %}
+            {% set upcomingMeetings = upcomingMeetings + 1 %}
+        {% elseif endTime < now %}
+            {% set pastMeetings = pastMeetings + 1 %}
+        {% else %}
+            {% set ongoingMeetings = ongoingMeetings + 1 %}
+        {% endif %}
+    {% endfor %}
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="info-box bg-aqua">
+                <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Meetings</span>
+                    <span class="info-box-number">{{ totalMeetings }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="info-box bg-green">
+                <span class="info-box-icon"><i class="fa fa-clock-o"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Upcoming</span>
+                    <span class="info-box-number">{{ upcomingMeetings }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="info-box bg-yellow">
+                <span class="info-box-icon"><i class="fa fa-circle"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Ongoing</span>
+                    <span class="info-box-number">{{ ongoingMeetings }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="info-box bg-gray">
+                <span class="info-box-icon"><i class="fa fa-check"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Completed</span>
+                    <span class="info-box-number">{{ pastMeetings }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if totalMeetings > 0 %}
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    <i class="fa fa-calendar"></i> Recent & Upcoming Meetings
+                </h3>
+            </div>
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="bg-light-blue">
+                                <th width="40%">Meeting Title</th>
+                                <th width="20%">Date & Time</th>
+                                <th width="20%">Organizer</th>
+                                <th width="20%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set displayedCount = 0 %}
+                            {% for reunion in reunions|slice(0, 10) %}
+                                {% set displayedCount = displayedCount + 1 %}
+                                {% set startTime = reunion.dateDebut|date('U') %}
+                                {% set endTime = reunion.dateFin|date('U') %}
+                                
+                                <tr>
+                                    <td>
+                                        <strong>{{ reunion.objet }}</strong>
+                                        {% if reunion.type %}
+                                            <br><small class="text-muted">{{ reunion.type }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <i class="fa fa-calendar"></i> 
+                                        {{ reunion.dateDebut|date('d/m/Y') }}
+                                        <br>
+                                        <i class="fa fa-clock-o"></i> 
+                                        {{ reunion.dateDebut|date('H:i') }}
+                                        {% if reunion.dateFin %}
+                                            - {{ reunion.dateFin|date('H:i') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if reunion.organisateur %}
+                                            <i class="fa fa-building text-primary"></i> 
+                                            {{ reunion.organisateur.nameFr }}
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if startTime > now %}
+                                            <span class="label label-success">
+                                                <i class="fa fa-clock-o"></i> Upcoming
+                                            </span>
+                                        {% elseif endTime < now %}
+                                            <span class="label label-default">
+                                                <i class="fa fa-check"></i> Completed
+                                            </span>
+                                        {% else %}
+                                            <span class="label label-warning">
+                                                <i class="fa fa-circle"></i> Ongoing
+                                            </span>
+                                        {% endif %}
+                                        
+                                        {% if reunion.statut %}
+                                            <br><small class="text-muted">{{ reunion.statut.label() }}</small>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if totalMeetings > 10 %}
+                    <div class="text-center" style="margin-top: 15px;">
+                        <p class="text-muted">
+                            Showing {{ displayedCount }} of {{ totalMeetings }} meetings. 
+                            {{ totalMeetings - displayedCount }} more meeting(s) not shown.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Room Utilization</h3>
+                    </div>
+                    <div class="box-body">
+                        {% set utilizationRate = totalMeetings > 0 ? ((pastMeetings + ongoingMeetings) / totalMeetings * 100)|round(2) : 0 %}
+                        <div class="progress" style="height: 30px; margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-success" style="width: {{ utilizationRate }}%">
+                                <span style="line-height: 30px; font-size: 16px;">
+                                    {{ utilizationRate }}%
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-muted">
+                            <i class="fa fa-info-circle"></i> 
+                            {{ pastMeetings + ongoingMeetings }} out of {{ totalMeetings }} scheduled meetings used this room
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Room Status</h3>
+                    </div>
+                    <div class="box-body">
+                        {% if object.isAvailable() %}
+                            <div class="callout callout-success">
+                                <h4><i class="fa fa-check-circle"></i> Currently Available</h4>
+                                <p>This room is not currently in use and is available for booking.</p>
+                            </div>
+                        {% else %}
+                            <div class="callout callout-warning">
+                                <h4><i class="fa fa-ban"></i> Currently In Use</h4>
+                                <p>This room is currently occupied. Please check the schedule for availability.</p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if upcomingMeetings > 0 %}
+                            <p class="text-info">
+                                <i class="fa fa-calendar-check-o"></i> 
+                                <strong>{{ upcomingMeetings }}</strong> upcoming meeting(s) scheduled
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4><i class="fa fa-info-circle"></i> No Meeting History</h4>
+            <p>This room has not been used for any meetings yet. Once meetings are scheduled in this room, usage statistics will appear here.</p>
+        </div>
+    {% endif %}
+{% endblock %}

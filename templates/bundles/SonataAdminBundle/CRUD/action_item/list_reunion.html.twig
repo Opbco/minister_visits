@@ -1,0 +1,16 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/list_reunion.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div style="max-width: 250px;">
+            <strong>{{ value.objet|slice(0, 50) }}{% if value.objet|length > 50 %}...{% endif %}</strong>
+            <br>
+            <small class="text-muted">
+                <i class="fa fa-calendar"></i> {{ value.dateDebut|date('d/m/Y') }}
+            </small>
+        </div>
+    {% else %}
+        <span class="text-muted">No meeting</span>
+    {% endif %}
+{% endblock %}

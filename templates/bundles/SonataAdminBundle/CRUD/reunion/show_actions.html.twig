@@ -1,0 +1,77 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+    {% if object.actionItems|length > 0 %}
+    {% set completedCount = object.actionItems|filter(item => item.statut.value == 'completed')|length %}
+    {% set pendingCount = object.actionItems|filter(item => item.statut.value == 'pending')|length %}
+    
+    <div class="alert alert-info">
+        <strong>Action Items Summary:</strong>
+        {{ object.actionItems|length }} total, 
+        {{ completedCount }} completed, 
+        {{ pendingCount }} pending
+    </div>
+    
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Responsible</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for action in object.actionItems %}
+                <tr class="{% if action.dateEcheance and action.dateEcheance < date() and action.statut.value != 'completed' %}danger{% endif %}">
+                    <td>
+                        <strong>{{ action.description|slice(0, 100) }}{% if action.description|length > 100 %}...{% endif %}</strong>
+                    </td>
+                    <td>
+                        {% if action.responsable %}
+                            {{ action.responsable.nomComplet }}
+                        {% else %}
+                            <span class="text-muted">Not assigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if action.dateEcheance %}
+                            {{ action.dateEcheance|date('d/m/Y') }}
+                            {% if action.dateEcheance < date() and action.statut.value != 'completed' %}
+                                <br><span class="label label-danger">
+                                    <i class="fa fa-warning"></i> OVERDUE
+                                </span>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">No deadline</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set status = action.statut.value %}
+                        {% if status == 'completed' %}
+                            <span class="label label-success">
+                                <i class="fa fa-check"></i> Completed
+                            </span>
+                        {% elseif status == 'in_progress' %}
+                            <span class="label label-info">
+                                <i class="fa fa-spinner"></i> In Progress
+                            </span>
+                        {% elseif status == 'cancelled' %}
+                            <span class="label label-default">
+                                <i class="fa fa-ban"></i> Cancelled
+                            </span>
+                        {% else %}
+                            <span class="label label-warning">
+                                <i class="fa fa-hourglass"></i> Pending
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> No action items created from this meeting.
+    </div>
+{% endif %}
+{% endblock %}

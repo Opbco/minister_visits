@@ -1,0 +1,114 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	{% if object.requiresVideoConference() %}
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title">
+					<i class="fa fa-video-camera"></i>
+					Video Conference Details
+				</h3>
+			</div>
+			<div class="box-body">
+				{% if object.videoConferenceLink %}
+					<div class="row">
+						<div class="col-md-12">
+							<div class="callout callout-info">
+								<h4>
+									<i class="fa fa-{{ object.videoConferencePlatform ? object.videoConferencePlatform.icon : 'video-camera' }}"></i>
+									{{ object.videoConferencePlatform ? object.videoConferencePlatform.label : 'Video Conference' }}
+								</h4>
+
+								<div style="margin-top: 15px;">
+									<p>
+										<strong>Join Link:</strong>
+									</p>
+									<div class="input-group">
+										<input type="text" class="form-control" value="{{ object.videoConferenceLink }}" id="video-link" readonly>
+										<span class="input-group-btn">
+											<button class="btn btn-default" type="button" onclick="copyToClipboard('video-link')" title="Copy link">
+												<i class="fa fa-copy"></i>
+											</button>
+											<a href="{{ object.videoConferenceLink }}" target="_blank" class="btn btn-primary">
+												<i class="fa fa-external-link"></i>
+												Join Meeting
+											</a>
+										</span>
+									</div>
+								</div>
+
+								{% if object.videoConferenceMeetingId %}
+									<div style="margin-top: 15px;">
+										<p>
+											<strong>Meeting ID:</strong>
+											<code>{{ object.videoConferenceMeetingId }}</code>
+											<button class="btn btn-xs btn-default copy-btn" data-text="{{ object.videoConferenceMeetingId }}" title="Copy Meeting ID">
+												<i class="fa fa-copy"></i>
+											</button>
+										</p>
+									</div>
+								{% endif %}
+
+								{% if object.videoConferencePassword %}
+									<div style="margin-top: 10px;">
+										<p>
+											<strong>Password:</strong>
+											<code>{{ object.videoConferencePassword }}</code>
+											<button class="btn btn-xs btn-default copy-btn" data-text="{{ object.videoConferencePassword }}" title="Copy Password">
+												<i class="fa fa-copy"></i>
+											</button>
+										</p>
+									</div>
+								{% endif %}
+
+								{% if object.videoConferenceInstructions %}
+									<div style="margin-top: 15px;">
+										<p>
+											<strong>Additional Instructions:</strong>
+										</p>
+										<div class="well well-sm">
+											{{ object.videoConferenceInstructions|nl2br }}
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+                    <script>
+                        $(document).ready(function() {
+                            $(".copy-btn").on("click", function() {
+                                var text = $(this).data("text");
+
+                                if (navigator.clipboard && navigator.clipboard.writeText) {
+                                    // Méthode moderne
+                                    navigator.clipboard.writeText(text).then(function() {
+                                        alert("Texte copié !");
+                                    }).catch(function(err) {
+                                        console.error("Erreur lors de la copie :", err);
+                                    });
+                                } else {
+                                    // Fallback pour anciens navigateurs
+                                    var $temp = $("<textarea>");
+                                    $("body").append($temp);
+                                    $temp.val(text).select();
+                                    try {
+                                        document.execCommand("copy");
+                                        alert("Texte copié (fallback) !");
+                                    } catch (err) {
+                                        console.error("Impossible de copier :", err);
+                                    }
+                                    $temp.remove();
+                                }
+                            });
+                        });
+                    </script>
+				{% else %}
+					<div class="alert alert-warning">
+						<i class="fa fa-warning"></i>
+						<strong>Warning:</strong>
+						Video conference link has not been provided yet.
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

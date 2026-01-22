@@ -1,0 +1,24 @@
+{# templates/bundles/SonataAdminBundle/CRUD/meeting_room/list_equipment.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value and value|length > 0 %}
+        <div style="max-width: 250px;">
+            {% set displayCount = 3 %}
+            {% for equipment in value|slice(0, displayCount) %}
+                <span class="label label-success" style="margin: 2px;">
+                    <i class="fa fa-check"></i> {{ equipment }}
+                </span>
+            {% endfor %}
+            {% if value|length > displayCount %}
+                <span class="label label-default" style="margin: 2px;">
+                    +{{ value|length - displayCount }} more
+                </span>
+            {% endif %}
+        </div>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-times"></i> No equipment listed
+        </span>
+    {% endif %}
+{% endblock %}

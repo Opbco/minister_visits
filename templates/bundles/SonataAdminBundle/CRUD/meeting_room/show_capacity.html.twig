@@ -1,0 +1,34 @@
+{# templates/bundles/SonataAdminBundle/CRUD/meeting_room/show_capacity.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div class="info-box bg-aqua" style="margin: 0;">
+            <span class="info-box-icon">
+                <i class="fa fa-users"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Seating Capacity</span>
+                <span class="info-box-number">{{ value }} People</span>
+                <div class="progress" style="height: 3px; margin: 5px 0;">
+                    <div class="progress-bar" style="width: 100%"></div>
+                </div>
+                <span class="progress-description">
+                    {% if value < 10 %}
+                        Small meeting room
+                    {% elseif value < 30 %}
+                        Medium meeting room
+                    {% elseif value < 50 %}
+                        Large meeting room
+                    {% else %}
+                        Conference hall
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-question-circle"></i> Capacity not specified
+        </span>
+    {% endif %}
+{% endblock %}

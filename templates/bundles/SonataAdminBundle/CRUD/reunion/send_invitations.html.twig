@@ -1,0 +1,93 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}Send Invitations - {{ object.objet }}{% endblock %}
+
+{% block content %}
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-envelope"></i> Send Meeting Invitations
+            </h3>
+        </div>
+        
+        <form method="POST" action="{{ admin.generateObjectUrl('send_invitations', object) }}">
+            <div class="box-body">
+                <div class="alert alert-info">
+                    <h4><i class="fa fa-info-circle"></i> Meeting Details</h4>
+                    <ul>
+                        <li><strong>Subject:</strong> {{ object.objet }}</li>
+                        <li><strong>Date:</strong> {{ object.dateDebut|date('l, F j, Y') }}</li>
+                        <li><strong>Time:</strong> {{ object.dateDebut|date('H:i') }} - {{ object.dateFin|date('H:i') }}</li>
+                        <li><strong>Location:</strong> {{ object.locationDisplay }}</li>
+                    </ul>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="info-box bg-aqua">
+                            <span class="info-box-icon"><i class="fa fa-users"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total</span>
+                                <span class="info-box-number">{{ stats.total }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="info-box bg-green">
+                            <span class="info-box-icon"><i class="fa fa-envelope"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">With Email</span>
+                                <span class="info-box-number">{{ stats.with_email }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="info-box bg-yellow">
+                            <span class="info-box-icon"><i class="fa fa-phone"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">With Phone</span>
+                                <span class="info-box-number">{{ stats.with_phone }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="info-box {% if stats.without_contact > 0 %}bg-red{% else %}bg-gray{% endif %}">
+                            <span class="info-box-icon"><i class="fa fa-warning"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">No Contact</span>
+                                <span class="info-box-number">{{ stats.without_contact }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if stats.without_contact > 0 %}
+                    <div class="alert alert-warning">
+                        <i class="fa fa-warning"></i> 
+                        <strong>Warning:</strong> {{ stats.without_contact }} participant(s) do not have contact information and will not receive invitations.
+                    </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="notification_type">Notification Method</label>
+                    <select name="notification_type" id="notification_type" class="form-control">
+                        <option value="email">Email ({{ stats.with_email }} recipients)</option>
+                        <option value="sms">SMS ({{ stats.with_phone }} recipients)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fa fa-send"></i> Send Invitations
+                </button>
+                <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

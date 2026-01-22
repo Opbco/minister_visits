@@ -1,0 +1,9 @@
+{%- block html_widget -%}
+    {{ html|raw }}
+{%- endblock -%}
+
+{%- block template_widget -%}
+    {%- if template -%}
+        {% include template %}
+    {%- endif -%}
+{%- endblock -%}

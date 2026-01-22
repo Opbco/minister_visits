@@ -167,6 +167,24 @@ class ExternalParticipant
         return $this;
     }
 
+    public function getStatistics(): array
+    {
+        $totalMeetings = count($this->myReunions);
+        $lastMeeting = null;
+
+        foreach ($this->myReunions as $participation) {
+            $meetingDate = $participation->getReunion()->getDateStart();
+            if ($lastMeeting === null || $meetingDate > $lastMeeting) {
+                $lastMeeting = $meetingDate;
+            }
+        }
+
+        return [
+            'total_meetings' => $totalMeetings,
+            'last_meeting' => $lastMeeting,
+        ];
+    }
+
     #[Assert\Callback]
     public function validateContactInfo(ExecutionContextInterface $context, $payload): void
     {

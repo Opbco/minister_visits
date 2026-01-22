@@ -1,0 +1,50 @@
+{# templates/bundles/SonataAdminBundle/CRUD/meeting_room/show_equipment.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value and value|length > 0 %}
+        <div class="row">
+            {% for equipment in value %}
+                <div class="col-md-6" style="margin-bottom: 10px;">
+                    <div class="callout callout-success" style="margin: 0; padding: 8px 12px;">
+                        {% set icon = 'fa-check' %}
+                        {% if equipment == 'Projector' %}
+                            {% set icon = 'fa-desktop' %}
+                        {% elseif equipment == 'Video Conference' %}
+                            {% set icon = 'fa-video-camera' %}
+                        {% elseif equipment == 'Whiteboard' %}
+                            {% set icon = 'fa-pencil-square-o' %}
+                        {% elseif equipment == 'Air Conditioning' %}
+                            {% set icon = 'fa-thermometer-half' %}
+                        {% elseif equipment == 'Sound System' %}
+                            {% set icon = 'fa-volume-up' %}
+                        {% elseif equipment == 'WiFi' %}
+                            {% set icon = 'fa-wifi' %}
+                        {% elseif equipment == 'TV Screen' %}
+                            {% set icon = 'fa-television' %}
+                        {% elseif equipment == 'Flip Chart' %}
+                            {% set icon = 'fa-list-alt' %}
+                        {% elseif equipment == 'Conference Phone' %}
+                            {% set icon = 'fa-phone' %}
+                        {% elseif equipment == 'Recording Equipment' %}
+                            {% set icon = 'fa-microphone' %}
+                        {% endif %}
+                        
+                        <i class="fa {{ icon }} text-success"></i> 
+                        <strong>{{ equipment }}</strong>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="callout callout-info" style="margin-top: 15px;">
+            <h4><i class="fa fa-info-circle"></i> Equipment Summary</h4>
+            <p>This room has <strong>{{ value|length }}</strong> equipment/facility item(s) available.</p>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-triangle"></i> 
+            No equipment has been listed for this room yet. Please update the equipment list to help with meeting planning.
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}Validate Meeting - {{ object.objet }}{% endblock %}
+
+{% block content %}
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-check-circle"></i> Validate Meeting
+            </h3>
+        </div>
+        
+        <form method="POST" action="{{ admin.generateObjectUrl('validate', object) }}">
+            <div class="box-body">
+                <div class="alert alert-info">
+                    <h4><i class="fa fa-info-circle"></i> Meeting Validation</h4>
+                    <p>You are about to validate the following meeting:</p>
+                    <ul>
+                        <li><strong>Subject:</strong> {{ object.objet }}</li>
+                        <li><strong>Date:</strong> {{ object.dateDebut|date('d/m/Y H:i') }}</li>
+                        <li><strong>Location:</strong> {{ object.locationDisplay }}</li>
+                        <li><strong>Participants:</strong> {{ object.participations|length }}</li>
+                    </ul>
+                    <p class="text-success">
+                        <i class="fa fa-check"></i> 
+                        Validating this meeting will change its status to <strong>CONFIRMED</strong>.
+                    </p>
+                </div>
+                
+                {% if object.participations|length == 0 %}
+                    <div class="alert alert-warning">
+                        <i class="fa fa-warning"></i> 
+                        <strong>Warning:</strong> No participants have been added to this meeting yet.
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fa fa-check-circle"></i> Confirm Validation
+                </button>
+                <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-default">
+                    <i class="fa fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

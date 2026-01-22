@@ -1,0 +1,39 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+	{% set totalParticipants = object.participations|length %}
+	{% set internalCount = object.nombreParticipantsInternes %}
+	{% set externalCount = object.nombreParticipantsExternes %}
+	{% set attendedCount = object.nombrePresents %}
+
+	<div>
+		<span class="badge badge-primary" title="Total participants">
+			<i class="fa fa-users"></i>
+			{{ totalParticipants }}
+		</span>
+
+		{% if internalCount > 0 %}
+			<span class="badge badge-info" title="Internal staff">
+				<i class="fa fa-user"></i>
+				{{ internalCount }}
+			</span>
+		{% endif %}
+
+		{% if externalCount > 0 %}
+			<span class="badge badge-warning" title="External guests">
+				<i class="fa fa-user-plus"></i>
+				{{ externalCount }}
+			</span>
+		{% endif %}
+
+		{% if object.isPast() and attendedCount > 0 %}
+			<br>
+			<span class="badge badge-success" title="Attended">
+				<i class="fa fa-check"></i>
+				{{ attendedCount }}
+				attended
+			</span>
+		{% endif %}
+	</div>
+
+{% endblock %}

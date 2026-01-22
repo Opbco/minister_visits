@@ -1,0 +1,26 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/list_priority_indicator.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% set now = 'now'|date('U') %}
+    {% set isOverdue = object.dateEcheance and object.dateEcheance|date('U') < now and object.statut.value != 'completed' %}
+    {% set isDueSoon = object.dateEcheance and not isOverdue %}
+    
+    {% if isDueSoon %}
+        {% set daysUntil = ((object.dateEcheance|date('U') - now) / 86400)|round %}
+    {% endif %}
+    
+    <div style="text-align: center; width: 30px;">
+        {% if isOverdue %}
+            <i class="fa fa-exclamation-circle text-danger" style="font-size: 20px;" title="Overdue"></i>
+        {% elseif isDueSoon and daysUntil <= 3 %}
+            <i class="fa fa-warning text-warning" style="font-size: 20px;" title="Due in {{ daysUntil }} day(s)"></i>
+        {% elseif object.statut.value == 'completed' %}
+            <i class="fa fa-check-circle text-success" style="font-size: 20px;" title="Completed"></i>
+        {% elseif object.statut.value == 'in_progress' %}
+            <i class="fa fa-spinner text-info" style="font-size: 20px;" title="In Progress"></i>
+        {% else %}
+            <i class="fa fa-circle-o text-muted" style="font-size: 20px;" title="Pending"></i>
+        {% endif %}
+    </div>
+{% endblock %}

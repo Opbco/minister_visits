@@ -1,0 +1,12 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+	<div>
+		<i class="fa fa-building"></i>
+		{{ object.organisateur.nameFr }}
+		{% if object.organisateur.acronym %}
+			<br>
+			<small class="text-muted">({{ object.organisateur.acronym }})</small>
+		{% endif %}
+	</div>
+{% endblock %}

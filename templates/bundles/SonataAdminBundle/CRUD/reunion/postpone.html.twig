@@ -1,0 +1,78 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}Postpone Meeting - {{ object.objet }}{% endblock %}
+
+{% block content %}
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-clock-o"></i> Postpone Meeting
+            </h3>
+        </div>
+        
+        <form method="POST" action="{{ admin.generateObjectUrl('postpone', object) }}">
+            <div class="box-body">
+                <div class="alert alert-warning">
+                    <h4><i class="fa fa-info-circle"></i> Meeting Postponement</h4>
+                    <p>You are postponing the following meeting:</p>
+                    <ul>
+                        <li><strong>Subject:</strong> {{ object.objet }}</li>
+                        <li><strong>Current Date:</strong> {{ object.dateDebut|date('d/m/Y H:i') }}</li>
+                        <li><strong>Participants:</strong> {{ object.participations|length }}</li>
+                    </ul>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="new_date" class="required">
+                                New Date & Time <span class="text-danger">*</span>
+                            </label>
+                            <input type="datetime-local" 
+                                name="new_date" 
+                                id="new_date" 
+                                class="form-control" 
+                                required
+                                min="{{ 'now'|date('Y-m-d\\TH:i') }}">
+                            <p class="help-block">Select the new date and time for this meeting.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="info-box bg-yellow">
+                            <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Original Date</span>
+                                <span class="info-box-number">
+                                    {{ object.dateDebut|date('d/m/Y H:i') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postpone_reason" class="required">
+                        Reason for Postponement <span class="text-danger">*</span>
+                    </label>
+                    <textarea name="postpone_reason" 
+                            id="postpone_reason" 
+                            class="form-control" 
+                            rows="4" 
+                            required
+                            placeholder="Please explain why this meeting is being postponed..."></textarea>
+                    <p class="help-block">This reason will be communicated to all participants.</p>
+                </div>
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-warning btn-lg">
+                    <i class="fa fa-clock-o"></i> Postpone Meeting
+                </button>
+                <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Go Back
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

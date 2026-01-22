@@ -1,0 +1,77 @@
+{# templates/admin/reunion_participation/show_contact_info.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% set email = null %}
+    {% set phone = null %}
+    
+    {% if object.personnel %}
+        {% set email = object.personnel.email %}
+        {% set phone = object.personnel.telephone %}
+    {% elseif object.externalParticipant %}
+        {% set email = object.externalParticipant.email %}
+        {% set phone = object.externalParticipant.telephone %}
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-box {% if email %}bg-aqua{% else %}bg-gray{% endif %}">
+                <span class="info-box-icon">
+                    <i class="fa fa-envelope"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Email Address</span>
+                    <span class="info-box-number">
+                        {% if email %}
+                            <a href="mailto:{{ email }}" style="color: white; text-decoration: underline;">
+                                {{ email }}
+                            </a>
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="info-box {% if phone %}bg-green{% else %}bg-gray{% endif %}">
+                <span class="info-box-icon">
+                    <i class="fa fa-phone"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Phone Number</span>
+                    <span class="info-box-number">
+                        {% if phone %}
+                            <a href="tel:{{ phone }}" style="color: white; text-decoration: underline;">
+                                {{ phone }}
+                            </a>
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if email or phone %}
+        <div class="callout callout-success">
+            <h4><i class="fa fa-check"></i> Contact Available</h4>
+            <p>You can reach this participant via:</p>
+            <ul>
+                {% if email %}
+                    <li><strong>Email:</strong> Invitations, reports, and formal communications</li>
+                {% endif %}
+                {% if phone %}
+                    <li><strong>Phone/SMS:</strong> Quick reminders and urgent notifications</li>
+                {% endif %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="callout callout-warning">
+            <h4><i class="fa fa-warning"></i> No Contact Information</h4>
+            <p>This participant has no email or phone number on file. Please update their contact information to send notifications.</p>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/list_responsable.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div>
+            <i class="fa fa-user text-primary"></i> 
+            <strong>{{ value.nomComplet }}</strong>
+            {% if value.fonction %}
+                <br><small class="text-muted">{{ value.fonction.libelle }}</small>
+            {% endif %}
+        </div>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-question-circle"></i> Unassigned
+        </span>
+    {% endif %}
+{% endblock %}

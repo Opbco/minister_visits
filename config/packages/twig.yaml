@@ -6,6 +6,7 @@ twig:
         - 'form/map_coords_widget.html.twig'
         - '@SonataAdmin/CRUD/personnel/form/meeting_stats_widget.html.twig'
         - '@SonataAdmin/CRUD/personnel/form/action_items_widget.html.twig'
+        - 'form/fields.html.twig'
 
 when@test:
     twig:

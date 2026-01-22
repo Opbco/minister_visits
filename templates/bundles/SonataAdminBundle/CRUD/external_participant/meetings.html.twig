@@ -1,0 +1,172 @@
+{# templates/admin/external_participant/meetings.html.twig #}
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}
+    Meetings - {{ object.nom }} - {{ admin.label|trans({}, admin.translationDomain) }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <i class="fa fa-user"></i> {{ object.nom }}
+                        {% if object.organisation %}
+                            <small>{{ object.organisation }}</small>
+                        {% endif %}
+                    </h3>
+                    <div class="box-tools pull-right">
+                        <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-eye"></i> View Profile
+                        </a>
+                        <a href="{{ admin.generateUrl('list') }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-list"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong><i class="fa fa-envelope"></i> Email</strong>
+                            <p class="text-muted">
+                                {% if object.email %}
+                                    <a href="mailto:{{ object.email }}">{{ object.email }}</a>
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><i class="fa fa-phone"></i> Phone</strong>
+                            <p class="text-muted">
+                                {% if object.telephone %}
+                                    <a href="tel:{{ object.telephone }}">{{ object.telephone }}</a>
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><i class="fa fa-building"></i> Organization</strong>
+                            <p class="text-muted">{{ object.organisation ?? 'Independent' }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><i class="fa fa-briefcase"></i> Function</strong>
+                            <p class="text-muted">{{ object.fonction ?? 'Not specified' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <i class="fa fa-calendar"></i> Meeting Participation History
+                    </h3>
+                    <div class="box-tools pull-right">
+                        <span class="badge bg-blue">{{ participations|length }} Total</span>
+                    </div>
+                </div>
+                <div class="box-body">
+                    {% if participations|length > 0 %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr class="bg-light-blue">
+                                        <th width="5%">#</th>
+                                        <th width="35%">Meeting Title</th>
+                                        <th width="15%">Date & Time</th>
+                                        <th width="15%">Location</th>
+                                        <th width="15%">Status</th>
+                                        <th width="15%">Confirmed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for participation in participations %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>
+                                                <strong>{{ participation.reunion.objet }}</strong>
+                                                {% if participation.reunion.typeReunion %}
+                                                    <br>
+                                                    <span class="label label-default">
+                                                        {{ participation.reunion.typeReunion.libelle }}
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-calendar"></i> 
+                                                {{ participation.reunion.dateDebut|date('d/m/Y') }}
+                                                <br>
+                                                <i class="fa fa-clock-o"></i> 
+                                                {{ participation.reunion.dateDebut|date('H:i') }}
+                                                {% if participation.reunion.dateFin %}
+                                                    - {{ participation.reunion.dateFin|date('H:i') }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if participation.reunion.lieu %}
+                                                    <i class="fa fa-map-marker text-danger"></i> 
+                                                    {{ participation.reunion.lieu }}
+                                                {% else %}
+                                                    <span class="text-muted">Not specified</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if participation.status.value == 'attended' %}
+                                                    <span class="label label-success">
+                                                        <i class="fa fa-check"></i> Attended
+                                                    </span>
+                                                {% elseif participation.status.value == 'confirmed' %}
+                                                    <span class="label label-info">
+                                                        <i class="fa fa-check-circle"></i> Confirmed
+                                                    </span>
+                                                {% elseif participation.status.value == 'absent' %}
+                                                    <span class="label label-danger">
+                                                        <i class="fa fa-times"></i> Absent
+                                                    </span>
+                                                {% elseif participation.status.value == 'excused' %}
+                                                    <span class="label label-warning">
+                                                        <i class="fa fa-info-circle"></i> Excused
+                                                    </span>
+                                                {% else %}
+                                                    <span class="label label-default">
+                                                        <i class="fa fa-envelope"></i> Invited
+                                                    </span>
+                                                {% endif %}
+                                                {% if participation.absenceReason %}
+                                                    <br><small class="text-muted">
+                                                        <i class="fa fa-comment"></i> {{ participation.absenceReason|slice(0, 50) }}
+                                                        {% if participation.absenceReason|length > 50 %}...{% endif %}
+                                                    </small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if participation.confirmedAt %}
+                                                    <i class="fa fa-check text-success"></i> 
+                                                    {{ participation.confirmedAt|date('d/m/Y H:i') }}
+                                                {% else %}
+                                                    <span class="text-muted">—</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle"></i> 
+                            This external participant has not been invited to any meetings yet.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

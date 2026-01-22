@@ -18,6 +18,8 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: MeetingRoomRepository::class)]
 #[ORM\Table(name: 'meeting_room')]
@@ -85,6 +87,16 @@ class MeetingRoom
 
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
+
+    #[ORM\OneToMany(targetEntity: Reunion::class, mappedBy: 'salle', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[Groups(['room:read', 'room:write'])]
+    private Collection $reunions;
+
+    public function __construct()
+    {
+        $this->reunions = new ArrayCollection();
+    }
+    
 
     public function getId(): ?int
     {
@@ -195,6 +207,82 @@ class MeetingRoom
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $this->date_created = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->date_updated = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->nom ?? 'New Meeting Room';
+    }
+
+    public function isAvailable(): bool
+    {
+        $now = new \DateTimeImmutable();
+
+        foreach ($this->reunions as $reunion) {
+            if ($reunion->getStartTime() <= $now && $reunion->getEndTime() >= $now) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getUsageStats(): array
+    {
+        $totalMeetings = count($this->reunions);
+        $totalHours = 0;
+
+        foreach ($this->reunions as $reunion) {
+            $interval = $reunion->getStartTime()->diff($reunion->getEndTime());
+            $totalHours += ($interval->h + ($interval->days * 24)) + ($interval->i / 60);
+        }
+
+        return [
+            'total_meetings' => $totalMeetings,
+            'total_hours' => round($totalHours, 2),
+        ];
+    }
+
+    /**
+     * @return Collection<int, Reunion>
+     */
+    public function getReunions(): Collection
+    {
+        return $this->reunions;
+    }
+
+    public function addReunion(Reunion $reunion): static
+    {
+        if (!$this->reunions->contains($reunion)) {
+            $this->reunions->add($reunion);
+            $reunion->setSalle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReunion(Reunion $reunion): static
+    {
+        if ($this->reunions->removeElement($reunion)) {
+            // set the owning side to null (unless already changed)
+            if ($reunion->getSalle() === $this) {
+                $reunion->setSalle(null);
+            }
+        }
 
         return $this;
     }

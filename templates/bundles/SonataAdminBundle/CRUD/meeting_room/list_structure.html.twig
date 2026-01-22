@@ -1,0 +1,18 @@
+{# templates/bundles/SonataAdminBundle/CRUD/meeting_room/list_structure.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div>
+            <i class="fa fa-building text-primary"></i> 
+            <strong>{{ value.nameFr }}</strong>
+            {% if value.acronym %}
+                <br><small class="text-muted">({{ value.acronym }})</small>
+            {% endif %}
+        </div>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-map-marker"></i> No location specified
+        </span>
+    {% endif %}
+{% endblock %}

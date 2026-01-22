@@ -1,0 +1,82 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	<div class="box box-success">
+		<div class="box-header with-border">
+			<h3 class="box-title">
+				<i class="fa fa-map-marker"></i>
+				Location Information
+			</h3>
+		</div>
+		<div class="box-body">
+			<dl class="dl-horizontal">
+				<dt>Meeting Format:</dt>
+				<dd>
+					{% if object.isInPerson() %}
+						<span class="label label-default">
+							<i class="fa fa-building"></i>
+							In-Person Only
+						</span>
+						<br><small class="text-muted">All participants attend physically</small>
+					{% elseif object.isVirtual() %}
+						<span class="label label-primary">
+							<i class="fa fa-video-camera"></i>
+							Virtual Only
+						</span>
+						<br><small class="text-muted">All participants join remotely</small>
+					{% elseif object.isHybrid() %}
+						<span class="label label-info">
+							<i class="fa fa-exchange"></i>
+							Hybrid
+						</span>
+						<br><small class="text-muted">In-person and virtual options available</small>
+					{% endif %}
+				</dd>
+
+				{% if object.requiresPhysicalLocation() %}
+					<dt>Physical Location:</dt>
+					<dd>
+						{% if object.salle %}
+							<i class="fa fa-building"></i>
+							<strong>{{ object.salle.nom }}</strong>
+							{% if object.salle.structure %}
+								<br><small class="text-muted">{{ object.salle.structure.nameFr }}</small>
+							{% endif %}
+							{% if object.salle.capacite %}
+								<br><small class="text-muted">
+									<i class="fa fa-users"></i>
+									Capacity:
+									{{ object.salle.capacite }}
+									people
+								</small>
+							{% endif %}
+						{% elseif object.lieu %}
+							<i class="fa fa-map-marker"></i>
+							{{ object.lieu }}
+						{% else %}
+							<span class="text-muted">Not specified</span>
+						{% endif %}
+					</dd>
+				{% endif %}
+
+				{% if object.requiresVideoConference() %}
+					<dt>Virtual Access:</dt>
+					<dd>
+						{% if object.videoConferencePlatform %}
+							<i class="fa fa-video-camera"></i>
+							{{ object.videoConferencePlatform.label }}
+						{% else %}
+							<span class="text-muted">Platform not specified</span>
+						{% endif %}
+						{% if object.videoConferenceLink %}
+							<br>
+							<a href="{{ object.videoConferenceLink }}" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 5px;">
+								<i class="fa fa-external-link"></i>
+								Join Meeting
+							</a>
+						{% endif %}
+					</dd>
+				{% endif %}
+			</dl>
+		</div>
+	</div>
+{% endblock %}

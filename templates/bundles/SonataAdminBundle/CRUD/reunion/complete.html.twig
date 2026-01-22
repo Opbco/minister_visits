@@ -1,0 +1,80 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}Complete Meeting - {{ object.objet }}{% endblock %}
+
+{% block content %}
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-check"></i> Mark Meeting as Completed
+            </h3>
+        </div>
+        
+        <form method="POST" action="{{ admin.generateObjectUrl('complete', object) }}">
+            <div class="box-body">
+                <div class="alert alert-success">
+                    <h4><i class="fa fa-info-circle"></i> Complete Meeting</h4>
+                    <p>You are marking this meeting as completed:</p>
+                    <ul>
+                        <li><strong>Subject:</strong> {{ object.objet }}</li>
+                        <li><strong>Date:</strong> {{ object.dateDebut|date('d/m/Y H:i') }}</li>
+                        <li><strong>Participants:</strong> {{ object.participations|length }}</li>
+                    </ul>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="info-box bg-green">
+                            <span class="info-box-icon"><i class="fa fa-users"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Participants</span>
+                                <span class="info-box-number">{{ object.participations|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="info-box bg-aqua">
+                            <span class="info-box-icon"><i class="fa fa-list"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Agenda Items</span>
+                                <span class="info-box-number">{{ object.agendaItems|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="info-box bg-yellow">
+                            <span class="info-box-icon"><i class="fa fa-tasks"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Action Items</span>
+                                <span class="info-box-number">{{ object.actionItems|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fa fa-lightbulb-o"></i> <strong>Next Steps:</strong>
+                    <ul>
+                        <li>Update attendance records</li>
+                        <li>Add meeting summary/report</li>
+                        <li>Track action items progress</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fa fa-check"></i> Mark as Completed
+                </button>
+                <a href="{{ admin.generateObjectUrl('edit', object) }}" class="btn btn-primary">
+                    <i class="fa fa-edit"></i> Edit Meeting Report
+                </a>
+                <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Go Back
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

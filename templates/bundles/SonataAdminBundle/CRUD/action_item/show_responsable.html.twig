@@ -1,0 +1,46 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/show_responsable.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div class="well well-sm" style="background-color: #e3f2fd;">
+            <h4 style="margin-top: 0;">
+                <i class="fa fa-user text-primary"></i> {{ value.nomComplet }}
+            </h4>
+            <dl class="dl-horizontal" style="margin-bottom: 0;">
+                {% if value.fonction %}
+                    <dt>Function:</dt>
+                    <dd>{{ value.fonction.libelle }}</dd>
+                {% endif %}
+                
+                {% if value.structure %}
+                    <dt>Structure:</dt>
+                    <dd>{{ value.structure.nameFr }}</dd>
+                {% endif %}
+                
+                {% if value.email %}
+                    <dt>Email:</dt>
+                    <dd>
+                        <a href="mailto:{{ value.email }}">
+                            <i class="fa fa-envelope"></i> {{ value.email }}
+                        </a>
+                    </dd>
+                {% endif %}
+                
+                {% if value.telephone %}
+                    <dt>Phone:</dt>
+                    <dd>
+                        <a href="tel:{{ value.telephone }}">
+                            <i class="fa fa-phone"></i> {{ value.telephone }}
+                        </a>
+                    </dd>
+                {% endif %}
+            </dl>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-triangle"></i> 
+            <strong>No person assigned</strong> - This action item needs to be assigned to someone.
+        </div>
+    {% endif %}
+{% endblock %}

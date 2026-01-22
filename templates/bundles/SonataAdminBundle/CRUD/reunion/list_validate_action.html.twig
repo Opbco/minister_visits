@@ -1,0 +1,7 @@
+{% if object.statut.value == 'planned' %}
+    <a href="{{ admin.generateObjectUrl('validate', object) }}" 
+        class="btn btn-sm btn-success" 
+        title="Validate this meeting">
+        <i class="fa fa-check-circle"></i> Validate
+    </a>
+{% endif %}

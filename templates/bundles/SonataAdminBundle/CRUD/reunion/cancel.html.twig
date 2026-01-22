@@ -1,0 +1,53 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}Cancel Meeting - {{ object.objet }}{% endblock %}
+
+{% block content %}
+    <div class="box box-danger">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-ban"></i> Cancel Meeting
+            </h3>
+        </div>
+        
+        <form method="POST" action="{{ admin.generateObjectUrl('cancel', object) }}">
+            <div class="box-body">
+                <div class="alert alert-danger">
+                    <h4><i class="fa fa-warning"></i> Meeting Cancellation</h4>
+                    <p>You are about to cancel the following meeting:</p>
+                    <ul>
+                        <li><strong>Subject:</strong> {{ object.objet }}</li>
+                        <li><strong>Date:</strong> {{ object.dateDebut|date('d/m/Y H:i') }}</li>
+                        <li><strong>Participants:</strong> {{ object.participations|length }}</li>
+                    </ul>
+                    <p class="text-danger">
+                        <i class="fa fa-exclamation-triangle"></i> 
+                        This action will notify all participants about the cancellation.
+                    </p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cancel_reason" class="required">
+                        Reason for Cancellation <span class="text-danger">*</span>
+                    </label>
+                    <textarea name="cancel_reason" 
+                            id="cancel_reason" 
+                            class="form-control" 
+                            rows="4" 
+                            required
+                            placeholder="Please provide a detailed reason for cancelling this meeting..."></textarea>
+                    <p class="help-block">This reason will be communicated to all participants.</p>
+                </div>
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fa fa-ban"></i> Cancel Meeting
+                </button>
+                <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Go Back
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

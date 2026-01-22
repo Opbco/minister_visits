@@ -1,0 +1,25 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+	{% set isUpcoming = object.isUpcoming() %}
+	{% set isOngoing = object.isOngoing() %}
+	{% set isPast = object.isPast() %}
+	{% set status = object.statut.value %}
+
+	<div class="status-indicator" style="width: 10px; height: 40px; border-radius: 5px;
+		    {% if status == 'cancelled' %}
+		        background: #dd4b39;
+		    {% elseif status == 'completed' %}
+		        background: #00a65a;
+		    {% elseif status == 'postponed' %}
+		        background: #f39c12;
+		    {% elseif isOngoing %}
+		        background: #00c0ef;
+		    {% elseif isUpcoming %}
+		        background: #3c8dbc;
+		    {% else %}
+		        background: #d2d6de;
+		    {% endif %}
+		" title="{{ status|title }}"></div>
+
+{% endblock %}

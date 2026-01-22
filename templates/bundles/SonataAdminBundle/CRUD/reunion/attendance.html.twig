@@ -1,0 +1,74 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}Attendance Tracking - {{ object.objet }}{% endblock %}
+
+{% block content %}
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <i class="fa fa-check-square-o"></i> Attendance Tracking
+            </h3>
+        </div>
+        
+        <form method="POST" action="{{ admin.generateObjectUrl('attendance', object) }}">
+            <div class="box-body">
+                <div class="alert alert-info">
+                    <strong>Meeting:</strong> {{ object.objet }}<br>
+                    <strong>Date:</strong> {{ object.dateDebut|date('d/m/Y H:i') }}
+                </div>
+                
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th width="40%">Participant</th>
+                            <th>Type</th>
+                            <th width="200">Status</th>
+                            <th>Absence Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participation in object.participations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ participation.participantName }}</strong>
+                                </td>
+                                <td>
+                                    {% if participation.personnel %}
+                                        <span class="label label-info">Internal</span>
+                                    {% else %}
+                                        <span class="label label-warning">External</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <select name="attendance[{{ participation.id }}][status]" class="form-control">
+                                        <option value="invited" {% if participation.status.value == 'invited' %}selected{% endif %}>Invited</option>
+                                        <option value="confirmed" {% if participation.status.value == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                        <option value="attended" {% if participation.status.value == 'attended' %}selected{% endif %}>Attended</option>
+                                        <option value="absent" {% if participation.status.value == 'absent' %}selected{% endif %}>Absent</option>
+                                        <option value="excused" {% if participation.status.value == 'excused' %}selected{% endif %}>Excused</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" 
+                                            name="attendance[{{ participation.id }}][reason]" 
+                                            class="form-control" 
+                                            placeholder="Reason (if absent/excused)"
+                                            value="{{ participation.absenceReason }}">
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fa fa-save"></i> Save Attendance
+                </button>
+                <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends '@SonataAdmin/standard_layout.html.twig' %}
 
 {% block title %}
-    Send Notification to Personnel
+    Send Notification to External Participants
 {% endblock %}
 
 {% block content %}
@@ -9,7 +9,7 @@
         <div class="box-header with-border">
             <h3 class="box-title">
                 <i class="fa fa-bell"></i>
-                Send Notification to {{ personnelList|length }} Personnel
+                Send Notification to {{ participantList|length }} External Participant(s)
             </h3>
         </div>
         <form method="POST" action="{{ admin.generateUrl('batch', {'filter': admin.datagrid.values}) }}">
@@ -22,19 +22,22 @@
             
             <div class="box-body">
                 <div class="alert alert-info">
-                    <h4><i class="fa fa-users"></i> Selected Personnel</h4>
+                    <h4><i class="fa fa-users"></i> Selected Participants</h4>
                     <ul>
-                        {% for personnel in personnelList %}
+                        {% for participant in participantList %}
                             <li>
-                                <strong>{{ personnel.nomComplet }}</strong>
-                                {% if personnel.email %}
+                                <strong>{{ participant.nom }}</strong>
+                                {% if participant.organisation %}
+                                    <span class="label label-default">{{ participant.organisation }}</span>
+                                {% endif %}
+                                {% if participant.email %}
                                     <span class="label label-success">
-                                        <i class="fa fa-envelope"></i> {{ personnel.email }}
+                                        <i class="fa fa-envelope"></i> {{ participant.email }}
                                     </span>
                                 {% endif %}
-                                {% if personnel.telephone %}
+                                {% if participant.telephone %}
                                     <span class="label label-info">
-                                        <i class="fa fa-phone"></i> {{ personnel.telephone }}
+                                        <i class="fa fa-phone"></i> {{ participant.telephone }}
                                     </span>
                                 {% endif %}
                             </li>

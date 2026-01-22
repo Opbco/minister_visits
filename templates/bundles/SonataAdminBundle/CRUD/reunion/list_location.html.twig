@@ -1,0 +1,62 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+	<div>
+		{% if object.isVirtual() %}
+			<i class="fa fa-video-camera text-primary"></i>
+			<strong>{{ object.videoConferencePlatform ? object.videoConferencePlatform.label : 'Virtual Meeting' }}</strong>
+			{% if object.videoConferenceLink %}
+				<br>
+				<a href="{{ object.videoConferenceLink }}" target="_blank" class="btn btn-xs btn-primary">
+					<i class="fa fa-external-link"></i>
+					Join
+				</a>
+			{% endif %}
+		{% elseif object.isHybrid() %}
+			<div>
+				<i class="fa fa-building text-success"></i>
+				{% if object.salle %}
+					<strong>{{ object.salle.nom }}</strong>
+				{% elseif object.lieu %}
+					{{ object.lieu }}
+				{% else %}
+					<span class="text-muted">Location TBD</span>
+				{% endif %}
+			</div>
+			<div style="margin-top: 5px;">
+				<i class="fa fa-video-camera text-primary"></i>
+				{{ object.videoConferencePlatform ? object.videoConferencePlatform.label : 'Video Conference' }}
+				{% if object.videoConferenceLink %}
+					<br>
+					<a href="{{ object.videoConferenceLink }}" target="_blank" class="btn btn-xs btn-primary">
+						<i class="fa fa-external-link"></i>
+						Join Online
+					</a>
+				{% endif %}
+			</div>
+		{% else %}
+			{# In-Person #}
+			{% if object.salle %}
+				<i class="fa fa-map-marker"></i>
+				<strong>{{ object.salle.nom }}</strong>
+				{% if object.salle.capacite %}
+					<br>
+					<small class="text-muted">
+						<i class="fa fa-users"></i>
+						Capacity:
+						{{ object.salle.capacite }}
+					</small>
+				{% endif %}
+			{% elseif object.lieu %}
+				<i class="fa fa-map-marker"></i>
+				{{ object.lieu }}
+			{% else %}
+				<span class="text-muted">
+					<i class="fa fa-map-marker"></i>
+					Not specified
+				</span>
+			{% endif %}
+		{% endif %}
+	</div>
+
+{% endblock %}

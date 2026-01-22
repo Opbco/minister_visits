@@ -9,6 +9,7 @@ use App\Entity\Personnel;
 use App\Entity\Structure;
 use App\Entity\User;
 use App\Form\Type\ActionItemsType;
+use App\Form\Type\HtmlType;
 use App\Form\Type\MeetingStatsType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -209,11 +210,8 @@ final class PersonnelAdmin extends AbstractAdmin
                     'class' => 'col-md-4',
                     'box_class' => 'box box-warning'
                 ])
-                    ->add('_contact_help', TextType::class, [
-                        'label' => false,
-                        'mapped' => false,
-                        'disabled' => true,
-                        'help' => '
+                    ->add('_contact_help', HtmlType::class, [
+                        'html' => '
                             <div class="alert alert-warning">
                                 <h4><i class="icon fa fa-warning"></i> Important!</h4>
                                 <ul>
@@ -233,7 +231,6 @@ final class PersonnelAdmin extends AbstractAdmin
                                 </ul>
                             </div>
                         ',
-                        'help_html' => true,
                     ])
                 ->end()
             ->end()
@@ -258,11 +255,8 @@ final class PersonnelAdmin extends AbstractAdmin
                     'class' => 'col-md-4',
                     'box_class' => 'box box-info'
                 ])
-                    ->add('_account_help', TextType::class, [
-                        'label' => false,
-                        'mapped' => false,
-                        'disabled' => true,
-                        'help' => '
+                    ->add('_account_help', HtmlType::class, [
+                        'html' => '
                             <div class="alert alert-info">
                                 <h4><i class="icon fa fa-info-circle"></i> User Accounts</h4>
                                 <p>Create a user account to allow this staff member to:</p>
@@ -279,7 +273,6 @@ final class PersonnelAdmin extends AbstractAdmin
                                     : '') . '
                             </div>
                         ',
-                        'help_html' => true,
                     ])
                 ->end()
             ->end()

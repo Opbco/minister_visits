@@ -1,0 +1,18 @@
+{# templates/admin/reunion_participation/list_participant_type.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.personnel %}
+        <span class="label label-primary">
+            <i class="fa fa-user"></i> Internal
+        </span>
+    {% elseif object.externalParticipant %}
+        <span class="label label-info">
+            <i class="fa fa-user-secret"></i> External
+        </span>
+    {% else %}
+        <span class="label label-danger">
+            <i class="fa fa-question"></i> Unknown
+        </span>
+    {% endif %}
+{% endblock %}

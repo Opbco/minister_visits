@@ -191,8 +191,77 @@ services:
         calls:
             - [setTranslationDomain, ['messages']]
 
+    admin.external_participant:
+        class: App\Admin\ExternalParticipantAdmin
+        tags:
+            - { controller: App\Controller\Admin\ExternalParticipantCRUDController, name: sonata.admin, model_class: App\Entity\ExternalParticipant, manager_type: orm, group: 'Human Resources', label: 'External Participants', icon: '<i class="fa fa-user-plus"></i>' }
+        calls:
+            - [setTranslationDomain, ['messages']]
+
     # ============ END ======== PERSONNEL ADMIN ========= END ===========
 
+    # ==================== REUNION ADMIN ====================
+
+    admin.meeting_room:
+        class: App\Admin\MeetingRoomAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\MeetingRoom,
+                    controller: App\Controller\Admin\MeetingRoomCRUDController,
+                    manager_type: orm,
+                    icon: '<i class="fa fa-handshake-o" aria-hidden="true"></i>',
+                    group: "Gestion des réunions",
+                    label: Salles de réunion,
+                }
+
+    admin.reunion_participation:
+        class: App\Admin\ReunionParticipationAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\ReunionParticipation,
+                    controller: ~,
+                    manager_type: orm,
+                    group: "Gestion des réunions",
+                    label: Participations aux réunions,
+                }
+
+    admin.reunion:
+        class: App\Admin\ReunionAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Reunion,
+                    controller: App\Controller\Admin\ReunionCRUDController,
+                    manager_type: orm,
+                    group: "Gestion des réunions",
+                    label: Réunions,
+                }
+
+    admin.action_item:
+        class: App\Admin\ActionItemAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\ActionItem,
+                    controller: App\Controller\Admin\ActionItemCRUDController,
+                    manager_type: orm,
+                    group: "Gestion des réunions",
+                    label: Actions à suivre,
+                }
+
+    # ==================== END REUNION ADMIN ====================
+
+    # ==================== DOCUMENT ADMIN ====================
     admin.document:
         class: App\Admin\DocumentAdmin
         calls:
@@ -206,4 +275,6 @@ services:
                     group: "Gestion des documents",
                     label: Documents,
                 }
+
+    # ============ END ======== DOCUMENT ADMIN ========= END ===========
 

@@ -1,0 +1,213 @@
+{# templates/admin/meeting_room/schedule.html.twig #}
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block title %}
+    Schedule - {{ object.nom }} - {{ admin.label|trans({}, admin.translationDomain) }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <i class="fa fa-calendar"></i> {{ object.nom }}
+                        {% if object.structure %}
+                            <small>{{ object.structure.nameFr }}</small>
+                        {% endif %}
+                    </h3>
+                    <div class="box-tools pull-right">
+                        <a href="{{ admin.generateObjectUrl('exportSchedule', object) }}" class="btn btn-sm btn-success">
+                            <i class="fa fa-download"></i> Export Schedule
+                        </a>
+                        <a href="{{ admin.generateObjectUrl('show', object) }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-eye"></i> View Details
+                        </a>
+                        <a href="{{ admin.generateUrl('list') }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-list"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="info-box bg-aqua">
+                                <span class="info-box-icon"><i class="fa fa-users"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Capacity</span>
+                                    <span class="info-box-number">
+                                        {{ object.capacite ?? 'N/A' }}
+                                        {% if object.capacite %}people{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-green">
+                                <span class="info-box-icon"><i class="fa fa-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Equipment</span>
+                                    <span class="info-box-number">
+                                        {{ object.equipements|length }} items
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-yellow">
+                                <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Meetings</span>
+                                    <span class="info-box-number">{{ meetings|length }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box {% if object.isAvailable() %}bg-green{% else %}bg-red{% endif %}">
+                                <span class="info-box-icon">
+                                    <i class="fa {% if object.isAvailable() %}fa-check-circle{% else %}fa-ban{% endif %}"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Status</span>
+                                    <span class="info-box-number">
+                                        {% if object.isAvailable() %}Available{% else %}In Use{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if object.equipements and object.equipements|length > 0 %}
+                        <div class="callout callout-info">
+                            <h4><i class="fa fa-wrench"></i> Available Equipment</h4>
+                            <p>
+                                {% for equipment in object.equipements %}
+                                    <span class="label label-success" style="margin-right: 5px; margin-bottom: 5px;">
+                                        <i class="fa fa-check"></i> {{ equipment }}
+                                    </span>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <i class="fa fa-calendar-check-o"></i> Meeting Schedule
+                    </h3>
+                </div>
+                <div class="box-body">
+                    {% if meetings|length > 0 %}
+                        {% set now = 'now'|date('U') %}
+                        {% set upcomingMeetings = [] %}
+                        {% set pastMeetings = [] %}
+                        {% set ongoingMeetings = [] %}
+                        
+                        {% for meeting in meetings %}
+                            {% set startTime = meeting.dateDebut|date('U') %}
+                            {% set endTime = meeting.dateFin|date('U') %}
+                            
+                            {% if startTime > now %}
+                                {% set upcomingMeetings = upcomingMeetings|merge([meeting]) %}
+                            {% elseif endTime < now %}
+                                {% set pastMeetings = pastMeetings|merge([meeting]) %}
+                            {% else %}
+                                {% set ongoingMeetings = ongoingMeetings|merge([meeting]) %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {# Ongoing Meetings #}
+                        {% if ongoingMeetings|length > 0 %}
+                            <h4 class="text-warning">
+                                <i class="fa fa-circle"></i> Ongoing Now ({{ ongoingMeetings|length }})
+                            </h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="bg-yellow">
+                                        <tr>
+                                            <th width="40%">Meeting Title</th>
+                                            <th width="20%">Time</th>
+                                            <th width="20%">Organizer</th>
+                                            <th width="20%">Participants</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for meeting in ongoingMeetings %}
+                                            {{ include('admin/meeting_room/_meeting_row.html.twig', {meeting: meeting, status: 'ongoing'}) }}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                        {% endif %}
+                        
+                        {# Upcoming Meetings #}
+                        {% if upcomingMeetings|length > 0 %}
+                            <h4 class="text-success">
+                                <i class="fa fa-clock-o"></i> Upcoming Meetings ({{ upcomingMeetings|length }})
+                            </h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="bg-light-blue">
+                                        <tr>
+                                            <th width="40%">Meeting Title</th>
+                                            <th width="20%">Date & Time</th>
+                                            <th width="20%">Organizer</th>
+                                            <th width="20%">Participants</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for meeting in upcomingMeetings %}
+                                            {{ include('admin/meeting_room/_meeting_row.html.twig', {meeting: meeting, status: 'upcoming'}) }}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                        {% endif %}
+                        
+                        {# Past Meetings #}
+                        {% if pastMeetings|length > 0 %}
+                            <h4 class="text-muted">
+                                <i class="fa fa-history"></i> Past Meetings ({{ pastMeetings|length }})
+                            </h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr class="bg-gray">
+                                            <th width="40%">Meeting Title</th>
+                                            <th width="20%">Date & Time</th>
+                                            <th width="20%">Organizer</th>
+                                            <th width="20%">Participants</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for meeting in pastMeetings|slice(0, 20) %}
+                                            {{ include('@SonataAdmin/CRUD/meeting_room/_meeting_row.html.twig', {meeting: meeting, status: 'past'}) }}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% if pastMeetings|length > 20 %}
+                                <p class="text-muted text-center">
+                                    Showing 20 of {{ pastMeetings|length }} past meetings
+                                </p>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            <h4><i class="fa fa-info-circle"></i> No Meetings Scheduled</h4>
+                            <p>This room has no meetings scheduled. It's available for booking!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

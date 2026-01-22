@@ -1,0 +1,79 @@
+{# templates/bundles/SonataAdminBundle/CRUD/external_participant/form_meeting_history.html.twig #}
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            <i class="fa fa-calendar"></i> Meeting Participation History
+        </h3>
+    </div>
+    <div class="box-body">
+        {% set participations = admin.subject.myReunions %}
+        {% if participations|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Meeting</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Confirmed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participation in participations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ participation.reunion.objet }}</strong>
+                                </td>
+                                <td>
+                                    <i class="fa fa-clock-o"></i> 
+                                    {{ participation.reunion.dateDebut|date('d/m/Y H:i') }}
+                                </td>
+                                <td>
+                                    {% if participation.status.value == 'attended' %}
+                                        <span class="label label-success">
+                                            <i class="fa fa-check"></i> Attended
+                                        </span>
+                                    {% elseif participation.status.value == 'confirmed' %}
+                                        <span class="label label-info">
+                                            <i class="fa fa-check-circle"></i> Confirmed
+                                        </span>
+                                    {% elseif participation.status.value == 'absent' %}
+                                        <span class="label label-danger">
+                                            <i class="fa fa-times"></i> Absent
+                                        </span>
+                                    {% elseif participation.status.value == 'excused' %}
+                                        <span class="label label-warning">
+                                            <i class="fa fa-info-circle"></i> Excused
+                                        </span>
+                                    {% else %}
+                                        <span class="label label-default">
+                                            <i class="fa fa-envelope"></i> Invited
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if participation.confirmedAt %}
+                                        <i class="fa fa-check text-success"></i> 
+                                        {{ participation.confirmedAt|date('d/m/Y H:i') }}
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center" style="margin-top: 15px;">
+                <a href="{{ admin.generateObjectUrl('meetings', admin.subject) }}" class="btn btn-primary">
+                    <i class="fa fa-list"></i> View All Meetings
+                </a>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> 
+                No meeting participation history yet.
+            </div>
+        {% endif %}
+    </div>
+</div>

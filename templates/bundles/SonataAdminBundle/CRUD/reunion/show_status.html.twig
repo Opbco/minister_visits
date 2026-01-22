@@ -1,0 +1,65 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	{% set status = value.value %}
+
+	<div class="meeting-status">
+		{% if status == 'planned' %}
+			<span class="label label-lg label-default">
+				<i class="fa fa-calendar"></i>
+				Planned
+			</span>
+		{% elseif status == 'confirmed' %}
+			<span class="label label-lg label-primary">
+				<i class="fa fa-check-circle"></i>
+				Confirmed
+			</span>
+			{% if object.userValidated %}
+				<br><small class="text-muted">
+					Validated by
+					{{ object.userValidated.username }}
+					on
+					{{ object.dateValidation|date('d/m/Y H:i') }}
+				</small>
+			{% endif %}
+		{% elseif status == 'in_progress' %}
+			<span class="label label-lg label-warning">
+				<i class="fa fa-spinner fa-spin"></i>
+				In Progress
+			</span>
+		{% elseif status == 'completed' %}
+			<span class="label label-lg label-success">
+				<i class="fa fa-check"></i>
+				Completed
+			</span>
+		{% elseif status == 'cancelled' %}
+			<span class="label label-lg label-danger">
+				<i class="fa fa-ban"></i>
+				Cancelled
+			</span>
+			{% if object.motifReport %}
+				<br><br>
+				<div class="alert alert-danger">
+					<strong>Cancellation Reason:</strong><br>
+					{{ object.motifReport }}
+				</div>
+			{% endif %}
+		{% elseif status == 'postponed' %}
+			<span class="label label-lg label-warning">
+				<i class="fa fa-clock-o"></i>
+				Postponed
+			</span>
+			{% if object.nouvelleDateDebut %}
+				<br><br>
+				<div class="alert alert-warning">
+					<strong>New Date:</strong>
+					{{ object.nouvelleDateDebut|date('d/m/Y H:i') }}<br>
+					{% if object.motifReport %}
+						<strong>Reason:</strong>
+						{{ object.motifReport }}
+					{% endif %}
+				</div>
+			{% endif %}
+		{% endif %}
+	</div>
+
+{% endblock %}

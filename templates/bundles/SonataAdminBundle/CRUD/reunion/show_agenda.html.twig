@@ -1,0 +1,51 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+	{% if object.agendaItems|length > 0 %}
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th width="50">#</th>
+					<th>Agenda Item</th>
+					<th>Presenter</th>
+					<th>Duration</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in object.agendaItems %}
+					<tr>
+						<td>
+							<strong>{{ item.ordre }}</strong>
+						</td>
+						<td>
+							<strong>{{ item.titre }}</strong>
+							{% if item.description %}
+								<br><small class="text-muted">{{ item.description }}</small>
+							{% endif %}
+						</td>
+						<td>
+							{% if item.presentateur %}
+								{{ item.presentateur.participantName }}
+							{% else %}
+								<span class="text-muted">Not assigned</span>
+							{% endif %}
+						</td>
+						<td>
+							{% if item.dureeEstimee %}
+								{{ item.dureeEstimee }}
+								min
+							{% else %}
+								<span class="text-muted">-</span>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<div class="alert alert-info">
+			<i class="fa fa-info-circle"></i>
+			No agenda items defined for this meeting.
+		</div>
+	{% endif %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{# templates/bundles/SonataAdminBundle/CRUD/action_item/list_description.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <div style="max-width: 400px;">
+        <strong>{{ value|slice(0, 100) }}{% if value|length > 100 %}...{% endif %}</strong>
+        {% if object.commentaire %}
+            <br><small class="text-muted">
+                <i class="fa fa-comment"></i> {{ object.commentaire|slice(0, 60) }}{% if object.commentaire|length > 60 %}...{% endif %}
+            </small>
+        {% endif %}
+    </div>
+{% endblock %}

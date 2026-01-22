@@ -1,0 +1,7 @@
+{% if object.participations|length > 0 and object.isUpcoming() %}
+    <a href="{{ admin.generateObjectUrl('send_invitations', object) }}" 
+        class="btn btn-sm btn-primary" 
+        title="Send invitations to participants">
+        <i class="fa fa-envelope"></i> Invite
+    </a>
+{% endif %}
