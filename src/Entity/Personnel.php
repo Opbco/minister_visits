@@ -98,6 +98,40 @@ class Personnel
         $this->actionItems = new ArrayCollection();
     }
 
+    public function getMeetingStats(): array
+    {
+        $totalMeetings = $this->myReunions->count();
+        $attendedMeetings = 0;
+
+        foreach ($this->myReunions as $participation) {
+            if ($participation->isAttended()) {
+                $attendedMeetings++;
+            }
+        }
+
+        return [
+            'totalMeetings' => $totalMeetings,
+            'attendedMeetings' => $attendedMeetings,
+        ];
+    }
+
+    public function getPerformance(): array
+    {
+        $totalActionItems = $this->actionItems->count();
+        $completedActionItems = 0;
+
+        foreach ($this->actionItems as $item) {
+            if ($item->isCompleted()) {
+                $completedActionItems++;
+            }
+        }
+
+        return [
+            'totalActionItems' => $totalActionItems,
+            'completedActionItems' => $completedActionItems,
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

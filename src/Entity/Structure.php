@@ -204,6 +204,9 @@ class Structure
     #[ORM\OneToMany(targetEntity: Reunion::class, mappedBy: 'organisateur', orphanRemoval: true)]
     private Collection $reunions;
 
+    #[ORM\OneToMany(targetEntity: Personnel::class, mappedBy: 'structure', orphanRemoval: true)]
+    private Collection $personnels;
+
     public function __construct()
     {
         $this->date_created = new \DateTimeImmutable();
@@ -214,6 +217,7 @@ class Structure
         $this->myStructures = new ArrayCollection();
         $this->visites = new ArrayCollection();
         $this->reunions = new ArrayCollection();
+        $this->personnels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -619,6 +623,36 @@ class Structure
     public function setCodeHierarchique(?string $codeHierarchique=""): static
     {
         $this->codeHierarchique = $codeHierarchique;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Personnel>
+     */
+    public function getPersonnels(): Collection
+    {
+        return $this->personnels;
+    }
+
+    public function addPersonnel(Personnel $personnel): static
+    {
+        if (!$this->personnels->contains($personnel)) {
+            $this->personnels->add($personnel);
+            $personnel->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonnel(Personnel $personnel): static
+    {
+        if ($this->personnels->removeElement($personnel)) {
+            // set the owning side to null (unless already changed)
+            if ($personnel->getStructure() === $this) {
+                $personnel->setStructure(null);
+            }
+        }
 
         return $this;
     }

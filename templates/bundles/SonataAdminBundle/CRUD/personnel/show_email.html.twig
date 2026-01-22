@@ -6,7 +6,7 @@
 				<i class="fa fa-envelope"></i>
 				{{ value }}
 			</a>
-			<button type="button" class="btn btn-sm btn-default" onclick="copyToClipboard('{{ value }}')" title="Copy to clipboard">
+			<button type="button" class="btn btn-sm btn-default copy-btn" data-text="{{ value }}" title="Copy to clipboard">
 				<i class="fa fa-copy"></i>
 			</button>
 		{% else %}
@@ -21,14 +21,4 @@
 			</div>
 		{% endif %}
 	</div>
-
-	<script>
-		function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(function () {
-                alert('Email copied to clipboard: ' + text);
-            });
-        }
-	</script>
-
-
 {% endblock %}

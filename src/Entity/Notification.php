@@ -53,7 +53,7 @@ class Notification
     #[Groups(['notification:read', 'reunion:read'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: Reunion::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "The meeting is required.")]
     #[Groups(['notification:read', 'notification:write'])]

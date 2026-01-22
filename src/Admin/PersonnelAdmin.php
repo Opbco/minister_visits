@@ -8,6 +8,8 @@ use App\Entity\Fonction;
 use App\Entity\Personnel;
 use App\Entity\Structure;
 use App\Entity\User;
+use App\Form\Type\ActionItemsType;
+use App\Form\Type\MeetingStatsType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -148,7 +150,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     ->add('matricule', TextType::class, [
                         'label' => 'Staff Number',
                         'required' => false,
-                        'help' => 'Unique employee identification number',
+                        'help' => 'Service number',
                         'attr' => [
                             'placeholder' => 'e.g., EMP-2024-001',
                             'maxlength' => 100,
@@ -197,7 +199,7 @@ final class PersonnelAdmin extends AbstractAdmin
                         'required' => false,
                         'help' => 'Mobile or office phone number for SMS notifications',
                         'attr' => [
-                            'placeholder' => '+237 6XX XXX XXX',
+                            'placeholder' => '+2376XXXXXXXX',
                             'maxlength' => 50,
                         ],
                     ])
@@ -210,6 +212,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     ->add('_contact_help', TextType::class, [
                         'label' => false,
                         'mapped' => false,
+                        'disabled' => true,
                         'help' => '
                             <div class="alert alert-warning">
                                 <h4><i class="icon fa fa-warning"></i> Important!</h4>
@@ -258,6 +261,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     ->add('_account_help', TextType::class, [
                         'label' => false,
                         'mapped' => false,
+                        'disabled' => true,
                         'help' => '
                             <div class="alert alert-info">
                                 <h4><i class="icon fa fa-info-circle"></i> User Accounts</h4>
@@ -288,10 +292,9 @@ final class PersonnelAdmin extends AbstractAdmin
                         'class' => 'col-md-12',
                         'box_class' => 'box box-primary'
                     ])
-                        ->add('_meeting_stats', TextType::class, [
+                        ->add('_meeting_stats', MeetingStatsType::class, [
                             'label' => false,
                             'mapped' => false,
-                            'template' => '@SonataAdmin/CRUD/personnel/form_meeting_stats.html.twig',
                         ])
                     ->end()
                 ->end()
@@ -301,10 +304,9 @@ final class PersonnelAdmin extends AbstractAdmin
                         'class' => 'col-md-12',
                         'box_class' => 'box box-warning'
                     ])
-                        ->add('_action_items', TextType::class, [
+                        ->add('_action_items', ActionItemsType::class, [
                             'label' => false,
                             'mapped' => false,
-                            'template' => '@SonataAdmin/CRUD/personnel/form_action_items.html.twig',
                         ])
                     ->end()
                 ->end()
@@ -363,7 +365,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     'class' => 'col-md-12',
                     'box_class' => 'box box-info'
                 ])
-                    ->add('_meetings', 'html', [
+                    ->add('myReunions', null, [
                         'label' => false,
                         'mapped' => false,
                         'template' => '@SonataAdmin/CRUD/personnel/show_meetings.html.twig',
@@ -376,7 +378,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     'class' => 'col-md-12',
                     'box_class' => 'box box-warning'
                 ])
-                    ->add('_action_items', 'html', [
+                    ->add('actionItems', null, [
                         'label' => false,
                         'mapped' => false,
                         'template' => '@SonataAdmin/CRUD/personnel/show_action_items.html.twig',
@@ -389,7 +391,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     'class' => 'col-md-6',
                     'box_class' => 'box box-primary'
                 ])
-                    ->add('_meeting_stats', 'html', [
+                    ->add('meetingStats', null, [
                         'label' => false,
                         'mapped' => false,
                         'template' => '@SonataAdmin/CRUD/personnel/show_meeting_statistics.html.twig',
@@ -400,7 +402,7 @@ final class PersonnelAdmin extends AbstractAdmin
                     'class' => 'col-md-6',
                     'box_class' => 'box box-success'
                 ])
-                    ->add('_performance', 'html', [
+                    ->add('performance', 'html', [
                         'label' => false,
                         'mapped' => false,
                         'template' => '@SonataAdmin/CRUD/personnel/show_performance.html.twig',
@@ -482,4 +484,5 @@ final class PersonnelAdmin extends AbstractAdmin
         $random = str_pad((string)rand(1, 9999), 4, '0', STR_PAD_LEFT);
         return sprintf('EMP-%s-%s', $year, $random);
     }
+
 }

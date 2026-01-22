@@ -187,7 +187,7 @@ services:
     admin.personnel:
         class: App\Admin\PersonnelAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\Personnel, manager_type: orm, group: 'Human Resources', label: 'Personnel', icon: '<i class="fa fa-users"></i>' }
+            - { controller: App\Controller\Admin\PersonnelCRUDController, name: sonata.admin, model_class: App\Entity\Personnel, manager_type: orm, group: 'Human Resources', label: 'Personnel', icon: '<i class="fa fa-users"></i>' }
         calls:
             - [setTranslationDomain, ['messages']]
 

@@ -5,7 +5,7 @@
         <a href="tel:{{ value }}" class="btn btn-sm btn-info" title="Call {{ value }}">
             <i class="fa fa-phone"></i> {{ value }}
         </a>
-        <button type="button" class="btn btn-sm btn-default" onclick="copyToClipboard('{{ value }}')" title="Copy to clipboard">
+        <button type="button" class="btn btn-sm btn-default copy-btn" data-text="{{ value }}" title="Copy to clipboard">
             <i class="fa fa-copy"></i>
         </button>
         {% if value starts with '+' or value starts with '00' %}
@@ -27,10 +27,32 @@
 </div>
 
 <script>
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(function() {
-        alert('Phone number copied to clipboard: ' + text);
+    $(document).ready(function() {
+        $(".copy-btn").on("click", function() {
+            var text = $(this).data("text");
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                // Méthode moderne
+                navigator.clipboard.writeText(text).then(function() {
+                    alert("Texte copié !");
+                }).catch(function(err) {
+                    console.error("Erreur lors de la copie :", err);
+                });
+            } else {
+                // Fallback pour anciens navigateurs
+                var $temp = $("<textarea>");
+                $("body").append($temp);
+                $temp.val(text).select();
+                try {
+                    document.execCommand("copy");
+                    alert("Texte copié (fallback) !");
+                } catch (err) {
+                    console.error("Impossible de copier :", err);
+                }
+                $temp.remove();
+            }
+        });
     });
-}
 </script>
+
 {% endblock %}

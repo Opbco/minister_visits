@@ -18,7 +18,7 @@
                 {% for personnel in personnels %}
                 <tr>
                     <td>
-                        <a href="{{ admin.generateUrl('edit', { 'id': personnel.id }, admin_resource_routes.resource) }}">
+                        <a href="{{ app.request.schemeAndHttpHost }}/admin/app/personnel/{{ personnel.id }}/show" target="_blank">
                             {{ personnel.nomComplet }}
                         </a>
                     </td>
