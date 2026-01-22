@@ -181,87 +181,7 @@ final class ReunionAdmin extends AbstractAdmin
                         'btn_delete' => false,
                     ])
                 ->end()
-                
-                ->with('Meeting Format', [
-                    'class' => 'col-md-8',
-                    'box_class' => 'box box-info'
-                ])
-                    ->add('meetingType', EnumType::class, [
-                        'label' => 'Meeting Format',
-                        'class' => MeetingTypeEnum::class,
-                        'help' => 'How will participants attend this meeting?',
-                        'attr' => [
-                            'class' => 'meeting-type-selector',
-                        ],
-                    ])
-                ->end()
-                
-                ->with('Physical Location', [
-                    'class' => 'col-md-8',
-                    'box_class' => 'box box-success',
-                    'description' => 'Required for In-Person and Hybrid meetings'
-                ])
-                    ->add('salle', ModelType::class, [
-                        'label' => 'Meeting Room',
-                        'class' => MeetingRoom::class,
-                        'property' => 'nom',
-                        'required' => false,
-                        'btn_add' => 'Add Room',
-                        'btn_delete' => false,
-                    ])
-                    ->add('lieu', TextType::class, [
-                        'label' => 'Location/Address',
-                        'required' => false,
-                        'help' => 'Physical address if not using a meeting room',
-                    ])
-                ->end()
-                
-                ->with('Video Conference Details', [
-                    'class' => 'col-md-8',
-                    'box_class' => 'box box-warning',
-                    'description' => 'Required for Virtual and Hybrid meetings'
-                ])
-                    ->add('videoConferencePlatform', EnumType::class, [
-                        'label' => 'Platform',
-                        'class' => VideoConferencePlatform::class,
-                        'required' => false,
-                        'placeholder' => 'Select platform...',
-                    ])
-                    ->add('videoConferenceLink', TextType::class, [
-                        'label' => 'Meeting Link',
-                        'required' => false,
-                        'help' => 'Full URL to join the meeting',
-                        'attr' => [
-                            'placeholder' => 'https://zoom.us/j/1234567890 or https://meet.google.com/xxx-yyyy-zzz',
-                        ],
-                    ])
-                    ->add('videoConferenceMeetingId', TextType::class, [
-                        'label' => 'Meeting ID',
-                        'required' => false,
-                        'help' => 'Meeting ID or Room number (if applicable)',
-                        'attr' => [
-                            'placeholder' => 'e.g., 123 456 7890',
-                        ],
-                    ])
-                    ->add('videoConferencePassword', TextType::class, [
-                        'label' => 'Password/Passcode',
-                        'required' => false,
-                        'help' => 'Access password (if required)',
-                        'attr' => [
-                            'placeholder' => 'Enter meeting password',
-                        ],
-                    ])
-                    ->add('videoConferenceInstructions', TextareaType::class, [
-                        'label' => 'Additional Instructions',
-                        'required' => false,
-                        'help' => 'Any special instructions for joining',
-                        'attr' => [
-                            'rows' => 3,
-                            'placeholder' => 'e.g., Please join 5 minutes early, ensure your camera is on, etc.',
-                        ],
-                    ])
-                ->end()
-                
+
                 ->with('Quick Guide', [
                     'class' => 'col-md-4',
                     'box_class' => 'box box-primary'
@@ -300,6 +220,92 @@ final class ReunionAdmin extends AbstractAdmin
                                 </ul>
                             </div>
                         ',
+                    ])
+                ->end()
+                
+                ->with('Meeting Format', [
+                    'class' => 'col-md-8',
+                    'box_class' => 'box box-info'
+                ])
+                    ->add('meetingType', EnumType::class, [
+                        'label' => 'Meeting Format',
+                        'class' => MeetingTypeEnum::class,
+                        'help' => 'How will participants attend this meeting?',
+                        'attr' => [
+                            'class' => 'meeting-type-selector',
+                        ],
+                        'choice_label' => function (MeetingTypeEnum $type) {
+                            return $type->labelEn();
+                        },
+                    ])
+                ->end()
+                
+                ->with('Physical Location', [
+                    'class' => 'col-md-8',
+                    'box_class' => 'box box-success',
+                    'description' => 'Required for In-Person and Hybrid meetings'
+                ])
+                    ->add('salle', ModelType::class, [
+                        'label' => 'Meeting Room',
+                        'class' => MeetingRoom::class,
+                        'property' => 'nom',
+                        'required' => false,
+                        'btn_add' => 'Add Room',
+                        'btn_delete' => false,
+                    ])
+                    ->add('lieu', TextType::class, [
+                        'label' => 'Location/Address',
+                        'required' => false,
+                        'help' => 'Physical address if not using a meeting room',
+                    ])
+                ->end()
+                
+                ->with('Video Conference Details', [
+                    'class' => 'col-md-8',
+                    'box_class' => 'box box-warning',
+                    'description' => 'Required for Virtual and Hybrid meetings'
+                ])
+                    ->add('videoConferencePlatform', EnumType::class, [
+                        'label' => 'Platform',
+                        'class' => VideoConferencePlatform::class,
+                        'required' => false,
+                        'choice_label' => function (VideoConferencePlatform $platform) {
+                            return $platform->label();
+                        },
+                        'placeholder' => 'Select platform...',
+                    ])
+                    ->add('videoConferenceLink', TextType::class, [
+                        'label' => 'Meeting Link',
+                        'required' => false,
+                        'help' => 'Full URL to join the meeting',
+                        'attr' => [
+                            'placeholder' => 'https://zoom.us/j/1234567890 or https://meet.google.com/xxx-yyyy-zzz',
+                        ],
+                    ])
+                    ->add('videoConferenceMeetingId', TextType::class, [
+                        'label' => 'Meeting ID',
+                        'required' => false,
+                        'help' => 'Meeting ID or Room number (if applicable)',
+                        'attr' => [
+                            'placeholder' => 'e.g., 123 456 7890',
+                        ],
+                    ])
+                    ->add('videoConferencePassword', TextType::class, [
+                        'label' => 'Password/Passcode',
+                        'required' => false,
+                        'help' => 'Access password (if required)',
+                        'attr' => [
+                            'placeholder' => 'Enter meeting password',
+                        ],
+                    ])
+                    ->add('videoConferenceInstructions', TextareaType::class, [
+                        'label' => 'Additional Instructions',
+                        'required' => false,
+                        'help' => 'Any special instructions for joining',
+                        'attr' => [
+                            'rows' => 3,
+                            'placeholder' => 'e.g., Please join 5 minutes early, ensure your camera is on, etc.',
+                        ],
                     ])
                 ->end()
                 
@@ -357,7 +363,13 @@ final class ReunionAdmin extends AbstractAdmin
             ->tab('Report')
                 ->with('Meeting Report')
                     ->add('compteRendu', CKEditorType::class, ['label' => 'Summary', 'required' => false])
-                    ->add('statut', EnumType::class, ['label' => 'Status', 'class' => ReunionStatut::class])
+                    ->add('statut', EnumType::class, [
+                        'label' => 'Status', 
+                        'class' => ReunionStatut::class,
+                        'choice_label' => function (ReunionStatut $status) {
+                            return $status->labelEn();
+                        },
+                    ])
                 ->end()
             ->end()
         ;
