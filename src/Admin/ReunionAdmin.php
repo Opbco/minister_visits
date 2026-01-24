@@ -13,6 +13,7 @@ use App\Entity\Structure;
 use App\Entity\ReunionParticipation;
 use App\Entity\AgendaItem;
 use App\Entity\ActionItem;
+use App\Entity\ExternalParticipant;
 use App\Enum\MeetingTypeEnum;
 use App\Enum\ReunionStatut;
 use App\Enum\VideoConferencePlatform;
@@ -34,6 +35,8 @@ use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
+use Doctrine\ORM\QueryBuilder;
 
 final class ReunionAdmin extends AbstractAdmin
 {
@@ -84,6 +87,85 @@ final class ReunionAdmin extends AbstractAdmin
                 'field_options' => [
                     'property' => 'nomComplet',
                     'minimum_input_length' => 2,
+                ],
+            ])
+            // NEW: Filter by Internal Participant (Personnel)
+            ->add('internalParticipant', CallbackFilter::class, [
+                'label' => 'Internal Participant',
+                'callback' => function (QueryBuilder $qb, string $alias, string $field, array $value) {
+                    if (!$value || !isset($value['value'])) {
+                        return false;
+                    }
+
+                    $qb
+                        ->leftJoin(sprintf('%s.participations', $alias), 'p_internal')
+                        ->andWhere('p_internal.personnel = :personnel')
+                        ->setParameter('personnel', $value['value']);
+
+                    return true;
+                },
+                'field_type' => ModelAutocompleteType::class,
+                'field_options' => [
+                    'class' => Personnel::class,
+                    'property' => 'nomComplet',
+                    'minimum_input_length' => 2,
+                    'placeholder' => 'Search by staff name...',
+                ],
+            ])
+            
+            // NEW: Filter by External Participant
+            ->add('externalParticipant', CallbackFilter::class, [
+                'label' => 'External Participant',
+                'callback' => function (QueryBuilder $qb, string $alias, string $field, array $value) {
+                    if (!$value || !isset($value['value'])) {
+                        return false;
+                    }
+
+                    $qb
+                        ->leftJoin(sprintf('%s.participations', $alias), 'p_external')
+                        ->andWhere('p_external.externalParticipant = :externalParticipant')
+                        ->setParameter('externalParticipant', $value['value']);
+
+                    return true;
+                },
+                'field_type' => ModelAutocompleteType::class,
+                'field_options' => [
+                    'class' => ExternalParticipant::class,
+                    'property' => 'nom',
+                    'minimum_input_length' => 2,
+                    'placeholder' => 'Search by external participant...',
+                ],
+            ])
+            
+            // NEW: Filter by Any Participant (searches both internal and external)
+            ->add('anyParticipant', CallbackFilter::class, [
+                'label' => 'Any Participant (Name)',
+                'callback' => function (QueryBuilder $qb, string $alias, string $field, array $value) {
+                    if (!$value || empty($value['value'])) {
+                        return false;
+                    }
+
+                    $searchTerm = '%' . $value['value'] . '%';
+
+                    $qb
+                        ->leftJoin(sprintf('%s.participations', $alias), 'p_any')
+                        ->leftJoin('p_any.personnel', 'personnel')
+                        ->leftJoin('p_any.externalParticipant', 'external')
+                        ->andWhere(
+                            $qb->expr()->orX(
+                                'personnel.nomComplet LIKE :searchTerm',
+                                'external.nom LIKE :searchTerm'
+                            )
+                        )
+                        ->setParameter('searchTerm', $searchTerm);
+
+                    return true;
+                },
+                'field_type' => TextType::class,
+                'field_options' => [
+                    'attr' => [
+                        'placeholder' => 'Search by participant name...',
+                    ],
                 ],
             ])
             ->add('statut', null, [
@@ -393,14 +475,16 @@ final class ReunionAdmin extends AbstractAdmin
                 ->end()
             ->end()
             
-            ->tab('Agenda & Actions')
-                ->with('Agenda', ['class' => 'col-md-6', 'box_class' => 'box box-info'])
+            ->tab('Agenda')
+                ->with('Agenda', ['class' => 'col-md-12', 'box_class' => 'box box-info'])
                     ->add('agendaItems', null, [
                         'template' => '@SonataAdmin/CRUD/reunion/show_agenda.html.twig',
                     ])
                 ->end()
-                
-                ->with('Action Items', ['class' => 'col-md-6', 'box_class' => 'box box-warning'])
+            ->end()
+
+            ->tab('Actions')
+                ->with('Action Items', ['class' => 'col-md-12', 'box_class' => 'box box-warning'])
                     ->add('actionItems', null, [
                         'template' => '@SonataAdmin/CRUD/reunion/show_actions.html.twig',
                     ])

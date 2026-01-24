@@ -116,6 +116,12 @@ class ReunionParticipation
                 ->atPath('personnel')
                 ->addViolation();
         }
+
+        if ($this->status === ParticipantStatut::Excused && empty($this->absenceReason)) {
+            $context->buildViolation('Absence reason is required when status is Excused or Absent.')
+                ->atPath('absenceReason')
+                ->addViolation();
+        }
     }
     
     // --- Helper for Display ---

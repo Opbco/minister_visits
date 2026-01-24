@@ -23,8 +23,8 @@
         <tbody>
             {% for action in object.actionItems %}
                 <tr class="{% if action.dateEcheance and action.dateEcheance < date() and action.statut.value != 'completed' %}danger{% endif %}">
-                    <td>
-                        <strong>{{ action.description|slice(0, 100) }}{% if action.description|length > 100 %}...{% endif %}</strong>
+                    <td style="width: 40%;">
+                        <strong>{{ action.description|raw }}</strong>
                     </td>
                     <td>
                         {% if action.responsable %}

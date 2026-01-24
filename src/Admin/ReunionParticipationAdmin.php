@@ -189,8 +189,9 @@ final class ReunionParticipationAdmin extends AbstractAdmin
                         'attr' => [
                             'rows' => 4,
                             'placeholder' => 'Enter reason for absence or excuse...',
+                            'maxlength' => 200,
                         ],
-                        'help' => 'Provide reason if status is Absent or Excused',
+                        'help' => 'Provide reason if status is Absent or Excused (max 200 characters)',
                     ])
                 ->end()
                 
