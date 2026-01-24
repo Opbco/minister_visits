@@ -11,7 +11,6 @@ use App\Enum\ReunionStatut;
 use App\Enum\NotificationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Controller\CRUDController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -59,7 +58,7 @@ final class ReunionCRUDController extends CRUDController
             }
         }
 
-        return $this->renderWithExtraParams('admin/reunion/validate.html.twig', [
+        return $this->renderWithExtraParams('@SonataAdmin/CRUD/reunion/validate.html.twig', [
             'object' => $reunion,
             'action' => 'validate',
         ]);
@@ -115,7 +114,7 @@ final class ReunionCRUDController extends CRUDController
             }
         }
 
-        return $this->renderWithExtraParams('admin/reunion/cancel.html.twig', [
+        return $this->renderWithExtraParams('@SonataAdmin/CRUD/reunion/cancel.html.twig', [
             'object' => $reunion,
             'action' => 'cancel',
         ]);
@@ -174,7 +173,7 @@ final class ReunionCRUDController extends CRUDController
             }
         }
 
-        return $this->renderWithExtraParams('admin/reunion/postpone.html.twig', [
+        return $this->renderWithExtraParams('@SonataAdmin/CRUD/reunion/postpone.html.twig', [
             'object' => $reunion,
             'action' => 'postpone',
         ]);
@@ -220,7 +219,7 @@ final class ReunionCRUDController extends CRUDController
             }
         }
 
-        return $this->renderWithExtraParams('admin/reunion/complete.html.twig', [
+        return $this->renderWithExtraParams('@SonataAdmin/CRUD/reunion/complete.html.twig', [
             'object' => $reunion,
             'action' => 'complete',
         ]);
@@ -300,7 +299,7 @@ final class ReunionCRUDController extends CRUDController
         // Get statistics about participant contact info
         $stats = $this->getParticipantContactStats($reunion);
 
-        return $this->renderWithExtraParams('admin/reunion/send_invitations.html.twig', [
+        return $this->renderWithExtraParams('@SonataAdmin/CRUD/reunion/send_invitations.html.twig', [
             'object' => $reunion,
             'stats' => $stats,
             'action' => 'send_invitations',
@@ -353,7 +352,7 @@ final class ReunionCRUDController extends CRUDController
             }
         }
 
-        return $this->renderWithExtraParams('admin/reunion/attendance.html.twig', [
+        return $this->renderWithExtraParams('@SonataAdmin/CRUD/reunion/attendance.html.twig', [
             'object' => $reunion,
             'action' => 'attendance',
         ]);

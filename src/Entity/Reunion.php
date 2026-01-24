@@ -299,7 +299,7 @@ class Reunion
         return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTimeInterface $dateDebut): static
+    public function setDateDebut(?\DateTimeInterface $dateDebut): static
     {
         $this->dateDebut = $dateDebut;
         return $this;
@@ -310,7 +310,7 @@ class Reunion
         return $this->dateFin;
     }
 
-    public function setDateFin(\DateTimeInterface $dateFin): static
+    public function setDateFin(?\DateTimeInterface $dateFin): static
     {
         $this->dateFin = $dateFin;
         return $this;
@@ -336,6 +336,11 @@ class Reunion
     {
         $this->organisateur = $organisateur;
         return $this;
+    }
+
+    public function getStatutIndicator()
+    {
+        return $this->statut;
     }
 
     // --- NEW GETTERS/SETTERS FOR PERSONNEL ---
@@ -839,6 +844,11 @@ class Reunion
     }
 
     // ==================== HELPER METHODS ====================
+
+    public function hasVideoConference(): bool
+    {
+        return !empty($this->videoConferenceLink);
+    }
 
     /**
      * Check if meeting requires physical location

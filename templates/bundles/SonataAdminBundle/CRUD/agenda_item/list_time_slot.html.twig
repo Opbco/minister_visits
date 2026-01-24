@@ -1,0 +1,18 @@
+{# templates/admin/agenda_item/list_time_slot.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <div style="min-width: 100px;">
+        {% if object.startTime %}
+            <span class="text-bold text-primary">
+                <i class="fa fa-clock-o"></i> {{ object.startTime|date('H:i') }}
+            </span>
+            
+            {% if object.endTime %}
+                <span class="text-muted"> &rarr; {{ object.endTime|date('H:i') }}</span>
+            {% endif %}
+        {% else %}
+            <span class="text-muted">--:--</span>
+        {% endif %}
+    </div>
+{% endblock %}

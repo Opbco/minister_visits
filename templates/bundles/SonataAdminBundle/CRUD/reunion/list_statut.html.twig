@@ -3,38 +3,38 @@
 {% block field %}
 	{% set status = object.statut.value %}
 
-	{% if status == 'planned' %}
+	{% if status == 1 %}
 		<span class="label label-default">
 			<i class="fa fa-calendar"></i>
 			Planned
 		</span>
-	{% elseif status == 'confirmed' %}
+	{% elseif status == 2 %}
 		<span class="label label-primary">
 			<i class="fa fa-check-circle"></i>
 			Confirmed
 		</span>
-	{% elseif status == 'in_progress' %}
+	{% elseif status == 3 %}
 		<span class="label label-warning">
 			<i class="fa fa-spinner fa-spin"></i>
 			In Progress
 		</span>
-	{% elseif status == 'completed' %}
+	{% elseif status == 4 %}
 		<span class="label label-success">
 			<i class="fa fa-check"></i>
 			Completed
 		</span>
-	{% elseif status == 'cancelled' %}
+	{% elseif status == 5 %}
 		<span class="label label-danger">
 			<i class="fa fa-ban"></i>
 			Cancelled
 		</span>
-	{% elseif status == 'postponed' %}
+	{% elseif status == 6 %}
 		<span class="label label-warning">
 			<i class="fa fa-clock-o"></i>
 			Postponed
 		</span>
 	{% else %}
-		<span class="label label-default">{{ status|title }}</span>
+		<span class="label label-default">{{ status.label |title }}</span>
 	{% endif %}
 
 {% endblock %}

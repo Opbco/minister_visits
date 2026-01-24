@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['action:read']],
     denormalizationContext: ['groups' => ['action:write']]
 )]
+#[ORM\HasLifecycleCallbacks]
 class ActionItem
 {
     #[ORM\Id]
@@ -196,5 +197,30 @@ class ActionItem
         $this->user_updated = $user_updated;
 
         return $this;
+    }
+
+    public function getPriority(): ?int
+    {
+        return $this->dateEcheance ? (int) $this->dateEcheance->format('U') : null;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $this->date_created = new \DateTimeImmutable();
+        if( $this->statut === null ) {
+            $this->statut = ActionStatut::PENDING;
+        }
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->date_updated = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->description ?? 'ActionItem';
     }
 }

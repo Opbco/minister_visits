@@ -1,0 +1,21 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+{% block field %}
+    {% set type = object.meetingType %}
+	{% if type.value == 'in_person' %}
+        <span class="label label-lg label-default">
+            <i class="fa fa-building"></i>
+            In-Person
+        </span>
+    {% elseif type.value == 'virtual' %}
+        <span class="label label-lg label-primary">
+            <i class="fa fa-video-camera"></i>
+            Virtual
+        </span>
+    {% elseif type.value == 'hybrid' %}
+        <span class="label label-lg label-info">
+            <i class="fa fa-exchange"></i>
+            Hybrid
+        </span>
+    {% endif %}
+
+{% endblock %}

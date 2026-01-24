@@ -13,6 +13,7 @@ use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Sonata\AdminBundle\Form\Type\ModelType;
@@ -32,6 +33,13 @@ final class ActionItemAdmin extends AbstractAdmin
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
+        if($this->hasParentFieldDescription()) {
+            // Disable custom routes in embedded mode
+            return;
+        }
+        if(!$this->isChild()) {
+            $collection->clearExcept(['list', 'show', 'export']);
+        }
         // Add custom routes
         $collection->add('mark_completed', $this->getRouterIdParameter().'/mark-completed');
         $collection->add('mark_in_progress', $this->getRouterIdParameter().'/mark-in-progress');
@@ -69,7 +77,7 @@ final class ActionItemAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            ->add('_priority', null, [
+            ->add('priority', null, [
                 'label' => '',
                 'template' => '@SonataAdmin/CRUD/action_item/list_priority_indicator.html.twig',
             ])
@@ -115,21 +123,26 @@ final class ActionItemAdmin extends AbstractAdmin
         $isOverdue = $isEditMode && $this->getSubject()->getDateEcheance() 
             && $this->getSubject()->getDateEcheance() < new \DateTime()
             && $this->getSubject()->getStatut()->value !== 'completed';
+        // Check if we're in embedded mode (within Reunion form)
+        $isEmbedded = $this->hasParentFieldDescription();
+        $isChild = $this->isChild();
 
         $form
             ->with('Action Details', [
                 'class' => 'col-md-8',
                 'box_class' => 'box box-primary'
             ])
-                ->add('reunion', ModelType::class, [
-                    'label' => 'Meeting',
-                    'class' => Reunion::class,
-                    'property' => 'objet',
-                    'btn_add' => false,
-                    'btn_delete' => false,
-                    'disabled' => $isEditMode, // Can't change meeting after creation
-                    'help' => $isEditMode ? 'Meeting cannot be changed' : 'Select the meeting this action item was created in',
-                ])
+                ->ifTrue(!$isEmbedded && !$isChild)
+                    ->add('reunion', ModelType::class, [
+                            'label' => 'Meeting',
+                            'class' => Reunion::class,
+                            'property' => 'objet',
+                            'btn_add' => false,
+                            'btn_delete' => false,
+                            'disabled' => $isEditMode, // Can't change meeting after creation
+                            'help' => $isEditMode ? 'Meeting cannot be changed' : 'Select the meeting this action item was created in',
+                        ])
+                ->ifEnd()
                 ->add('description', CKEditorType::class, [
                     'label' => 'Action Description',
                     'help' => 'Clear description of what needs to be done',
@@ -191,29 +204,30 @@ final class ActionItemAdmin extends AbstractAdmin
                     ',
                 ])
             ->end()
-            
-            ->with('Status & Progress', [
-                'class' => 'col-md-8',
-                'box_class' => 'box box-success'
-            ])
-                ->add('statut', EnumType::class, [
-                    'label' => 'Status',
-                    'class' => ActionStatut::class,
-                    'choice_label' => function (ActionStatut $status) {
-                            return $status->labelEn();
-                        },
-                    'help' => 'Current status of this action item',
+            ->ifTrue($isEditMode) 
+                ->with('Status & Progress', [
+                    'class' => 'col-md-8',
+                    'box_class' => 'box box-success'
                 ])
-                ->add('commentaire', CKEditorType::class, [
-                    'label' => 'Comments/Notes',
-                    'required' => false,
-                    'help' => 'Progress updates, challenges, or additional notes',
-                    'attr' => [
-                        'rows' => 4,
-                        'placeholder' => 'Add updates, progress notes, or challenges encountered...',
-                    ],
-                ])
-            ->end()
+                    ->add('statut', EnumType::class, [
+                        'label' => 'Status',
+                        'class' => ActionStatut::class,
+                        'choice_label' => function (ActionStatut $status) {
+                                return $status->labelEn();
+                            },
+                        'help' => 'Current status of this action item',
+                    ])
+                    ->add('commentaire', CKEditorType::class, [
+                        'label' => 'Comments/Notes',
+                        'required' => false,
+                        'help' => 'Progress updates, challenges, or additional notes',
+                        'attr' => [
+                            'rows' => 4,
+                            'placeholder' => 'Add updates, progress notes, or challenges encountered...',
+                        ],
+                    ])
+                ->end()
+            ->ifEnd()
         ;
     }
 
@@ -224,10 +238,7 @@ final class ActionItemAdmin extends AbstractAdmin
                 'class' => 'col-md-8',
                 'box_class' => 'box box-primary'
             ])
-                ->add('id', null, [
-                    'label' => 'ID',
-                ])
-                ->add('description', null, [
+                ->add('description', FieldDescriptionInterface::TYPE_HTML, [
                     'label' => 'Action Description',
                     'safe' => false,
                 ])
@@ -279,7 +290,7 @@ final class ActionItemAdmin extends AbstractAdmin
                 'class' => 'col-md-12',
                 'box_class' => 'box box-warning'
             ])
-                ->add('_meeting_context', 'html', [
+                ->add('id', null, [
                     'label' => false,
                     'mapped' => false,
                     'template' => '@SonataAdmin/CRUD/action_item/show_meeting_context.html.twig',
@@ -291,7 +302,7 @@ final class ActionItemAdmin extends AbstractAdmin
     public function toString(object $object): string
     {
         return $object instanceof ActionItem
-            ? mb_substr($object->getDescription(), 0, 50) . '...'
+            ?  'Action item ref: ' . $object->getId()
             : 'Action Item';
     }
 

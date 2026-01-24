@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['agenda:read']],
     denormalizationContext: ['groups' => ['agenda:write']]
 )]
+#[ORM\HasLifecycleCallbacks]
 class AgendaItem
 {
     #[ORM\Id]
@@ -196,5 +197,22 @@ class AgendaItem
         $this->user_updated = $user_updated;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function prePersist(): void
+    {
+        $this->date_created = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate(): void
+    {
+        $this->date_updated = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->titre ?? '';
     }
 }

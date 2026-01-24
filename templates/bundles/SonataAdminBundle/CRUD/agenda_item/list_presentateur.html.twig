@@ -1,0 +1,23 @@
+{# templates/bundles/SonataAdminBundle/CRUD/agenda_item/list_presentateur.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div>
+            <i class="fa fa-user text-primary"></i> 
+            <strong>{{ value.participantName }}</strong>
+            <br>
+            <small class="text-muted">
+                {% if value.participantType == 'internal' %}
+                    <span class="label label-primary">Internal</span>
+                {% else %}
+                    <span class="label label-info">External</span>
+                {% endif %}
+            </small>
+        </div>
+    {% else %}
+        <span class="text-muted">
+            <i class="fa fa-question-circle"></i> No presenter
+        </span>
+    {% endif %}
+{% endblock %}

@@ -18,6 +18,7 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Form\Type\TemplateType;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Spipu\Html2Pdf\Parsing\Html;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -68,17 +69,19 @@ final class ReunionParticipationAdmin extends AbstractAdmin
 
     protected function configureListFields(ListMapper $list): void
     {
+        $isChild = $this->isChild();
+
         $list
             ->add('reunion', null, [
                 'label' => 'Meeting',
                 'associated_property' => 'objet',
                 'template' => '@SonataAdmin/CRUD/reunion_participation/list_reunion.html.twig',
             ])
-            ->add('_participant', null, [
+            ->add('participantName', null, [
                 'label' => 'Participant',
                 'template' => '@SonataAdmin/CRUD/reunion_participation/list_participant.html.twig',
             ])
-            ->add('_participantType', null, [
+            ->add('participantType', null, [
                 'label' => 'Type',
                 'template' => '@SonataAdmin/CRUD/reunion_participation/list_participant_type.html.twig',
             ])
@@ -103,30 +106,41 @@ final class ReunionParticipationAdmin extends AbstractAdmin
                 ],
             ])
         ;
+
+        if ($isChild) {
+            $list->remove('reunion');
+        }
     }
 
     protected function configureFormFields(FormMapper $form): void
     {
         $isEditMode = $this->hasSubject() && $this->getSubject()->getId() !== null;
+        // Check if we're in embedded mode (within Reunion form)
+        $isEmbedded = $this->hasParentFieldDescription();
 
-        $form
-            ->with('Meeting Details', [
-                'class' => 'col-md-6',
-                'box_class' => 'box box-primary'
-            ])
-                ->add('reunion', ModelType::class, [
-                    'label' => 'Meeting',
-                    'class' => Reunion::class,
-                    'property' => 'objet',
-                    'btn_add' => false,
-                    'btn_delete' => false,
-                    'disabled' => $isEditMode, // Can't change meeting once created
-                    'help' => $isEditMode ? 'Meeting cannot be changed after creation' : 'Select the meeting',
+        $isChild = $this->isChild();
+
+        // Only show reunion field if not embedded
+        if (!$isEmbedded && !$isChild) {
+            $form
+                ->with('Meeting Details', [
+                    'class' => 'col-md-6',
+                    'box_class' => 'box box-primary'
                 ])
-            ->end()
+                    ->add('reunion', ModelType::class, [
+                        'label' => 'Meeting',
+                        'class' => Reunion::class,
+                        'property' => 'objet',
+                        'btn_add' => false,
+                        'btn_delete' => false,
+                        'disabled' => $isEditMode,
+                        'help' => $isEditMode ? 'Meeting cannot be changed after creation' : 'Select the meeting',
+                    ])
+                ->end();
+        }
             
-            ->with('Participant Selection', [
-                'class' => 'col-md-6',
+        $form->with('Participant Selection', [
+                'class' => $isEmbedded ? 'col-md-8' : 'col-md-6',
                 'box_class' => 'box box-info'
             ])
                 ->add('personnel', ModelType::class, [
@@ -206,7 +220,7 @@ final class ReunionParticipationAdmin extends AbstractAdmin
         } else {
             $form
                 ->with('Important Notes', [
-                    'class' => 'col-md-12',
+                    'class' => $isEmbedded ? 'col-md-4' : 'col-md-12',
                     'box_class' => 'box box-warning'
                 ])
                     ->add('_creation_help', HtmlType::class, [
@@ -244,11 +258,11 @@ final class ReunionParticipationAdmin extends AbstractAdmin
                     'associated_property' => 'objet',
                     'template' => '@SonataAdmin/CRUD/reunion_participation/show_reunion.html.twig',
                 ])
-                ->add('_participant', null, [
+                ->add('participantName', null, [
                     'label' => 'Participant',
                     'template' => '@SonataAdmin/CRUD/reunion_participation/show_participant.html.twig',
                 ])
-                ->add('_participantType', null, [
+                ->add('participantType', null, [
                     'label' => 'Participant Type',
                     'template' => '@SonataAdmin/CRUD/reunion_participation/show_participant_type.html.twig',
                 ])
@@ -279,7 +293,7 @@ final class ReunionParticipationAdmin extends AbstractAdmin
                 'class' => 'col-md-12',
                 'box_class' => 'box box-info'
             ])
-                ->add('_contact_info', TemplateType::class, [
+                ->add('date_updated', TemplateType::class, [
                     'label' => false,
                     'mapped' => false,
                     'template' => '@SonataAdmin/CRUD/reunion_participation/show_contact_info.html.twig',
@@ -328,5 +342,14 @@ final class ReunionParticipationAdmin extends AbstractAdmin
         if ($object->getStatus() === ParticipantStatut::Confirmed && !$object->getConfirmedAt()) {
             $object->setConfirmedAt(new \DateTimeImmutable());
         }
+    }
+
+    protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+        if($this->hasParentFieldDescription() or $this->isChild()) {
+            return;
+        }
+        
+        $collection->clearExcept(['list', 'show', 'export']);
     }
 }

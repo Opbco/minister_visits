@@ -217,6 +217,23 @@ services:
                     label: Salles de réunion,
                 }
 
+    admin.reunion:
+        class: App\Admin\ReunionAdmin
+        calls:
+            - [setTranslationDomain, ["messages"]]
+            - [addChild, ['@admin.agenda_item', 'reunion']]
+            - [addChild, ['@admin.action_item', 'reunion']]
+            - [addChild, ['@admin.reunion_participation', 'reunion']]
+        tags:
+            - {
+                    name: sonata.admin,
+                    model_class: App\Entity\Reunion,
+                    controller: App\Controller\Admin\ReunionCRUDController,
+                    manager_type: orm,
+                    group: "Gestion des réunions",
+                    label: Réunions,
+                }
+
     admin.reunion_participation:
         class: App\Admin\ReunionParticipationAdmin
         calls:
@@ -231,20 +248,6 @@ services:
                     label: Participations aux réunions,
                 }
 
-    admin.reunion:
-        class: App\Admin\ReunionAdmin
-        calls:
-            - [setTranslationDomain, ["messages"]]
-        tags:
-            - {
-                    name: sonata.admin,
-                    model_class: App\Entity\Reunion,
-                    controller: App\Controller\Admin\ReunionCRUDController,
-                    manager_type: orm,
-                    group: "Gestion des réunions",
-                    label: Réunions,
-                }
-
     admin.action_item:
         class: App\Admin\ActionItemAdmin
         calls:
@@ -257,6 +260,22 @@ services:
                     manager_type: orm,
                     group: "Gestion des réunions",
                     label: Actions à suivre,
+                }
+
+    admin.agenda_item:
+        class: App\Admin\AgendaItemAdmin
+        arguments:
+            - '@doctrine.orm.entity_manager'
+        calls:
+            - [setTranslationDomain, ["messages"]]
+        tags:
+            - {
+                    name: sonata.admin, 
+                    model_class: App\Entity\AgendaItem,
+                    controller: ~,
+                    manager_type: orm,
+                    group: "Gestion des réunions",
+                    label: Points de l'ordre du jour
                 }
 
     # ==================== END REUNION ADMIN ====================

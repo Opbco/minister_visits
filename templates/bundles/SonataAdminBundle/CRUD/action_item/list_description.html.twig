@@ -3,10 +3,10 @@
 
 {% block field %}
     <div style="max-width: 400px;">
-        <strong>{{ value|slice(0, 100) }}{% if value|length > 100 %}...{% endif %}</strong>
+        <strong>{{ value|slice(0, 100)|raw }}{% if value|length > 100 %}...{% endif %}</strong>
         {% if object.commentaire %}
             <br><small class="text-muted">
-                <i class="fa fa-comment"></i> {{ object.commentaire|slice(0, 60) }}{% if object.commentaire|length > 60 %}...{% endif %}
+                <i class="fa fa-comment"></i> {{ object.commentaire|slice(0, 60)|raw }}{% if object.commentaire|length > 60 %}...{% endif %}
             </small>
         {% endif %}
     </div>

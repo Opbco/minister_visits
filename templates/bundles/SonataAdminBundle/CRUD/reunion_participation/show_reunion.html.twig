@@ -17,19 +17,27 @@
                     {% endif %}
                 </dd>
                 
+                {% if value.meetingType %}
+                    <dt>Type:</dt>
+                    <dd>
+                        <span class="label label-default">{{ value.meetingType.label }}</span>
+                    </dd>
+                {% endif %}
+
+                {% if value.salle %}
+                    <dt>Venue:</dt>
+                    <dd>
+                        <i class="fa fa-building-o text-info"></i> {{ value.salle }}
+                    </dd>
+                {% endif %}
+
                 {% if value.lieu %}
-                    <dt>Location:</dt>
+                    <dt>Venue:</dt>
                     <dd>
                         <i class="fa fa-map-marker text-danger"></i> {{ value.lieu }}
                     </dd>
                 {% endif %}
                 
-                {% if value.typeReunion %}
-                    <dt>Type:</dt>
-                    <dd>
-                        <span class="label label-default">{{ value.typeReunion.libelle }}</span>
-                    </dd>
-                {% endif %}
             </dl>
         </div>
     {% else %}

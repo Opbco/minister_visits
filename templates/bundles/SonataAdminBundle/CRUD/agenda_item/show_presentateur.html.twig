@@ -1,0 +1,68 @@
+{# templates/bundles/SonataAdminBundle/CRUD/agenda_item/show_presentateur.html.twig #}
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value %}
+        <div class="well well-sm" style="background-color: #e3f2fd; margin: 0;">
+            <h4 style="margin-top: 0;">
+                <i class="fa fa-user text-primary"></i> 
+                {{ value.participantName }}
+            </h4>
+            <dl class="dl-horizontal" style="margin-bottom: 0;">
+                <dt>Type:</dt>
+                <dd>
+                    {% if value.participantType == 'internal' %}
+                        <span class="label label-primary">Internal Personnel</span>
+                    {% else %}
+                        <span class="label label-info">External Participant</span>
+                    {% endif %}
+                </dd>
+                
+                {% if value.personnel %}
+                    {% if value.personnel.fonction %}
+                        <dt>Function:</dt>
+                        <dd>{{ value.personnel.fonction.libelle }}</dd>
+                    {% endif %}
+                    
+                    {% if value.personnel.structure %}
+                        <dt>Structure:</dt>
+                        <dd>{{ value.personnel.structure.nameFr }}</dd>
+                    {% endif %}
+                    
+                    {% if value.personnel.email %}
+                        <dt>Email:</dt>
+                        <dd>
+                            <a href="mailto:{{ value.personnel.email }}">
+                                <i class="fa fa-envelope"></i> {{ value.personnel.email }}
+                            </a>
+                        </dd>
+                    {% endif %}
+                {% elseif value.externalParticipant %}
+                    {% if value.externalParticipant.organisation %}
+                        <dt>Organization:</dt>
+                        <dd>{{ value.externalParticipant.organisation }}</dd>
+                    {% endif %}
+                    
+                    {% if value.externalParticipant.fonction %}
+                        <dt>Function:</dt>
+                        <dd>{{ value.externalParticipant.fonction }}</dd>
+                    {% endif %}
+                    
+                    {% if value.externalParticipant.email %}
+                        <dt>Email:</dt>
+                        <dd>
+                            <a href="mailto:{{ value.externalParticipant.email }}">
+                                <i class="fa fa-envelope"></i> {{ value.externalParticipant.email }}
+                            </a>
+                        </dd>
+                    {% endif %}
+                {% endif %}
+            </dl>
+        </div>
+    {% else %}
+        <div class="alert alert-info" style="margin: 0;">
+            <i class="fa fa-info-circle"></i> 
+            No presenter assigned for this agenda item.
+        </div>
+    {% endif %}
+{% endblock %}
