@@ -1,7 +1,7 @@
 const CONSTANTS = {
-  BASE_API_URL: "http://schoolgest.cm/api",
-  BASE_URL: "http://schoolgest.cm",
-  BASE_ADMIN: "http://schoolgest.cm/admin",
+  BASE_API_URL: "http://celsuive.minesec.gov.cm/api",
+  BASE_URL: "http://celsuive.minesec.gov.cm",
+  BASE_ADMIN: "http://celsuive.minesec.gov.cm/admin",
   drawerWidth: 280
 };
 

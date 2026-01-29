@@ -29,7 +29,6 @@ const Header = ({
   mode,
   auth,
   user,
-  enom,
   currentYear,
   logoutUser,
 }) => {
@@ -68,7 +67,7 @@ const Header = ({
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Chip
-              label={enom}
+              label={user?.username}
               size="small"
               variant="outlined"
               sx={{ color: "white", borderColor: "white" }}
@@ -77,16 +76,10 @@ const Header = ({
               •
             </Typography>
             <Chip
-              label={t("current_year", {
-                ns: "common",
-                value: currentYear.name,
-              })}
+              label={user?.roles[0]}
               size="small"
               variant="outlined"
-              sx={{
-                color: "white",
-                borderColor: currentYear.isAdmissionOn ? "white" : "red",
-              }}
+              sx={{ color: "white", borderColor: "white" }}
             />
           </Stack>
 
@@ -104,35 +97,9 @@ const Header = ({
             <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
               {/* Avatar with Tooltip */}
               <Box sx={{ mr: -1 }}>
-                <Tooltip
-                  title={
-                    <img
-                      src={user.personnel?.personne?.picture?.fileWebPath}
-                      alt={user.personnel?.personne?.name || ""}
-                      style={{
-                        width: 300,
-                        height: 300,
-                        objectFit: "contain",
-                      }}
-                    />
-                  }
-                >
-                  <Avatar sx={{ bgcolor: "primary.light" }}>
-                    {user.personnel?.personne?.picture ? (
-                      <img
-                        src={user.personnel?.personne?.picture?.fileWebPath}
-                        alt={t("table.photoEleve", { ns: "paiements" })}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      <Person />
-                    )}
-                  </Avatar>
-                </Tooltip>
+                <Avatar sx={{ bgcolor: "primary.light" }}>
+                    <Person />
+                </Avatar>
               </Box>
               <Button
                 onClick={handleUserMenuOpen}
@@ -148,13 +115,7 @@ const Header = ({
                     variant="body2"
                     sx={{ fontWeight: "medium", color: "white" }}
                   >
-                    {user.personnel?.personne?.name}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{ opacity: 0.8, color: "white" }}
-                  >
-                    {user.personnel?.fonction?.name}
+                    {user.username}
                   </Typography>
                 </Box>
               </Button>
@@ -193,7 +154,6 @@ const mapStateToProps = (state) => ({
   mode: state.config.mode,
   user: state.auth.credentials,
   auth: state.auth.authenticated,
-  enom: state.auth.etablissement.nom,
   currentYear: state.auth.cyear,
 });
 
