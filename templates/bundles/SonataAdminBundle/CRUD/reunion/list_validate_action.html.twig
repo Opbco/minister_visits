@@ -1,7 +1,14 @@
-{% if object.statut.value == 1 %}
-    <a href="{{ admin.generateObjectUrl('validate', object) }}" 
-        class="btn btn-sm btn-success" 
-        title="Validate this meeting">
-        <i class="fa fa-check-circle"></i> Validate
+{# templates/bundles/SonataAdminBundle/CRUD/reunion/list_validate_action.html.twig #}
+
+{% if admin.isGranted('EDIT', object) and object.statut.value in [1, 6] %}
+    <a href="{{ admin.generateObjectUrl('validate', object) }}"
+        class="btn btn-sm btn-success edit_link"
+        title="{{ 'action_validate'|trans({}, 'messages') }}"
+        data-toggle="confirmation"
+        data-message="{{ 'Are you sure you want to validate this meeting?'|trans({}, 'messages') }}"
+        data-btn-ok-label="{{ 'Yes'|trans({}, 'messages') }}"
+        data-btn-cancel-label="{{ 'No'|trans({}, 'messages') }}">
+        <i class="fa fa-crosshairs"></i>
+        {{ 'Validate'|trans({}, 'messages') }}
     </a>
 {% endif %}

@@ -1,0 +1,9 @@
+{# templates/bundles/SonataAdminBundle/CRUD/reunion/list_attendance_action.html.twig #}
+
+{% if admin.isGranted('EDIT', object) and object.statut.value in [2, 4] %}
+    <a href="{{ admin.generateObjectUrl('attendance', object) }}"
+        class="btn btn-sm btn-info edit_link"
+        title="{{ 'action_attendance'|trans({}, 'messages') }}">
+        <i class="fa fa-users"></i>
+    </a>
+{% endif %}

@@ -1,7 +1,13 @@
-{% if object.participations|length > 0 and object.isUpcoming() %}
-    <a href="{{ admin.generateObjectUrl('send_invitations', object) }}" 
-        class="btn btn-sm btn-primary" 
-        title="Send invitations to participants">
-        <i class="fa fa-envelope"></i> Invite
+{# templates/bundles/SonataAdminBundle/CRUD/reunion/list_send_invitations_action.html.twig #}
+
+{% if admin.isGranted('EDIT', object) and object.participations|length > 0 and object.isUpcoming() and object.statut.value in [1, 2, 6] %}
+    <a href="{{ admin.generateObjectUrl('send_invitations', object) }}"
+        class="btn btn-sm btn-primary edit_link"
+        title="{{ 'action_send_invitations'|trans({}, 'messages') }}"
+        data-toggle="confirmation"
+        data-message="{{ 'Are you sure you want to send invitations for this meeting?'|trans({}, 'messages') }}"
+        data-btn-ok-label="{{ 'Yes'|trans({}, 'messages') }}"
+        data-btn-cancel-label="{{ 'No'|trans({}, 'messages') }}">
+            <i class="fa fa-envelope"></i>
     </a>
 {% endif %}

@@ -5,19 +5,13 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Controller\Admin\ReunionCRUDController;
-use App\Entity\Document;
 use App\Entity\MeetingRoom;
 use App\Entity\Personnel;
 use App\Entity\Reunion;
 use App\Entity\Structure;
-use App\Entity\ReunionParticipation;
-use App\Entity\AgendaItem;
-use App\Entity\ActionItem;
-use App\Entity\ExternalParticipant;
 use App\Enum\MeetingTypeEnum;
 use App\Enum\ReunionStatut;
 use App\Enum\VideoConferencePlatform;
-use App\Form\Type\HtmlType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -35,8 +29,9 @@ use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Sonata\AdminBundle\Filter\Model\FilterData;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
-use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 
 final class ReunionAdmin extends AbstractAdmin
 {
@@ -68,7 +63,6 @@ final class ReunionAdmin extends AbstractAdmin
         $filter
             ->add('objet', null, [
                 'label' => 'Subject',
-                'show_filter' => true,
             ])
             ->add('dateDebut', null, [
                 'label' => 'Start Date',
@@ -89,72 +83,25 @@ final class ReunionAdmin extends AbstractAdmin
                     'minimum_input_length' => 2,
                 ],
             ])
-            // NEW: Filter by Internal Participant (Personnel)
-            ->add('internalParticipant', CallbackFilter::class, [
-                'label' => 'Internal Participant',
-                'callback' => function (QueryBuilder $qb, string $alias, string $field, array $value) {
-                    if (!$value || !isset($value['value'])) {
-                        return false;
-                    }
-
-                    $qb
-                        ->leftJoin(sprintf('%s.participations', $alias), 'p_internal')
-                        ->andWhere('p_internal.personnel = :personnel')
-                        ->setParameter('personnel', $value['value']);
-
-                    return true;
-                },
-                'field_type' => ModelAutocompleteType::class,
-                'field_options' => [
-                    'class' => Personnel::class,
-                    'property' => 'nomComplet',
-                    'minimum_input_length' => 2,
-                    'placeholder' => 'Search by staff name...',
-                ],
-            ])
-            
-            // NEW: Filter by External Participant
-            ->add('externalParticipant', CallbackFilter::class, [
-                'label' => 'External Participant',
-                'callback' => function (QueryBuilder $qb, string $alias, string $field, array $value) {
-                    if (!$value || !isset($value['value'])) {
-                        return false;
-                    }
-
-                    $qb
-                        ->leftJoin(sprintf('%s.participations', $alias), 'p_external')
-                        ->andWhere('p_external.externalParticipant = :externalParticipant')
-                        ->setParameter('externalParticipant', $value['value']);
-
-                    return true;
-                },
-                'field_type' => ModelAutocompleteType::class,
-                'field_options' => [
-                    'class' => ExternalParticipant::class,
-                    'property' => 'nom',
-                    'minimum_input_length' => 2,
-                    'placeholder' => 'Search by external participant...',
-                ],
-            ])
             
             // NEW: Filter by Any Participant (searches both internal and external)
-            ->add('anyParticipant', CallbackFilter::class, [
+            ->add('participations', CallbackFilter::class, [
                 'label' => 'Any Participant (Name)',
-                'callback' => function (QueryBuilder $qb, string $alias, string $field, array $value) {
-                    if (!$value || empty($value['value'])) {
+                'callback' => function (ProxyQueryInterface $query, string $alias, string $field, FilterData $data) {
+                    if (!$data->hasValue()) {
                         return false;
                     }
 
-                    $searchTerm = '%' . $value['value'] . '%';
+                    $searchTerm = '%' . strtolower($data->getValue()) . '%';
 
-                    $qb
+                    $query
                         ->leftJoin(sprintf('%s.participations', $alias), 'p_any')
                         ->leftJoin('p_any.personnel', 'personnel')
                         ->leftJoin('p_any.externalParticipant', 'external')
                         ->andWhere(
-                            $qb->expr()->orX(
-                                'personnel.nomComplet LIKE :searchTerm',
-                                'external.nom LIKE :searchTerm'
+                            $query->expr()->orX(
+                                'LOWER(personnel.nomComplet) LIKE :searchTerm',
+                                'LOWER(external.nom) LIKE :searchTerm'
                             )
                         )
                         ->setParameter('searchTerm', $searchTerm);
@@ -228,6 +175,10 @@ final class ReunionAdmin extends AbstractAdmin
                     'show' => [],
                     'edit' => [],
                     'validate' => ['template' => '@SonataAdmin/CRUD/reunion/list_validate_action.html.twig'],
+                    'cancel' => ['template' => '@SonataAdmin/CRUD/reunion/list_cancel_action.html.twig'],
+                    'postpone' => ['template' => '@SonataAdmin/CRUD/reunion/list_postpone_action.html.twig'],
+                    'attendance' => ['template' => '@SonataAdmin/CRUD/reunion/list_attendance_action.html.twig'],
+                    'complete' => ['template' => '@SonataAdmin/CRUD/reunion/list_complete_action.html.twig'],
                     'send_invitations' => ['template' => '@SonataAdmin/CRUD/reunion/list_send_invitations_action.html.twig'],
                 ],
             ]);

@@ -1,0 +1,13 @@
+{# templates/bundles/SonataAdminBundle/CRUD/reunion/list_cancel_action.html.twig #}
+
+{% if admin.isGranted('EDIT', object) and object.statut.value not in [4, 5] %}
+    <a href="{{ admin.generateObjectUrl('cancel', object) }}"
+        class="btn btn-sm btn-danger edit_link"
+        title="{{ 'action_cancel'|trans({}, 'messages') }}"
+        data-toggle="confirmation"
+        data-message="{{ 'Are you sure you want to cancel this meeting?'|trans({}, 'messages') }}"
+        data-btn-ok-label="{{ 'Yes'|trans({}, 'messages') }}"
+        data-btn-cancel-label="{{ 'No'|trans({}, 'messages') }}">
+        <i class="fa fa-times"></i>
+    </a>
+{% endif %}

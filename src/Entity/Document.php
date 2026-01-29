@@ -100,14 +100,18 @@ class Document
             mkdir($targetDir, 0755, true); // Changed from 0777 to 0755
         }
 
+        $fileSize = $this->getFile()->getSize();
+        $mimeType = $this->getFile()->getClientMimeType();
+        $originalFileName = $this->getFile()->getClientOriginalName();
+
         $this->getFile()->move($targetDir, $fileName);
         
         $this->fileName = $fileName;
         $this->context = $subfolder;
-        $this->mimeType = $this->getFile()->getClientMimeType();
-        $this->fileSize = $this->getFile()->getSize();
-        $this->originalFileName = $this->getFile()->getClientOriginalName();
-        
+        $this->fileSize = $fileSize;
+        $this->mimeType = $mimeType;
+        $this->originalFileName = $originalFileName;
+
         $this->setFile(null);
     }
 

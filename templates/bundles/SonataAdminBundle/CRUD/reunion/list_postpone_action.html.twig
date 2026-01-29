@@ -1,0 +1,9 @@
+{# templates/bundles/SonataAdminBundle/CRUD/reunion/list_postpone_action.html.twig #}
+
+{% if admin.isGranted('EDIT', object) and object.statut.value not in [5, 4] %}
+    <a href="{{ admin.generateObjectUrl('postpone', object) }}"
+        class="btn btn-sm btn-warning edit_link"
+        title="{{ 'action_postpone'|trans({}, 'messages') }}">
+        <i class="fa fa-calendar-alt"></i>
+    </a>
+{% endif %}

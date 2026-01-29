@@ -1,0 +1,5 @@
+{% if admin.isGranted('EDIT', object) and object.statut.value in [2, 3] %}
+    <a href="{{ admin.generateObjectUrl('complete', object) }}" class="btn btn-sm btn-success" title="{{ 'action_complete'|trans({}, 'messages') }}">
+        <i class="fa fa-check"></i>
+    </a>
+{% endif %}
