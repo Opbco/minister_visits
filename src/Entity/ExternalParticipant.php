@@ -70,7 +70,7 @@ class ExternalParticipant
     private ?string $email = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(['external:read', 'external:write'])]
+    #[Groups(['external:read', 'external:write', 'reunion:read'])]
     private ?string $telephone = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

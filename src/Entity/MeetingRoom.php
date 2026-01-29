@@ -56,15 +56,15 @@ class MeetingRoom
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Assert\Positive]
-    #[Groups(['room:read', 'room:write'])]
+    #[Groups(['room:read', 'room:write', 'reunion:read'])]
     private ?int $capacite = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['room:read', 'room:write'])]
+    #[Groups(['room:read', 'room:write', 'reunion:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    #[Groups(['room:read', 'room:write'])]
+    #[Groups(['room:read', 'room:write', 'reunion:read'])]
     private array $equipements = []; // e.g. ["Projector", "Video Conf", "AC"]
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

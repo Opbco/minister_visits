@@ -70,53 +70,53 @@ class Structure
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['structure:read'])]
+    #[Groups(['structure:read', 'reunion:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "The French name is required.")]
     #[Assert\Length(min: 2, max: 255)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $nameFr = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $nameEn = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $acronym = null;
 
     #[ORM\Column(type: Types::INTEGER, enumType: StructureCategory::class)]
     #[Assert\NotNull(message: "The category is required.")]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?StructureCategory $category = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, enumType: StructureType::class)]
     #[Assert\NotNull(message: "The structure type is required.")]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?StructureType $type = StructureType::ETABLISSEMENT;
 
     #[ORM\Column(type: Types::INTEGER, enumType: StructureRank::class, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?StructureRank $levelRank = StructureRank::Service;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $codeHierarchique = "";
 
     #[ORM\Column(type: Types::STRING, length: 100, enumType: StructureEducation::class, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?StructureEducation $education = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, enumType: StructureOrdre::class, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?StructureOrdre $ordre = null;
 
     #[ORM\Column(type: Types::INTEGER, enumType: Cycle::class, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?Cycle $cycle = null;
 
     #[ORM\Column(options: ['default' => false])]
@@ -134,33 +134,33 @@ class Structure
     #[ORM\ManyToOne(inversedBy: 'structures')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "The subdivision is required.")]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?SubDivision $subdivision = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $adress = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     #[Assert\Range(min: -90, max: 90)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $latitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     #[Assert\Range(min: -180, max: 180)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $longitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?string $altitude = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, enumType: Subsystem::class, nullable: true)]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?Subsystem $subsystem = null;
 
     #[ORM\Column(options: ['default' => false])]
-    #[Groups(['structure:read', 'structure:write'])]
+    #[Groups(['structure:read', 'structure:write', 'reunion:read'])]
     private ?bool $isBilingual = false;
     
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

@@ -58,7 +58,7 @@ class Personnel
     private ?string $nomComplet = null;
 
     #[ORM\Column(length: 100, nullable: true)]
-    #[Groups(['personnel:read', 'personnel:write'])]
+    #[Groups(['personnel:read', 'personnel:write', 'reunion:read'])]
     private ?string $matricule = null;
 
     #[ORM\ManyToOne(targetEntity: Fonction::class, inversedBy: 'personnels', cascade: ['persist'])]
@@ -70,20 +70,20 @@ class Personnel
     #[ORM\ManyToOne(inversedBy: 'personnels')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "The structure is required.")]
-    #[Groups(['personnel:read', 'personnel:write'])]
+    #[Groups(['personnel:read', 'personnel:write', 'reunion:read'])]
     private ?Structure $structure = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Email]
-    #[Groups(['personnel:read', 'personnel:write'])]
+    #[Groups(['personnel:read', 'personnel:write', 'reunion:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['personnel:read', 'personnel:write'])]
+    #[Groups(['personnel:read', 'personnel:write', 'reunion:read'])]
     private ?string $telephone = null;
 
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
-    #[Groups(['personnel:read', 'personnel:write'])]
+    #[Groups(['personnel:read', 'personnel:write', 'reunion:read'])]
     private ?User $userAccount = null;
 
     #[ORM\OneToMany(targetEntity: ReunionParticipation::class, mappedBy: 'personnel', orphanRemoval: true)]

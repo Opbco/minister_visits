@@ -18,22 +18,22 @@ class Document
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["document.list", 'bulletin:read', 'classe.timetable', 'etablissement.details', "document.details", 'paiement.list', "depense.details", "depense.list", 'salleclasse.student', 'user.details'])]
+    #[Groups(["document.list", "document.details", 'reunion:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true, nullable: true)]
-    #[Groups(["document.list", "document.details"])]
+    #[Groups(["document.list", "document.details", 'reunion:read'])]
     private ?string $fileName = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updated = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
-    #[Groups(["document.list"])]
+    #[Groups(["document.list", 'reunion:read'])]
     private ?int $fileSize = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["document.list"])]
+    #[Groups(["document.list", 'reunion:read'])]
     private ?string $originalFileName = null;
 
     #[Assert\File(
@@ -179,7 +179,7 @@ class Document
         return $this;
     }
 
-    #[Groups(["document.list", "document.details"])]
+    #[Groups(["document.list", "document.details", "reunion:read"])]
     public function getFileWebPath(): string
     {
         if (empty($this->fileName)) {
