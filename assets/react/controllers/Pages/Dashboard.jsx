@@ -6,10 +6,12 @@ import {
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { useHasRole } from "../../utils/useHasRole";
+import MyReunions from "../Components/MyReunions";
 
-const Dashboard = ({ user, eid, currentYear }) => {
+const Dashboard = ({ user }) => {
   const { t } = useTranslation();
   const hasRole = useHasRole();
+
 
 
   return (
@@ -38,6 +40,7 @@ const Dashboard = ({ user, eid, currentYear }) => {
           })}
         </Typography>
       </Box>
+      <MyReunions />
     </Box>
   );
 };

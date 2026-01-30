@@ -17,16 +17,16 @@ class SubDivision
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["subdivision.details", 'personne.details', 'etablissement.details', "subdivision.list", "structure.details", "structure.list"])]
+    #[Groups(["subdivision.details", 'reunion:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["subdivision.details", 'etablissement.details', 'personne.details',  "subdivision.list", "structure.details", "structure.list"])]
+    #[Groups(["subdivision.details", 'reunion:read', "structure.details", "structure.list"])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'subDivisions')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["subdivision.details", "structure.details", "structure.list"])]
+    #[Groups(["subdivision.details", "structure.details", "structure.list", 'reunion:read'])]
     private ?Division $division = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

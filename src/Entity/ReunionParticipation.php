@@ -40,7 +40,6 @@ class ReunionParticipation
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['reunion:read', 'reunion:write'])]
     private ?Reunion $reunion = null;
 
     // --- OPTION A: Internal Personnel ---

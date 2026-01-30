@@ -13,6 +13,7 @@ import Loading from "../utils/Loading";
 import SignIn from "./Pages/SignIn";
 import IsAuthenticated from "./../utils/IsAuthenticated";
 import IsAuthorized from "./../utils/IsAuthorized";
+import MeetingDetails from "./Pages/MeetingDetails";
 
 const Main = ({ page }) => {
   const { t } = useTranslation();
@@ -29,7 +30,14 @@ const Main = ({ page }) => {
       children: [
         {
           index: true,
-          element: <Dashboard title="MySchool-OPBco" />,
+          element: <Dashboard title="MinistrySuiv-OPBco" />,
+          handle: {
+            crumb: () => <Link to="/">{t("menu.dashboard")}</Link>,
+          },
+        },
+        {
+          path: "reunions/:reunionId",
+          element: <MeetingDetails title="MinistrySuiv-OPBco" />,
           handle: {
             crumb: () => <Link to="/">{t("menu.dashboard")}</Link>,
           },

@@ -165,6 +165,38 @@ export const openApi = createApi({
             ]
           : [{ type: "Reunion", id: "PARTICIPATIONS" }],
     }),
+
+    getReunionById: builder.query({
+      query: (id) => ({
+        url: `/reunions/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Reunion", id }],
+    }),
+
+    updateReunionParticipation: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `/participations/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Reunion", id },
+        { type: "Reunion", id: "LIST" },
+      ],
+    }),
+
+    updateActionItem: builder.mutation({
+      query: (arg) => ({
+        url: `/actions/${arg.id}`,
+        method: "PUT",
+        body: arg.data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Reunion", id },
+        { type: "Reunion", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -176,4 +208,7 @@ export const {
   useGetFilteredAccessibleReunionsQuery,
   useGetReunionStatsByUserIdQuery,
   useGetDirectParticipationsByUserIdQuery,
+  useGetReunionByIdQuery, 
+  useUpdateReunionParticipationMutation, 
+  useUpdateActionItemMutation
 } = openApi;

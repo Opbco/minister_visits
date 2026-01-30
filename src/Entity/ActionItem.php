@@ -34,19 +34,19 @@ class ActionItem
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
-    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['action:read', 'action:write', 'reunion:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['action:read', 'action:write', 'reunion:read'])]
     private ?\DateTimeInterface $dateEcheance = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['action:read', 'action:write', 'reunion:read'])]
     private ?string $commentaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'actionItems')]
-    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['action:read', 'action:write', 'reunion:read'])]
     private ?Personnel $responsable = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -71,7 +71,7 @@ class ActionItem
     private ?User $user_updated = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, enumType: ActionStatut::class)]
-    #[Groups(['action:read', 'action:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['action:read', 'action:write', 'reunion:read'])]
     private ?ActionStatut $statut = ActionStatut::PENDING;
 
     public function getId(): ?int

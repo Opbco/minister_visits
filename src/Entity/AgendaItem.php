@@ -32,25 +32,25 @@ class AgendaItem
     private ?Reunion $reunion = null;
 
     #[ORM\Column]
-    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read'])]
     private ?int $ordre = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read'])]
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read'])]
     private ?int $dureeEstimee = null;
 
     #[ORM\ManyToOne(inversedBy: 'agendaItems')]
     #[ORM\JoinColumn(nullable: true)]
-    #[Groups(['agenda:read', 'agenda:write', 'reunion:read', 'reunion:write'])]
+    #[Groups(['agenda:read', 'agenda:write', 'reunion:read'])]
     private ?ReunionParticipation $presentateur = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

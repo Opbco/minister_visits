@@ -22,6 +22,45 @@ class ReunionController extends AbstractController
     ) {
     }
 
+
+    /**
+     * Get reunion by its ID.
+     * 
+     * @Route: GET /api/reunions/{id}
+     * 
+     * @param int $Id The Reunion ID
+     * @return JsonResponse
+     */
+    #[Route('/{id}', name: 'reunion_by_id', methods: ['GET'])]
+    public function getReunionById(int $id): JsonResponse
+    {
+        try {
+            // Find reunion
+            $reunion = $this->reunionRepository->find($id);
+
+            if (!$reunion) {
+                return $this->json([
+                    'error' => 'Reunion not found',
+                    'message' => sprintf('No reunion found with ID %d', $id)
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // Serialize the reunion
+            $jsonContent = $this->serializer->serialize(
+                $reunion,
+                'json',
+                ['groups' => ['reunion:read']]
+            );
+
+            return new JsonResponse($jsonContent, Response::HTTP_OK, [], true);
+            
+        } catch (\Exception $e) {
+            return $this->json([
+                    'error' => "An error occurred while fetching reunion",
+                    'message' => $e->getMessage()
+                ], Response::HTTP_NOT_FOUND);
+        }
+    }
     /**
      * Get all reunions accessible to a personnel by their user account ID.
      * 
