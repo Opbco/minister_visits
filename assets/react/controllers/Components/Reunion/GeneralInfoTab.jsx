@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import {
     Box, Paper, Typography, Grid,
     Avatar, List, ListItem, ListItemAvatar,
-    ListItemText, Divider, Card, CardContent
+    ListItemText, Divider, Card, CardContent,
+    Alert,
+    Button
 } from '@mui/material';
 
 // Icons
@@ -15,7 +17,8 @@ import {
     Person as PersonIcon,
     Schedule as ScheduleIcon,
     Description as DescriptionIcon,
-    Download as DownloadIcon 
+    Download as DownloadIcon,
+    Info as InfoIcon
 } from '@mui/icons-material';
 import { formatDate } from '../../../utils/Globals';
 
