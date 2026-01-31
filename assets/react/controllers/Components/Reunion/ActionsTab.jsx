@@ -6,7 +6,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 // Material UI Components
 import {
-    Box, Typography, Tabs, Tab, Grid, Chip, Button,
+    Box, Typography, Grid, Chip, Button,
     Avatar, Dialog, DialogTitle, DialogContent, DialogActions,
     TextField, FormControl, InputLabel, Select, MenuItem, Card, CardContent, Alert,
 } from '@mui/material';
@@ -49,7 +49,7 @@ const ActionsTab = ({ meeting, currentUser, updateAction }) => {
     <Box>
         <Grid container spacing={2}>
         {meeting.actionItems?.map((action) => {
-            const isResponsible = currentUser?.id === action.responsable?.id;
+            const isResponsible = currentUser?.id === action.responsable?.userAccount?.id;
 
             return (
             <Grid item xs={12} sm={6} key={action.id}>
@@ -136,6 +136,7 @@ const ActionsTab = ({ meeting, currentUser, updateAction }) => {
                     InputLabelProps={{ shrink: true }}
                     value={formik.values.dateEcheance}
                     onChange={formik.handleChange}
+                    disabled={true}
                     error={formik.touched.dateEcheance && Boolean(formik.errors.dateEcheance)}
                     />
                 </Grid>

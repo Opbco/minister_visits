@@ -12,6 +12,10 @@ const Dashboard = ({ user }) => {
   const { t } = useTranslation();
   const hasRole = useHasRole();
 
+  useEffect(() => {
+    document.title = t("dashboard.title");
+  }, [t]);
+
 
 
   return (
